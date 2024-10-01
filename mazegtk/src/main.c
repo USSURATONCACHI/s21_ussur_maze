@@ -6,7 +6,7 @@
 int main(int argc, char** argv) {
    gtk_init(&argc, &argv);
    
-   GError* error;
+   GError* error = NULL;
    MazeApp* maze_app = maze_app_new(&error);
    if (maze_app == NULL) {
       if (error)
