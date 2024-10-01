@@ -7,6 +7,8 @@ install: installdir
 test: installdir
 	./installdir/bin/test
 
+re: clean install
+
 build: builddir
 	cmake --build builddir
 
