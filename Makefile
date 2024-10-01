@@ -4,9 +4,9 @@
 ENV = $(shell cat env.txt)
 
 gtk:
-	${ENV} ./install/bin/maze_gtk
+	${ENV} ./install/bin/s21_ussur_mazegtk
 test:
-	${ENV} ./install/bin/test
+	${ENV} ./install/bin/s21_ussur_maze_test
 
 
 r: clean

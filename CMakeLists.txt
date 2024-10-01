@@ -16,5 +16,6 @@ pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 find_package(GTest REQUIRED)
 
 add_subdirectory(tests)
-add_subdirectory(libmaze)
-add_subdirectory(maze_gtk)
+add_subdirectory(maze)
+add_subdirectory(mazegtk)
+# add_subdirectory(mazectl)

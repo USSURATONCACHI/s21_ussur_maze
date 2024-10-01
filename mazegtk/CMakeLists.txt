@@ -1,22 +1,22 @@
-add_executable(maze_gtk
+add_executable(s21_ussur_mazegtk
     src/main.c
 )
 
-target_include_directories(maze_gtk PRIVATE ${GTK3_INCLUDE_DIRS})
-target_link_directories(maze_gtk PRIVATE ${GTK3_LIBRARY_DIRS})
+target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})
+target_link_directories(s21_ussur_mazegtk PRIVATE ${GTK3_LIBRARY_DIRS})
 
-target_include_directories(maze_gtk PRIVATE include)
-target_link_libraries(maze_gtk PUBLIC libmaze ${GTK3_LIBRARIES})
+target_include_directories(s21_ussur_mazegtk PRIVATE include)
+target_link_libraries(s21_ussur_mazegtk PUBLIC s21_ussur_maze ${GTK3_LIBRARIES})
 
 
 install(
-    TARGETS maze_gtk
+    TARGETS s21_ussur_mazegtk
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 # === Resources ====
 file(GLOB RECURSE GRESOURCE_FILES "resources/*")
-set(GRESOURCE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/maze_gtk.gresource)
+set(GRESOURCE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mazegtk.gresource)
 
 add_custom_command(
     OUTPUT ${GRESOURCE_OUTPUT}
@@ -25,7 +25,7 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/resources
     COMMENT "Compiling gresource xml file to ${GRESOURCE_OUTPUT}"
 )
-add_custom_target(maze_gtk_resources ALL DEPENDS ${GRESOURCE_OUTPUT})
+add_custom_target(s21_ussur_mazegtk_resources ALL DEPENDS ${GRESOURCE_OUTPUT})
 
 install(
     FILES ${GRESOURCE_OUTPUT}

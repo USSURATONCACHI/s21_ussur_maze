@@ -1,13 +1,13 @@
 enable_testing()
 
-add_executable(test
+add_executable(s21_ussur_maze_test
     src/test.cpp
 )
-target_link_libraries(test GTest::gtest GTest::gtest_main libmaze)
+target_link_libraries(s21_ussur_maze_test GTest::gtest GTest::gtest_main s21_ussur_maze)
 install(
-    TARGETS test
+    TARGETS s21_ussur_maze_test
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 include(GoogleTest)
-gtest_discover_tests(test)
+gtest_discover_tests(s21_ussur_maze_test)
