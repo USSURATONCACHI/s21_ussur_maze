@@ -3,7 +3,7 @@ enable_testing()
 add_executable(test
     src/test.cpp
 )
-target_link_libraries(test GTest::gtest_main)
+target_link_libraries(test GTest::gtest_main libmaze)
 install(
     TARGETS test
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
