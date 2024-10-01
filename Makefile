@@ -4,6 +4,9 @@ configure: builddir
 
 install: installdir
 
+test: installdir
+	./installdir/bin/test
+
 build: builddir
 	cmake --build builddir
 
