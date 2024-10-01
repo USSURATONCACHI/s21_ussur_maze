@@ -1,5 +1,5 @@
 <gresources>
-  <gresource prefix="/org/ussur/maze_gtk">
+  <gresource prefix="/org/ussur/mazegtk">
     <file>main.glade</file>
   </gresource>
 </gresources>

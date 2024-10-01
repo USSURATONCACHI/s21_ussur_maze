@@ -2,11 +2,11 @@ add_executable(s21_ussur_mazegtk
     src/main.c
 )
 
-target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})
-target_link_directories(s21_ussur_mazegtk PRIVATE ${GTK3_LIBRARY_DIRS})
+target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS})
+target_link_directories(s21_ussur_mazegtk PRIVATE ${GTK3_LIBRARY_DIRS} ${GLIB_LIBRARY_DIRS} ${GIO_LIBRARY_DIRS})
 
 target_include_directories(s21_ussur_mazegtk PRIVATE include)
-target_link_libraries(s21_ussur_mazegtk PUBLIC s21_ussur_maze ${GTK3_LIBRARIES})
+target_link_libraries(s21_ussur_mazegtk PUBLIC s21_ussur_maze ${GTK3_LIBRARIES} ${GLIB_LIBRARIES} ${GIO_LIBRARIES})
 
 
 install(
@@ -16,7 +16,7 @@ install(
 
 # === Resources ====
 file(GLOB RECURSE GRESOURCE_FILES "resources/*")
-set(GRESOURCE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mazegtk.gresource)
+set(GRESOURCE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/s21_ussur_mazegtk.gresource)
 
 add_custom_command(
     OUTPUT ${GRESOURCE_OUTPUT}
