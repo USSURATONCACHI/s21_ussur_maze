@@ -1,5 +1,6 @@
 add_executable(s21_ussur_mazegtk
     src/main.c
+    src/maze_app.c
 )
 
 target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS})
@@ -7,7 +8,7 @@ target_link_directories(s21_ussur_mazegtk PRIVATE ${GTK3_LIBRARY_DIRS} ${GLIB_LI
 
 target_include_directories(s21_ussur_mazegtk PRIVATE include)
 target_link_libraries(s21_ussur_mazegtk PUBLIC s21_ussur_maze ${GTK3_LIBRARIES} ${GLIB_LIBRARIES} ${GIO_LIBRARIES})
-
+target_link_options(s21_ussur_mazegtk PRIVATE "-rdynamic")
 
 install(
     TARGETS s21_ussur_mazegtk
@@ -15,13 +16,13 @@ install(
 )
 
 # === Resources ====
-file(GLOB RECURSE GRESOURCE_FILES "resources/*")
+file(GLOB_RECURSE GRESOURCE_FILES "resources/*")
 set(GRESOURCE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/s21_ussur_mazegtk.gresource)
 
 add_custom_command(
     OUTPUT ${GRESOURCE_OUTPUT}
     COMMAND glib-compile-resources --target=${GRESOURCE_OUTPUT} resources.xml
-    DEPENDS ${RESOURCE_FILES}
+    DEPENDS ${GRESOURCE_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/resources
     COMMENT "Compiling gresource xml file to ${GRESOURCE_OUTPUT}"
 )

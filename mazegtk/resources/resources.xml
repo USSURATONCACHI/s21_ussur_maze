@@ -1,5 +1,6 @@
 <gresources>
   <gresource prefix="/org/ussur/mazegtk">
     <file>main.glade</file>
+    <file>loading.svg</file>
   </gresource>
 </gresources>
