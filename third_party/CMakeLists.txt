@@ -1,0 +1,2 @@
+set(gtest_force_shared_crt on)
+add_subdirectory(googletest)
