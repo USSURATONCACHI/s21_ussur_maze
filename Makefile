@@ -1,23 +1,30 @@
-.PHONY: 
+.PHONY: clean configure build install gtk test re
+.PHONY: r c b i
 
-configure: builddir
+ENV = $(shell cat env.txt)
 
-install: installdir
+gtk:
+	${ENV} ./install/bin/maze_gtk
+test:
+	${ENV} ./install/bin/test
 
-test: installdir
-	./installdir/bin/test
 
-re: clean install
+r: clean
+c: configure
+b: build
+i: install
 
-build: builddir
-	cmake --build builddir
-
-installdir: build
-	cmake --install builddir
-
-builddir:
-	cmake -S . -B builddir -DCMAKE_INSTALL_PREFIX="$(shell pwd)/installdir/"
+re: clean configure build
 
 clean:
-	rm -rf builddir/
-	rm -rf installdir/
+	rm -rf build/
+	rm -rf install/
+
+configure:
+	cmake -S . -B build -DCMAKE_INSTALL_PREFIX="$(shell pwd)/install/"
+
+build:
+	cmake --build build --parallel
+
+install:
+	cmake --install build

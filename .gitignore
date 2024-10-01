@@ -2,6 +2,6 @@
 .vscode/
 .venv/
 .vs/
-builddir/
-installdir/
+build/
+install/
 CMakeSettings.json
