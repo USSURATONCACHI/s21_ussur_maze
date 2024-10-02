@@ -1,4 +1,5 @@
 #include <opengl_utils/framebuffer.h>
+#include <better_c_std/prettify.h>
 
 Framebuffer framebuffer_create(int width, int height, int samples) {
   unused(samples);
@@ -19,7 +20,7 @@ Framebuffer framebuffer_create(int width, int height, int samples) {
 
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          texture, 0);
-  assert_m(glCheckFramebufferStatus(GL_FRAMEBUFFER) is GL_FRAMEBUFFER_COMPLETE);
+  assert_m(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
   Framebuffer result = {.color_texture = texture, .framebuffer = fb};
   glBindFramebuffer(GL_FRAMEBUFFER, 0);

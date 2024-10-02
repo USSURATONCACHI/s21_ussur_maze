@@ -1,4 +1,5 @@
 #include <opengl_utils/mesh.h>
+#include <better_c_std/prettify.h>
 
 Mesh mesh_create() {
   Mesh result;
@@ -51,7 +52,7 @@ void mesh_set_indices_int_tuples(Mesh* this, int* data, int len, GLenum usage) {
 }
 
 void mesh_draw(Mesh this) {
-  glDrawElements(GL_TRIANGLES, this.indices_count, this.index_type, null);
+  glDrawElements(GL_TRIANGLES, this.indices_count, this.index_type, NULL);
 }
 
 void mesh_bind_consecutive_attribs(Mesh this, int start_id, MeshAttrib* attribs,

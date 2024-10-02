@@ -1,5 +1,6 @@
 #include <opengl_utils/shader.h>
 
+#include <better_c_std/string.h>
 #include <stdbool.h>
 
 #define LOG_BUF_SIZE (1024 * 512)
@@ -21,4 +22,11 @@ Shader shader_from_source(GLuint type, const char* source) {
   }
 
   return (Shader){.shader = shader};
+}
+
+Shader shader_from_file(GLenum type, const char* filepath) {
+  str_t src = read_file_to_str(filepath);
+  Shader result = shader_from_source(type, src.string);
+  str_free(src);
+  return result;
 }
