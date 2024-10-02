@@ -1,0 +1,3 @@
+[submodule "better_c_std"]
+	path = better_c_std
+	url = git@github.com:USSURATONCACHI/better_c_std.git

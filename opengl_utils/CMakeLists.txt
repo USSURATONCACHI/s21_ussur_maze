@@ -12,6 +12,8 @@ target_include_directories(s21_ussur_opengl_utils PRIVATE ${EPOXY_INCLUDE_DIRS})
 target_link_directories   (s21_ussur_opengl_utils PRIVATE ${EPOXY_LIBRARY_DIRS})
 target_link_libraries     (s21_ussur_opengl_utils PUBLIC  ${EPOXY_LIBRARIES})
 
+target_link_libraries     (s21_ussur_opengl_utils PUBLIC  s21_ussur_better_c_std)
+
 target_include_directories(s21_ussur_opengl_utils PUBLIC include)
 
 install(
