@@ -87,6 +87,20 @@
             <property name="position">1</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkImage" id="dropdown_ui">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="pixel-size">64</property>
+            <property name="icon-name">document-open</property>
+            <property name="icon_size">6</property>
+          </object>
+          <packing>
+            <property name="name">page2</property>
+            <property name="title" translatable="yes">page2</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>

@@ -1,71 +1,55 @@
 #include <mazegtk/viewmodel.h>
+#include <libmaze/util.h>
 #include <string.h>
+#include <stdlib.h>
 
-// typedef enum {
-//     MAZEGTK_VIEWMODEL_STATE_LOADING,
-//     MAZEGTK_VIEWMODEL_STATE_DRAG,
-//     MAZEGTK_VIEWMODEL_STATE_SHOW_MAZE,
-// } MazegtkViewodelState;
+void mg_viewmodel_state_loading_free(MgViewmodelStateLoading state) {
+    free(state.text_shown);
+}
+void mg_viewmodel_state_drag_free(MgViewmodelStateDrag state) {
+    // nothing
+}
+void mg_viewmodel_state_show_maze_free(MgViewmodelStateShowMaze state) {
+    // nothing
+}
 
-// typedef struct {
-//     char* text_shown;
-// } MazegtkViewodelStateLoading;
-
-// typedef struct {
-// } MazegtkViewodelStateDrag;
-
-// typedef struct {
-// } MazegtkViewodelStateShowMaze;
-
-// typedef struct {
-//     MazegtkViewodelState state;
-//     union {
-//         MazegtkViewodelStateLoading  loading;
-//         MazegtkViewodelStateDrag     drag;
-//         MazegtkViewodelStateShowMaze show_maze;
-//     };
-//     struct {
-//         GCallback on_state_changed;
-//         void* callback_user_data;
-//     } private;
-// } MazegtkViewmodel;
-
-MazegtkViewmodel mazegtk_viewmodel_new() {
-    return (MazegtkViewmodel) {
-        .state = MAZEGTK_VIEWMODEL_STATE_LOADING,
+MgViewmodelState mg_viewmodel_state_new() {
+    return (MgViewmodelState) {
+        .type = MAZEGTK_VIEWMODEL_STATE_LOADING,
         .loading = {
-            .text_shown = strdup("Launching application"),
+            .text_shown = strdup("Starting the application"),
         },
-        .private = {
-            .on_state_changed = NULL,
-            .callback_user_data = NULL,
-        }
     };
 }
+void mg_viewmodel_state_free(MgViewmodelState* model) {
+    if (model == NULL) return;
 
-void mazegtk_viewmodel_free(MazegtkViewmodel model) {
-
+    switch (model->type) {
+        case MAZEGTK_VIEWMODEL_STATE_LOADING:   mg_viewmodel_state_loading_free  (model->loading);   break;
+        case MAZEGTK_VIEWMODEL_STATE_DRAG:      mg_viewmodel_state_drag_free     (model->drag);      break;
+        case MAZEGTK_VIEWMODEL_STATE_SHOW_MAZE: mg_viewmodel_state_show_maze_free(model->show_maze); break;
+        default:
+    }
 }
 
-void mazegtk_viewmodel_state_loading_free(MazegtkViewodelStateLoading state) {
+void mg_viewmodel_state_set_loading(MgViewmodelState* self, MgViewmodelStateLoading new_state) {
+    if (self == NULL) return;
 
+    mg_viewmodel_state_free(self);
+    self->type = MAZEGTK_VIEWMODEL_STATE_LOADING;
+    self->loading = new_state;
 }
+void mg_viewmodel_state_set_drag(MgViewmodelState* self, MgViewmodelStateDrag new_state) {
+    if (self == NULL) return;
 
-void mazegtk_viewmodel_state_drag_free(MazegtkViewodelStateDrag state) {
-
+    mg_viewmodel_state_free(self);
+    self->type = MAZEGTK_VIEWMODEL_STATE_DRAG;
+    self->drag = new_state;
 }
+void mg_viewmodel_state_set_show_maze(MgViewmodelState* self, MgViewmodelStateShowMaze new_state) {
+    if (self == NULL) return;
 
-void mazegtk_viewmodel_state_show_maze_free(MazegtkViewodelStateShowMaze state) {
-
+    mg_viewmodel_state_free(self);
+    self->type = MAZEGTK_VIEWMODEL_STATE_SHOW_MAZE;
+    self->show_maze = new_state;
 }
-
-void mazegtk_viewmodel_set_user_data(void* callback_user_data) {
-
-}
-
-void mazegtk_viewmodel_on_state_changed(GCallback callback) {
-    
-}
-void mazegtk_viewmodel_set_state_loading(MazegtkViewodelStateLoading new_state);
-void mazegtk_viewmodel_set_state_drag(MazegtkViewodelStateDrag new_state);
-void mazegtk_viewmodel_set_state_show_maze(MazegtkViewodelStateShowMaze new_state);
