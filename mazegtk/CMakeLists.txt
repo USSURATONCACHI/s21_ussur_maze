@@ -9,6 +9,7 @@ add_executable(s21_ussur_mazegtk
     src/maze_app.c
     src/maze_app_create.c
     src/viewmodel.c
+    src/viewmodel_state.c
 )
 
 target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})

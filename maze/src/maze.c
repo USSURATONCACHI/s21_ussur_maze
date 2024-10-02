@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <better_c_std/prettify.h>
 #include <libmaze/directions_struct.h>
 #include <libmaze/cell_struct.h>
 #include <libmaze/maze.h>
-#include <libmaze/util.h>
 
 Maze maze_create(size_t width, size_t height) {
     size_t size_bits = width * height * 2; // each cell is 2 bits

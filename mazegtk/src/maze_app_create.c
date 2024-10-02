@@ -1,6 +1,6 @@
 #include <mazegtk/maze_app.h>
 #include <mazegtk/domain.h>
-#include <libmaze/util.h>
+#include <better_c_std/prettify.h>
 
 #define PUTERR(out_error) if (out_error) (*(out_error))
 
@@ -8,7 +8,8 @@ static GResource* register_resource(GError** out_error);
 static GtkApplication* create_gtk_app(GError** out_error, gpointer callbacks_user_data);
 static GtkBuilder* create_gtk_builder(GError** out_error);
 
-ST_METHOD(MgMazeApp, MgMazeApp*, create, GError** out_error) {
+
+MgMazeApp* MgMazeApp_create(GError** out_error) {
     debugln("MgMazeApp_create called");
     GError* error = NULL;
 
@@ -63,18 +64,6 @@ ST_METHOD(MgMazeApp, MgMazeApp*, create, GError** out_error) {
             free(maze_app);
             maze_app = NULL;
         }
-    }
-    if (!error) {
-        debugln("Filling method pointers in maze app");
-        maze_app->free               = (void*) METHOD_NAME(MgMazeApp, free);
-        maze_app->activate           = (void*) METHOD_NAME(MgMazeApp, activate);
-        maze_app->destroy            = (void*) METHOD_NAME(MgMazeApp, destroy);
-        maze_app->drag_moved         = (void*) METHOD_NAME(MgMazeApp, drag_moved);
-        maze_app->drag_ended         = (void*) METHOD_NAME(MgMazeApp, drag_ended);
-        maze_app->free               = (void*) METHOD_NAME(MgMazeApp, free);
-        maze_app->run                = (void*) METHOD_NAME(MgMazeApp, run);
-        maze_app->update_shown_state = (void*) METHOD_NAME(MgMazeApp, update_shown_state);
-        maze_app->render_gl          = (void*) METHOD_NAME(MgMazeApp, render_gl);
     }
     debugln("MgMazeApp_create done: %p", maze_app);
 

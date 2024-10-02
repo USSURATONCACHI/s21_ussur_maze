@@ -1,17 +1,8 @@
 #include <mazegtk/viewmodel.h>
-#include <libmaze/util.h>
+#include <better_c_std/prettify.h>
+#include <libmaze/maze.h>
 #include <string.h>
 #include <stdlib.h>
-
-void mg_viewmodel_state_loading_free(MgViewmodelStateLoading state) {
-    free(state.text_shown);
-}
-void mg_viewmodel_state_drag_free(MgViewmodelStateDrag state) {
-    // nothing
-}
-void mg_viewmodel_state_show_maze_free(MgViewmodelStateShowMaze state) {
-    // nothing
-}
 
 MgViewmodelState mg_viewmodel_state_new() {
     return (MgViewmodelState) {

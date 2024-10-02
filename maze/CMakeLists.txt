@@ -3,6 +3,8 @@ add_library(s21_ussur_maze SHARED
 )
 target_include_directories(s21_ussur_maze PUBLIC include)
 
+target_link_libraries(s21_ussur_maze PUBLIC s21_ussur_better_c_std)
+
 include(GNUInstallDirs)
 install(
     TARGETS s21_ussur_maze

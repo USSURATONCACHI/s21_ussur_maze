@@ -1,7 +1,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <mazegtk/maze_app.h>
-#include <libmaze/util.h>
+#include <better_c_std/prettify.h>
 
 
 int main(int argc, char** argv) {
@@ -22,10 +22,10 @@ int main(int argc, char** argv) {
     debugln("Maze app created.");
 
     debugln("Running...");
-    maze_app->run(maze_app, argc, argv);
+    MgMazeApp_run(maze_app, argc, argv);
     debugln("Run ended, freeing");
 
-    maze_app->free(maze_app);
+    MgMazeApp_free(maze_app);
     debugln("Maze app destroyed");
     return 0;
 }

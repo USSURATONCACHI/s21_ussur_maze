@@ -2,5 +2,7 @@
   <gresource prefix="/org/ussur/mazegtk">
     <file>main.glade</file>
     <file>loading.svg</file>
+    <file>common.vert</file>
+    <file>basic.frag</file>
   </gresource>
 </gresources>

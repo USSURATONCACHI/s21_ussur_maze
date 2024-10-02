@@ -1,9 +1,8 @@
-#include <mazegtk/dumb_oop.h>
 #include <mazegtk/viewmodel.h>
 #include <mazegtk/maze_app.h>
 #include <mazegtk/domain.h>
 
-#include <libmaze/util.h>
+#include <better_c_std/prettify.h>
 
 #include <stdbool.h>
 
@@ -13,7 +12,7 @@
 
 #include <epoxy/gl.h>
 
-IMPL_METHODP(MgMazeApp, void, free) {
+void MgMazeApp_free(MgMazeApp* this) {
     if (this == NULL)
         return;
     
@@ -24,14 +23,14 @@ IMPL_METHODP(MgMazeApp, void, free) {
     free(this);
 }
 
-IMPL_METHODP(MgMazeApp, void, activate) {
+void MgMazeApp_activate(MgMazeApp* this) {
     gtk_builder_connect_signals(this->private.builder, this);
 
     // Window
     GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(this->private.builder, "main_window"));
     if (window == NULL) {
         g_error("No main_window object found in UI layout");
-        this->destroy(this);
+        MgMazeApp_destroy(this);
         return;
     }
     const GtkTargetEntry target_entries[] = {
@@ -55,11 +54,11 @@ IMPL_METHODP(MgMazeApp, void, activate) {
 
     MgViewmodelStateShowMaze new_state = {};
     mg_viewmodel_state_set(&this->state, new_state);
-    this->update_shown_state(this);
+    MgMazeApp_update_shown_state(this);
 }
 
 
-IMPL_METHODP(MgMazeApp, void, update_shown_state) {
+void MgMazeApp_update_shown_state(MgMazeApp* this) {
     switch (this->state.type) {
         case MAZEGTK_VIEWMODEL_STATE_LOADING:
             gtk_stack_set_visible_child(this->private.ref_main_window_stack, this->private.ref_loading_ui);
@@ -76,27 +75,27 @@ IMPL_METHODP(MgMazeApp, void, update_shown_state) {
     }
 }
 
-IMPL_METHODP(MgMazeApp, void, destroy) {
+void MgMazeApp_destroy(MgMazeApp* this) {
     g_info("Destroying the Maze App");
     g_application_quit(G_APPLICATION(this->private.app));
 }
 
-IMPL_METHOD(MgMazeApp, void, run, int argc, char** argv) {
+void MgMazeApp_run(MgMazeApp* this, int argc, char** argv) {
     g_application_run(G_APPLICATION(this->private.app), argc, argv);
 }
 
-IMPL_METHODP(MgMazeApp, void, drag_moved) {
+void MgMazeApp_drag_moved(MgMazeApp* this) {
     MgViewmodelStateDrag new_state = {};
     mg_viewmodel_state_set(&this->state, new_state);
-    this->update_shown_state(this);
+    MgMazeApp_update_shown_state(this);
 }
-IMPL_METHODP(MgMazeApp, void, drag_ended) {
+void MgMazeApp_drag_ended(MgMazeApp* this) {
     MgViewmodelStateShowMaze new_state = {};
     mg_viewmodel_state_set(&this->state, new_state);
-    this->update_shown_state(this);
+    MgMazeApp_update_shown_state(this);
 }
 
-IMPL_METHOD(MgMazeApp, bool, render_gl, GtkGLArea* widget, GdkGLContext* context) {
+bool MgMazeApp_render_gl(MgMazeApp* this, GtkGLArea* widget, GdkGLContext* context) {
     glClearColor (0, 0, 1.0, 0);
     glClear (GL_COLOR_BUFFER_BIT);
     return true;
@@ -110,7 +109,7 @@ G_MODULE_EXPORT void mg_maze_app_handle_drag_move(
     guint time,
     MgMazeApp* maze_app
 ) { 
-    maze_app->drag_moved(maze_app);
+    MgMazeApp_drag_moved(maze_app);
 }
 G_MODULE_EXPORT void mg_maze_app_handle_drag_leave(
     GtkWidget* widget, 
@@ -118,7 +117,7 @@ G_MODULE_EXPORT void mg_maze_app_handle_drag_leave(
     guint time,
     MgMazeApp* maze_app
 ) { 
-    maze_app->drag_ended(maze_app);
+    MgMazeApp_drag_ended(maze_app);
 }
 
 G_MODULE_EXPORT bool mg_maze_app_handle_render_gl(
@@ -126,8 +125,8 @@ G_MODULE_EXPORT bool mg_maze_app_handle_render_gl(
     GdkGLContext* context,
     MgMazeApp* maze_app
 ) {
-    return maze_app->render_gl(maze_app, widget, context);
+    return MgMazeApp_render_gl(maze_app, widget, context);
 }
 
-void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app) { maze_app->activate(maze_app); }
-void mg_maze_app_handle_destroy(GtkWidget *widget, MgMazeApp* maze_app)  { maze_app->destroy(maze_app); }
+void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app) { MgMazeApp_activate(maze_app); }
+void mg_maze_app_handle_destroy(GtkWidget *widget, MgMazeApp* maze_app)  { MgMazeApp_destroy(maze_app); }

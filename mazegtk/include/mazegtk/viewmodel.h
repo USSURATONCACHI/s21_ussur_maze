@@ -1,31 +1,8 @@
-#ifndef MAZEGTK_VIEWMODEL_H_
-#define MAZEGTK_VIEWMODEL_H_
+#ifndef MAZEGTK_VIEWMODEL_STATE_H_
+#define MAZEGTK_VIEWMODEL_STATE_H_
 
-typedef enum {
-    MAZEGTK_VIEWMODEL_STATE_LOADING,
-    MAZEGTK_VIEWMODEL_STATE_DRAG,
-    MAZEGTK_VIEWMODEL_STATE_SHOW_MAZE,
-} MgViewmodelStateType;
-
-typedef struct {
-    char* text_shown;
-} MgViewmodelStateLoading;
-
-typedef struct {
-} MgViewmodelStateDrag;
-
-typedef struct {
-} MgViewmodelStateShowMaze;
-
-void mg_viewmodel_state_loading_free(MgViewmodelStateLoading state);
-void mg_viewmodel_state_drag_free(MgViewmodelStateDrag state);
-void mg_viewmodel_state_show_maze_free(MgViewmodelStateShowMaze state);
-
-#define mg_viewmodel_state_X_free(X) _Generic((X), \
-                MgViewmodelStateLoading:  mg_viewmodel_state_loading_free   \
-                MgViewmodelStateDrag:     mg_viewmodel_state_drag_free      \
-                MgViewmodelStateShowMaze: mg_viewmodel_state_show_maze_free \
-            )(X)
+#include <libmaze/maze_struct.h>
+#include <mazegtk/viewmodel_state.h>
 
 typedef struct {
     MgViewmodelStateType type;
@@ -50,4 +27,4 @@ void mg_viewmodel_state_set_show_maze(MgViewmodelState* self, MgViewmodelStateSh
             )(vm, X)
 
 
-#endif // MAZEGTK_VIEWMODEL_H_
+#endif // MAZEGTK_VIEWMODEL_STATE_H_
