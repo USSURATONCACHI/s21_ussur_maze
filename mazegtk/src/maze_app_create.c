@@ -66,13 +66,14 @@ ST_METHOD(MgMazeApp, MgMazeApp*, create, GError** out_error) {
     }
     if (!error) {
         debugln("Filling method pointers in maze app");
-        maze_app->free =       (void*) METHOD_NAME(MgMazeApp, free);
-        maze_app->activate =   (void*) METHOD_NAME(MgMazeApp, activate);
-        maze_app->destroy =    (void*) METHOD_NAME(MgMazeApp, destroy);
-        maze_app->drag_moved = (void*) METHOD_NAME(MgMazeApp, drag_moved);
-        maze_app->drag_ended = (void*) METHOD_NAME(MgMazeApp, drag_ended);
-        maze_app->free =       (void*) METHOD_NAME(MgMazeApp, free);
-        maze_app->run =        (void*) METHOD_NAME(MgMazeApp, run);
+        maze_app->free               = (void*) METHOD_NAME(MgMazeApp, free);
+        maze_app->activate           = (void*) METHOD_NAME(MgMazeApp, activate);
+        maze_app->destroy            = (void*) METHOD_NAME(MgMazeApp, destroy);
+        maze_app->drag_moved         = (void*) METHOD_NAME(MgMazeApp, drag_moved);
+        maze_app->drag_ended         = (void*) METHOD_NAME(MgMazeApp, drag_ended);
+        maze_app->free               = (void*) METHOD_NAME(MgMazeApp, free);
+        maze_app->run                = (void*) METHOD_NAME(MgMazeApp, run);
+        maze_app->update_shown_state = (void*) METHOD_NAME(MgMazeApp, update_shown_state);
     }
     debugln("MgMazeApp_create done: %p", maze_app);
 

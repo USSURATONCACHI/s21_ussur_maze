@@ -42,13 +42,30 @@ IMPL_METHODP(MgMazeApp, void, activate) {
     GtkWidget* main_ui = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "main_ui"));
 
     this->private.ref_main_window = window;
-    this->private.ref_main_window_stack = GTK_STACK(gtk_builder_get_object(this->private.builder, "main_window_stack"));
-    this->private.ref_show_maze_ui = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "show_maze_ui"));
-    this->private.ref_loading_text = GTK_LABEL(gtk_builder_get_object(this->private.builder, "loading_ui_text"));
-    this->private.ref_dropdown_ui = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "dropdown_ui"));
-    this->private.ref_show_maze_ui = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "show_maze_ui"));
+    this->private.ref_main_window_stack = GTK_STACK (gtk_builder_get_object(this->private.builder, "main_window_stack"));
+    this->private.ref_show_maze_ui      = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "show_maze_ui"));
+    this->private.ref_loading_text      = GTK_LABEL (gtk_builder_get_object(this->private.builder, "loading_ui_text"));
+    this->private.ref_dropdown_ui       = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "dropdown_ui"));
+    this->private.ref_show_maze_ui      = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "show_maze_ui"));
 }
 
+
+IMPL_METHODP(MgMazeApp, void, update_shown_state) {
+    switch (this->state.type) {
+        case MAZEGTK_VIEWMODEL_STATE_LOADING:
+            gtk_stack_set_visible_child(this->private.ref_main_window_stack, this->private.ref_loading_ui);
+            gtk_label_set_text(this->private.ref_loading_text, this->state.loading.text_shown);
+            break;
+
+        case MAZEGTK_VIEWMODEL_STATE_DRAG:
+            gtk_stack_set_visible_child(this->private.ref_main_window_stack, this->private.ref_dropdown_ui);
+            break;
+            
+        case MAZEGTK_VIEWMODEL_STATE_SHOW_MAZE:
+            gtk_stack_set_visible_child(this->private.ref_main_window_stack, this->private.ref_show_maze_ui);
+            break;
+    }
+}
 
 
 IMPL_METHODP(MgMazeApp, void, destroy) {
@@ -63,11 +80,12 @@ IMPL_METHOD(MgMazeApp, void, run, int argc, char** argv) {
 IMPL_METHODP(MgMazeApp, void, drag_moved) {
     MgViewmodelStateDrag new_state = {};
     mg_viewmodel_state_set(&this->state, new_state);
+    this->update_shown_state(this);
 }
 IMPL_METHODP(MgMazeApp, void, drag_ended) {
     MgViewmodelStateShowMaze new_state = {};
     mg_viewmodel_state_set(&this->state, new_state);
-
+    this->update_shown_state(this);
 }
 G_MODULE_EXPORT void mg_maze_app_handle_drag_move(
     GtkWidget* widget, 

@@ -30,6 +30,7 @@ typedef struct {
     METHODP(void, free);
     METHODP(void, activate);
     METHODP(void, destroy);
+    METHODP(void, update_shown_state);
     
     METHODP(void, drag_moved);
     METHODP(void, drag_ended);
@@ -41,6 +42,7 @@ IMPL_METHODP(MgMazeApp, void, activate);
 IMPL_METHODP(MgMazeApp, void, destroy);
 IMPL_METHODP(MgMazeApp, void, drag_moved);
 IMPL_METHODP(MgMazeApp, void, drag_ended);
+IMPL_METHODP(MgMazeApp, void, update_shown_state);
 
 ST_METHOD(MgMazeApp, MgMazeApp*, create, GError** out_error);
 
