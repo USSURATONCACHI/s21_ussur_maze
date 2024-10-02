@@ -1,9 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
+#include "libmaze/directions_struct.h"
 #include <gtest/gtest.h>
 
 extern "C" {
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <time.h>
     #include <libmaze/maze.h>
 }
 
@@ -55,6 +56,31 @@ TEST(Maze, Print) {
         .left_wall = false,
     });
     maze_print(maze);
+    maze_free(maze);
+}
+
+TEST(Maze, Directions) {
+    Maze maze = maze_create(9, 4);
+
+    maze_set_at(maze, 1, 1, (MazeCell) {
+        .top_wall = true,
+        .left_wall = true,
+    });
+    maze_set_at(maze, 2, 1, (MazeCell) {
+        .top_wall = true,
+        .left_wall = false,
+    });
+    maze_set_at(maze, 1, 2, (MazeCell) {
+        .top_wall = true,
+        .left_wall = false,
+    });
+
+    MazeDirections dir = maze_where_can_go(maze, 1, 1);
+    EXPECT_FALSE(dir.up);
+    EXPECT_FALSE(dir.down);
+    EXPECT_FALSE(dir.left);
+    EXPECT_TRUE(dir.right);
+
     maze_free(maze);
 }
 
