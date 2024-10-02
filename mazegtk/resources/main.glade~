@@ -6,13 +6,8 @@
     <property name="can-focus">False</property>
     <property name="default-width">600</property>
     <property name="default-height">400</property>
-    <signal name="drag-data-delete" handler="maze_app_drag_data_delete" swapped="no"/>
-    <signal name="drag-data-get" handler="maze_app_drag_data_get" swapped="no"/>
-    <signal name="drag-data-received" handler="maze_app_drag_data_received" swapped="no"/>
-    <signal name="drag-drop" handler="maze_app_drag_drop" swapped="no"/>
-    <signal name="drag-failed" handler="maze_app_drag_failed" swapped="no"/>
-    <signal name="drag-leave" handler="maze_app_drag_leave" swapped="no"/>
-    <signal name="drag-motion" handler="maze_app_drag_motion" swapped="no"/>
+    <signal name="drag-leave" handler="mg_maze_app_handle_drag_leave" swapped="no"/>
+    <signal name="drag-motion" handler="mg_maze_app_handle_drag_move" swapped="no"/>
     <child>
       <object class="GtkStack" id="main_window_stack">
         <property name="visible">True</property>
@@ -96,6 +91,7 @@
                 <property name="visible">True</property>
                 <property name="app-paintable">True</property>
                 <property name="can-focus">False</property>
+                <signal name="render" handler="mg_maze_app_handle_render_gl" swapped="no"/>
               </object>
               <packing>
                 <property name="resize">True</property>

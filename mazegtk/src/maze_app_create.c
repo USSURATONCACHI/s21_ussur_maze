@@ -74,6 +74,7 @@ ST_METHOD(MgMazeApp, MgMazeApp*, create, GError** out_error) {
         maze_app->free               = (void*) METHOD_NAME(MgMazeApp, free);
         maze_app->run                = (void*) METHOD_NAME(MgMazeApp, run);
         maze_app->update_shown_state = (void*) METHOD_NAME(MgMazeApp, update_shown_state);
+        maze_app->render_gl          = (void*) METHOD_NAME(MgMazeApp, render_gl);
     }
     debugln("MgMazeApp_create done: %p", maze_app);
 

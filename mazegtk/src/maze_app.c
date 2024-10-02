@@ -1,12 +1,15 @@
-#include "mazegtk/dumb_oop.h"
+#include <mazegtk/dumb_oop.h>
 #include <mazegtk/viewmodel.h>
 #include <mazegtk/maze_app.h>
 #include <mazegtk/domain.h>
 #include <libmaze/util.h>
 
+#include <stdbool.h>
+
 #include <glib.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
+#include <GL/gl.h>
 
 IMPL_METHODP(MgMazeApp, void, free) {
     if (this == NULL)
@@ -47,6 +50,10 @@ IMPL_METHODP(MgMazeApp, void, activate) {
     this->private.ref_loading_text      = GTK_LABEL (gtk_builder_get_object(this->private.builder, "loading_ui_text"));
     this->private.ref_dropdown_ui       = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "dropdown_ui"));
     this->private.ref_show_maze_ui      = GTK_WIDGET(gtk_builder_get_object(this->private.builder, "show_maze_ui"));
+
+    MgViewmodelStateShowMaze new_state = {};
+    mg_viewmodel_state_set(&this->state, new_state);
+    this->update_shown_state(this);
 }
 
 
@@ -67,7 +74,6 @@ IMPL_METHODP(MgMazeApp, void, update_shown_state) {
     }
 }
 
-
 IMPL_METHODP(MgMazeApp, void, destroy) {
     g_info("Destroying the Maze App");
     g_application_quit(G_APPLICATION(this->private.app));
@@ -87,6 +93,13 @@ IMPL_METHODP(MgMazeApp, void, drag_ended) {
     mg_viewmodel_state_set(&this->state, new_state);
     this->update_shown_state(this);
 }
+
+IMPL_METHOD(MgMazeApp, bool, render_gl, GtkGLArea* widget, GdkGLContext* context) {
+    glClearColor (0, 0, 1.0, 0);
+    glClear (GL_COLOR_BUFFER_BIT);
+    return true;
+}
+
 G_MODULE_EXPORT void mg_maze_app_handle_drag_move(
     GtkWidget* widget, 
     GdkDragContext* context,
@@ -104,6 +117,14 @@ G_MODULE_EXPORT void mg_maze_app_handle_drag_leave(
     MgMazeApp* maze_app
 ) { 
     maze_app->drag_ended(maze_app);
+}
+
+G_MODULE_EXPORT bool mg_maze_app_handle_render_gl(
+    GtkGLArea* widget, 
+    GdkGLContext* context,
+    MgMazeApp* maze_app
+) {
+    return maze_app->render_gl(maze_app, widget, context);
 }
 
 void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app) { maze_app->activate(maze_app); }

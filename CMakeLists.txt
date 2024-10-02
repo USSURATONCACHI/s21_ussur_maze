@@ -10,12 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # For VSCode clang extension integraion
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ggdb")
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-pkg_check_modules(GLIB REQUIRED glib-2.0)
-pkg_check_modules(GIO REQUIRED gio-2.0)
-find_package(GTest REQUIRED)
-
 add_subdirectory(tests)
 add_subdirectory(maze)
 add_subdirectory(mazegtk)

@@ -1,5 +1,7 @@
 enable_testing()
 
+find_package(GTest REQUIRED)
+
 add_executable(s21_ussur_maze_test
     src/test.cpp
 )
