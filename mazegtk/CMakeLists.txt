@@ -2,7 +2,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(GIO REQUIRED gio-2.0)
-find_package(OpenGL REQUIRED)
+pkg_check_modules(Epoxy REQUIRED epoxy)
 
 add_executable(s21_ussur_mazegtk
     src/main.c
@@ -11,11 +11,25 @@ add_executable(s21_ussur_mazegtk
     src/viewmodel.c
 )
 
-target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
-target_link_directories(s21_ussur_mazegtk PRIVATE ${GTK3_LIBRARY_DIRS} ${GLIB_LIBRARY_DIRS} ${GIO_LIBRARY_DIRS} ${OPENGL_LIBRARY_DIRS})
+target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})
+target_link_directories   (s21_ussur_mazegtk PRIVATE ${GTK3_LIBRARY_DIRS})
+target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${GTK3_LIBRARIES})
+
+target_include_directories(s21_ussur_mazegtk PRIVATE ${GLIB_INCLUDE_DIRS})
+target_link_directories   (s21_ussur_mazegtk PRIVATE ${GLIB_LIBRARY_DIRS})
+target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${GLIB_LIBRARIES})
+
+target_include_directories(s21_ussur_mazegtk PRIVATE ${GIO_INCLUDE_DIRS})
+target_link_directories   (s21_ussur_mazegtk PRIVATE ${GIO_LIBRARY_DIRS})
+target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${GIO_LIBRARIES})
+
+target_include_directories(s21_ussur_mazegtk PRIVATE ${EPOXY_INCLUDE_DIRS})
+target_link_directories   (s21_ussur_mazegtk PRIVATE ${EPOXY_LIBRARY_DIRS})
+target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${EPOXY_LIBRARIES})
+
+target_link_libraries     (s21_ussur_mazegtk PUBLIC s21_ussur_maze)
 
 target_include_directories(s21_ussur_mazegtk PRIVATE include)
-target_link_libraries(s21_ussur_mazegtk PUBLIC s21_ussur_maze ${GTK3_LIBRARIES} ${GLIB_LIBRARIES} ${GIO_LIBRARIES} ${OPENGL_LIBRARIES})
 target_link_options(s21_ussur_mazegtk PRIVATE "-rdynamic")
 
 install(
