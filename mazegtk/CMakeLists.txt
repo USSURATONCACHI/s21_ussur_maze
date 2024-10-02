@@ -23,9 +23,9 @@ target_include_directories(s21_ussur_mazegtk PRIVATE ${GIO_INCLUDE_DIRS})
 target_link_directories   (s21_ussur_mazegtk PRIVATE ${GIO_LIBRARY_DIRS})
 target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${GIO_LIBRARIES})
 
-target_include_directories(s21_ussur_mazegtk PRIVATE ${EPOXY_INCLUDE_DIRS})
-target_link_directories   (s21_ussur_mazegtk PRIVATE ${EPOXY_LIBRARY_DIRS})
-target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${EPOXY_LIBRARIES})
+target_include_directories(s21_ussur_mazegtk PRIVATE ${Epoxy_INCLUDE_DIRS})
+target_link_directories   (s21_ussur_mazegtk PRIVATE ${Epoxy_LIBRARY_DIRS})
+target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${Epoxy_LIBRARIES})
 
 target_link_libraries     (s21_ussur_mazegtk PUBLIC s21_ussur_maze)
 

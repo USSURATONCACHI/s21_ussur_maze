@@ -2,12 +2,18 @@ add_library(s21_ussur_maze SHARED
     src/maze.c
 )
 target_include_directories(s21_ussur_maze PUBLIC include)
-target_include_directories(s21_ussur_maze PRIVATE pinclude)
 
+include(GNUInstallDirs)
 install(
     TARGETS s21_ussur_maze
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    INCLUDES DESTINATION include
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# Install the header files
+install(
+    DIRECTORY include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )

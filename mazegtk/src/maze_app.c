@@ -2,6 +2,7 @@
 #include <mazegtk/viewmodel.h>
 #include <mazegtk/maze_app.h>
 #include <mazegtk/domain.h>
+
 #include <libmaze/util.h>
 
 #include <stdbool.h>
@@ -9,7 +10,8 @@
 #include <glib.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
-#include <GL/gl.h>
+
+#include <epoxy/gl.h>
 
 IMPL_METHODP(MgMazeApp, void, free) {
     if (this == NULL)
