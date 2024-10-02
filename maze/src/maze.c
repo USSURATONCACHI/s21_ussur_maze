@@ -10,7 +10,7 @@ Maze maze_create(size_t width, size_t height) {
     size_t size_bits = width * height * 2; // each cell is 2 bits
     size_t size_bytes = (size_bits + 7) / 8;
     
-    uint8_t* data = (uint8_t*) malloc(size_bytes);
+    uint8_t* data = (uint8_t*) calloc(size_bytes, 1);
     assert_alloc(data);
 
     return (Maze) {
@@ -49,9 +49,10 @@ void maze_set_at(Maze maze, size_t x, size_t y, MazeCell cell) {
 void maze_fill_random(Maze maze) {
     for (size_t y = 0; y < maze.height; y++) {
         for (size_t x = 0; x < maze.width; x++) {
+            int r = rand();
             MazeCell cell = {
-                .top_wall = ((x + y) & 1) ? true : false,
-                .left_wall = ((x * y) & 1) ? true : false  
+                .top_wall = r & 1 ? true : false,
+                .left_wall = r & 2 ? true : false,  
             };
 
             maze_set_at(maze, x, y, cell);

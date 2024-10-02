@@ -1,3 +1,6 @@
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <gtest/gtest.h>
 
 extern "C" {
@@ -9,6 +12,8 @@ TEST(Maze, Create) {
 
     EXPECT_EQ(maze.width, 150);
     EXPECT_EQ(maze.height, 151);
+
+    maze_free(maze);
 }
 
 
@@ -31,6 +36,7 @@ TEST(Maze, WritePersists) {
             EXPECT_EQ(cell.left_wall, (x & 6) ? true : false);
         }
     }
+    maze_free(maze);
 }
 
 TEST(Maze, Print) {
@@ -48,17 +54,14 @@ TEST(Maze, Print) {
         .top_wall = true,
         .left_wall = false,
     });
-
-    EXPECT_EQ(maze.width, 9);
-    EXPECT_EQ(maze.height, 4);
     maze_print(maze);
+    maze_free(maze);
 }
 
-// TEST(Maze, print) {
-//     Maze maze = maze_create(6, 6);
-
-//     EXPECT_EQ(maze.width, 6);
-//     EXPECT_EQ(maze.height, 6);
-
-//     // maze_print(maze);
-// }
+TEST(Maze, Random) {
+    Maze maze = maze_create(9, 6);
+    srand(time(NULL));
+    maze_fill_random(maze);
+    maze_print(maze);
+    maze_free(maze);
+}
