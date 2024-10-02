@@ -2,50 +2,52 @@
 #define MAZEGTK_MAZE_APP_H_
 
 #include <gtk/gtk.h>
+#include <mazegtk/viewmodel.h>
+#include <mazegtk/dumb_oop.h>
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
 
-typedef enum {
-   MAZE_APP_UI_LAUNCHING,
-   MAZE_APP_UI_DROPDOWN,
-   MAZE_APP_UI_MAIN
-} MazeAppUi;
 
 typedef struct {
-   GtkWindow* main_window;
+    PUBLIC(
+        MgViewmodelState state;
+    )
+    PRIVATE(
+        GtkApplication* app;
+        GtkBuilder* builder;
+        GResource* resource;
 
-   GtkWidget* main_ui;
-   GtkWidget* launching_ui;
-   GtkWidget* dropdown_ui;
-} MazeAppReferences;
+        GtkWindow* ref_main_window;
+        GtkStack* ref_main_window_stack;
+        GtkWidget* ref_loading_ui;
+        GtkLabel* ref_loading_text;
+        GtkWidget* ref_dropdown_ui;
+        GtkWidget* ref_show_maze_ui;
+    )
 
-typedef struct {
-   GtkApplication* app;
-   GtkBuilder* builder;
+    METHOD(void, run, int argc, char** argv);
+    METHODP(void, free);
+    METHODP(void, activate);
+    METHODP(void, destroy);
+} MgMazeApp;
 
-   MazeAppReferences references;
-   MazeAppUi current_ui;
-} MazeApp;
+IMPL_METHOD(MgMazeApp, void, run, int argc, char** argv);
+IMPL_METHODP(MgMazeApp, void, free);
+IMPL_METHODP(MgMazeApp, void, activate);
 
-MazeApp* maze_app_new(GError** out_error);
-void maze_app_free(MazeApp* maze_app);
+ST_METHOD(MgMazeApp, MgMazeApp*, create);
 
-void maze_app_switch_to_ui(MazeApp* app, MazeAppUi ui);
+void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app);
+void mg_maze_app_handle_destroy(GtkWidget *widget, MgMazeApp* maze_app);
 
-void maze_app_startup(GtkWidget *widget, MazeApp* app);
-void maze_app_activate(GtkWidget *widget, MazeApp* app);
-void maze_app_destroy(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_data_delete(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_data_get(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_data_received(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_motion(GtkWidget *widget, MazeApp* data);
 
-G_MODULE_EXPORT void maze_app_drag_begin(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_data_delete(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_data_get(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_data_received(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_end(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_motion(GtkWidget *widget, MazeApp* data);
-
-G_MODULE_EXPORT void maze_app_drag_leave(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_drop(GtkWidget *widget, MazeApp* data);
-G_MODULE_EXPORT void maze_app_drag_failed(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_leave(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_drop(GtkWidget *widget, MazeApp* data);
+// G_MODULE_EXPORT void maze_app_drag_failed(GtkWidget *widget, MazeApp* data);
 
 #endif // MAZEGTK_MAZE_APP_H_
