@@ -19,9 +19,9 @@ typedef struct {
         GResource* resource;
 
         GtkWindow* ref_main_window;
-        GtkStack* ref_main_window_stack;
+        GtkStack*  ref_main_window_stack;
         GtkWidget* ref_loading_ui;
-        GtkLabel* ref_loading_text;
+        GtkLabel*  ref_loading_text;
         GtkWidget* ref_dropdown_ui;
         GtkWidget* ref_show_maze_ui;
     )
@@ -30,16 +30,22 @@ typedef struct {
     METHODP(void, free);
     METHODP(void, activate);
     METHODP(void, destroy);
+    
+    METHODP(void, drag_moved);
+    METHODP(void, drag_ended);
 } MgMazeApp;
 
 IMPL_METHOD(MgMazeApp, void, run, int argc, char** argv);
 IMPL_METHODP(MgMazeApp, void, free);
 IMPL_METHODP(MgMazeApp, void, activate);
+IMPL_METHODP(MgMazeApp, void, destroy);
+IMPL_METHODP(MgMazeApp, void, drag_moved);
+IMPL_METHODP(MgMazeApp, void, drag_ended);
 
-ST_METHOD(MgMazeApp, MgMazeApp*, create);
+ST_METHOD(MgMazeApp, MgMazeApp*, create, GError** out_error);
 
-void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app);
-void mg_maze_app_handle_destroy(GtkWidget *widget, MgMazeApp* maze_app);
+G_MODULE_EXPORT void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app);
+G_MODULE_EXPORT void mg_maze_app_handle_destroy(GtkWidget *widget, MgMazeApp* maze_app);
 
 // G_MODULE_EXPORT void maze_app_drag_data_delete(GtkWidget *widget, MazeApp* data);
 // G_MODULE_EXPORT void maze_app_drag_data_get(GtkWidget *widget, MazeApp* data);

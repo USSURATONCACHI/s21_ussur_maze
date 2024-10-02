@@ -43,11 +43,11 @@ void mg_viewmodel_state_set_loading  (MgViewmodelState* self, MgViewmodelStateLo
 void mg_viewmodel_state_set_drag     (MgViewmodelState* self, MgViewmodelStateDrag new_state);
 void mg_viewmodel_state_set_show_maze(MgViewmodelState* self, MgViewmodelStateShowMaze new_state);
 
-#define mg_viewmodel_state_set(X) _Generic((X), \
-                MgViewmodelStateLoading:  mg_viewmodel_state_set_loading   \
-                MgViewmodelStateDrag:     mg_viewmodel_state_set_drag      \
+#define mg_viewmodel_state_set(vm, X) _Generic((X), \
+                MgViewmodelStateLoading:  mg_viewmodel_state_set_loading,   \
+                MgViewmodelStateDrag:     mg_viewmodel_state_set_drag,      \
                 MgViewmodelStateShowMaze: mg_viewmodel_state_set_show_maze \
-            )(X)
+            )(vm, X)
 
 
 #endif // MAZEGTK_VIEWMODEL_H_

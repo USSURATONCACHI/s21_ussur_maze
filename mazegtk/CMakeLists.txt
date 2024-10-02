@@ -1,6 +1,7 @@
 add_executable(s21_ussur_mazegtk
     src/main.c
     src/maze_app.c
+    src/maze_app_create.c
     src/viewmodel.c
 )
 
