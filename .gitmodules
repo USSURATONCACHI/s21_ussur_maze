@@ -1,3 +1,6 @@
 [submodule "better_c_std"]
 	path = better_c_std
 	url = git@github.com:USSURATONCACHI/better_c_std.git
+[submodule "opengl_utils"]
+	path = opengl_utils
+	url = git@github.com:USSURATONCACHI/opengl_utils.git
