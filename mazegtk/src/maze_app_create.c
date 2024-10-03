@@ -1,22 +1,27 @@
-#include "better_c_std/string/str_t.h"
-#include "glib-object.h"
-#include "gtk/gtk.h"
-#include "opengl_utils/gl_program.h"
-#include "opengl_utils/shader.h"
-#include <better_c_std/prettify/debug.h>
-#include <epoxy/gl_generated.h>
-#include <libmaze/maze_struct.h>
-#include <string.h>
-#include <gio/gio.h>
-#include <glib.h>
-
 #include <mazegtk/maze_app.h>
 #include <mazegtk/domain.h>
 #include <mazegtk/vec_g_error.h>
 #include <mazegtk/error_list.h>
 
+#include <string.h>
+#include <gio/gio.h>
+#include <glib.h>
+#include <gtk/gtk.h>
+#include <glib-object.h>
+
+#include <epoxy/gl_generated.h>
+#include <libmaze/maze_struct.h>
+
+#include <better_c_std/string/str_t.h>
 #include <better_c_std/prettify.h>
+#include <better_c_std/prettify/debug.h>
+
+#include <opengl_utils/gl_program.h>
+#include <opengl_utils/shader.h>
 #include <opengl_utils/framebuffer.h>
+
+
+
 
 
 #define PUTERR(out_error) if (out_error) (*(out_error))

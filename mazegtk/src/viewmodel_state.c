@@ -1,6 +1,8 @@
 #include <mazegtk/viewmodel_state.h>
-#include <better_c_std/prettify.h>
+
 #include <stdlib.h>
+
+#include <better_c_std/prettify.h>
 #include <libmaze/maze.h>
 
 void mg_viewmodel_state_loading_free(MgViewmodelStateLoading state) {

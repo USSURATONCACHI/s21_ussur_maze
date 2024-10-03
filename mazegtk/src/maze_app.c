@@ -1,21 +1,21 @@
-#include "better_c_std/prettify/debug.h"
-#include "gdk/gdk.h"
-#include "opengl_utils/framebuffer.h"
-#include "opengl_utils/mesh.h"
-#include <epoxy/gl_generated.h>
-#include <mazegtk/viewmodel.h>
 #include <mazegtk/maze_app.h>
+#include <mazegtk/viewmodel.h>
 #include <mazegtk/domain.h>
 
-#include <better_c_std/prettify.h>
-
 #include <stdbool.h>
-
 #include <glib.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
-
+#include <gdk/gdk.h>
 #include <epoxy/gl.h>
+#include <epoxy/gl_generated.h>
+
+#include <better_c_std/prettify.h>
+#include <better_c_std/prettify.h>
+#include <opengl_utils/mesh.h>
+
+
+
 
 void MgMazeApp_update_shown_state(MgMazeApp* this) {
     switch (this->state.type) {
@@ -57,7 +57,7 @@ void MgMazeApp_drag_ended(MgMazeApp* this) {
 bool MgMazeApp_render_gl(MgMazeApp* this, GtkGLArea* widget, GdkGLContext* context) {
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(widget));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(widget));
-    
+
     debug_push();
     glViewport(0, 0, width, height);
     glClearColor (0.5, 0, 0, 1);

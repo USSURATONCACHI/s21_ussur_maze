@@ -1,6 +1,7 @@
-#include "better_c_std/string/str_t.h"
 #include <mazegtk/error_list.h>
 #include <mazegtk/domain.h>
+
+#include <better_c_std/string/str_t.h>
 #include <better_c_std/prettify.h>
 
 GError** error_list_get_nullptr(vec_GError_ptr* list) {

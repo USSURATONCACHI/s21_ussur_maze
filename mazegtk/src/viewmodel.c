@@ -1,8 +1,10 @@
 #include <mazegtk/viewmodel.h>
-#include <better_c_std/prettify.h>
-#include <libmaze/maze.h>
+
 #include <string.h>
 #include <stdlib.h>
+
+#include <better_c_std/prettify.h>
+#include <libmaze/maze.h>
 
 MgViewmodelState mg_viewmodel_state_new() {
     return (MgViewmodelState) {

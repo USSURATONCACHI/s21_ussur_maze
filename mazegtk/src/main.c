@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <gtk/gtk.h>
+
 #include <mazegtk/maze_app.h>
 #include <better_c_std/prettify.h>
 
