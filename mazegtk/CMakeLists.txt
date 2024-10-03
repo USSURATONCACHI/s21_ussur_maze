@@ -11,6 +11,7 @@ add_executable(s21_ussur_mazegtk
     src/viewmodel.c
     src/viewmodel_state.c
     src/vec_g_error.c
+    src/error_list.c
 )
 
 target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})

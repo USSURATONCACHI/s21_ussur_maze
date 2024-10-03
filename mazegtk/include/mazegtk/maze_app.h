@@ -5,6 +5,11 @@
 #include <mazegtk/viewmodel.h>
 #include <stdbool.h>
 
+#include <opengl_utils/framebuffer.h>
+#include <opengl_utils/shader.h>
+#include <opengl_utils/gl_program.h>
+#include <opengl_utils/mesh.h>
+
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
 
@@ -16,6 +21,11 @@ typedef struct {
         GtkApplication* app;
         GtkBuilder* builder;
         GResource* resource;
+
+        Framebuffer read_framebuffer;
+        Framebuffer write_framebuffer;
+        GlProgram   main_shader;
+        Mesh        fullscreen_mesh;
 
         GtkWindow* ref_main_window;
         GtkStack*  ref_main_window_stack;

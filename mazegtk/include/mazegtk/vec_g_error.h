@@ -5,7 +5,7 @@
 
 typedef GError* GError_ptr;
 #define VECTOR_ITEM_TYPE GError_ptr
-#define VECTOR_ITEM_DESTRUCTOR g_error_free
+// #define VECTOR_ITEM_DESTRUCTOR g_error_free
 #include <better_c_std/vector.h>
 
 
