@@ -10,6 +10,7 @@ add_executable(s21_ussur_mazegtk
     src/maze_app_create.c
     src/viewmodel.c
     src/viewmodel_state.c
+    src/vec_g_error.c
 )
 
 target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})
@@ -28,7 +29,7 @@ target_include_directories(s21_ussur_mazegtk PRIVATE ${Epoxy_INCLUDE_DIRS})
 target_link_directories   (s21_ussur_mazegtk PRIVATE ${Epoxy_LIBRARY_DIRS})
 target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${Epoxy_LIBRARIES})
 
-target_link_libraries     (s21_ussur_mazegtk PUBLIC s21_ussur_maze)
+target_link_libraries     (s21_ussur_mazegtk PUBLIC s21_ussur_maze s21_ussur_opengl_utils)
 
 target_include_directories(s21_ussur_mazegtk PRIVATE include)
 target_link_options(s21_ussur_mazegtk PRIVATE "-rdynamic")
