@@ -1,7 +1,10 @@
 #include "better_c_std/string/str_t.h"
 #include "glib-object.h"
 #include "gtk/gtk.h"
+#include "opengl_utils/gl_program.h"
+#include "opengl_utils/shader.h"
 #include <better_c_std/prettify/debug.h>
+#include <epoxy/gl_generated.h>
 #include <libmaze/maze_struct.h>
 #include <string.h>
 #include <gio/gio.h>
@@ -33,7 +36,7 @@ static MgMazeApp* alloc_app_uninit(GError** out_error);
 static GResource* register_resource(GError** out_error);
 static GtkApplication* create_gtk_app(GError** out_error, gpointer callbacks_user_data);
 static GtkBuilder* create_gtk_builder(GError** out_error);
-static Framebuffer create_framebuffer(GError** out_error);
+static Framebuffer create_framebuffer(int width, int height, GError** out_error);
 static GlProgram load_main_shader_program(GResource* resource, GError** out_error);
 static Mesh create_fullscreen_mesh(GError** out_error);
 static void null_out_ui_references(MgMazeApp* maze_app);
@@ -139,9 +142,9 @@ static GtkBuilder* create_gtk_builder(GError** out_error) {
 
 }
 
-static Framebuffer create_framebuffer(GError** out_error) {
+static Framebuffer create_framebuffer(int width, int height, GError** out_error) {
     debugln("Creating Framebuffer...");
-    return framebuffer_create(1920, 1080, 1);
+    return framebuffer_create(width, height, 1);
 }
 
 static GlProgram load_main_shader_program(GResource* resource, GError** out_error) {
@@ -153,24 +156,42 @@ static GlProgram load_main_shader_program(GResource* resource, GError** out_erro
         return (GlProgram) {};
     }
 
-    GBytes* bytes = g_resource_lookup_data(resource, "/org/ussur/mazegtk/common.vert", G_RESOURCE_LOOKUP_FLAGS_NONE, out_error);
+    Shader vert;
+    {
+        GBytes* bytes = g_resource_lookup_data(resource, "/org/ussur/mazegtk/common.vert", G_RESOURCE_LOOKUP_FLAGS_NONE, out_error);
+        debugln("Looked up: %p", bytes);
+        if (!bytes) {
+            if (out_error)
+                *out_error = g_error_new(DOMAIN, 3, "Failed to load file data for vertex shader");
+            return (GlProgram) {};
+        }
+        gsize size;
+        const gchar* filetext = (const gchar*)g_bytes_get_data(bytes, &size);
 
-    debugln("Looked up: %p", bytes);
-    if (!bytes) {
-        if (out_error)
-            *out_error = g_error_new(DOMAIN, 3, "Failed to load file data for vertex shader");
-        return (GlProgram) {};
+        vert = shader_from_source(GL_VERTEX_SHADER, filetext);
+        g_bytes_unref(bytes);
     }
 
-    gsize size;
-    const gchar* filetext = (const gchar*)g_bytes_get_data(bytes, &size);
+    Shader frag;
+    {
+        GBytes* bytes = g_resource_lookup_data(resource, "/org/ussur/mazegtk/basic.frag", G_RESOURCE_LOOKUP_FLAGS_NONE, out_error);
+        debugln("Looked up: %p", bytes);
+        if (!bytes) {
+            if (out_error)
+                *out_error = g_error_new(DOMAIN, 3, "Failed to load file data for fragment shader");
+            return (GlProgram) {};
+        }
+        gsize size;
+        const gchar* filetext = (const gchar*)g_bytes_get_data(bytes, &size);
 
-    Shader vert = shader_from_source(GL_VERTEX_SHADER, filetext);
+        frag = shader_from_source(GL_FRAGMENT_SHADER, filetext);
+        g_bytes_unref(bytes);
+    }
+
+    GlProgram program = gl_program_from_2_shaders(&vert, &frag);
     shader_free(vert);
-
-    g_bytes_unref(bytes);
-
-    return (GlProgram) {};
+    shader_free(frag);
+    return program;
 }
 
 static Mesh create_fullscreen_mesh(GError** out_error) {
@@ -184,8 +205,10 @@ static Mesh create_fullscreen_mesh(GError** out_error) {
                                     sizeof(attribs) / sizeof(attribs[0]));
 
     float vertices[] = {
-        -1.0, -1.0, 0.0, 0.0, 1.0,  -1.0, 1.0, 0.0,
-        1.0,  1.0,  1.0, 1.0, -1.0, 1.0,  0.0, 1.0,
+        -1.0, -1.0, 0.0, 0.0, 
+        1.0,  -1.0, 1.0, 0.0,
+        1.0,  1.0,  1.0, 1.0, 
+        -1.0, 1.0,  0.0, 1.0,
     };
     mesh_set_vertex_data(&mesh, vertices, sizeof(vertices), GL_STATIC_DRAW);
 
@@ -196,7 +219,6 @@ static Mesh create_fullscreen_mesh(GError** out_error) {
         &mesh, indices, sizeof(indices) / sizeof(indices[0]), GL_STATIC_DRAW);
 
     return mesh;
-
 }
 
 static void null_out_ui_references(MgMazeApp* maze_app) {
@@ -263,18 +285,28 @@ void MgMazeApp_gl_realize(MgMazeApp* self) {
 
     vec_GError_ptr errors = vec_GError_ptr_create();
 
-    self->private.read_framebuffer  = create_framebuffer      (error_list_get_nullptr(&errors));
-    self->private.write_framebuffer = create_framebuffer      (error_list_get_nullptr(&errors));
+    self->private.fb_width          = 0;
+    self->private.fb_height         = 0;
+    self->private.read_framebuffer  = (Framebuffer){0, 0};
+    self->private.write_framebuffer = (Framebuffer){0, 0};
+    // self->private.read_framebuffer  = create_framebuffer(self->private.fb_width, self->private.fb_height, error_list_get_nullptr(&errors));
+    // self->private.write_framebuffer = create_framebuffer(self->private.fb_width, self->private.fb_height, error_list_get_nullptr(&errors));
+
+        debugln("Gl error: %d", glGetError()); 
     self->private.main_shader       = load_main_shader_program(self->private.resource, error_list_get_nullptr(&errors));
+        debugln("Gl error: %d", glGetError()); 
     self->private.fullscreen_mesh   = create_fullscreen_mesh  (error_list_get_nullptr(&errors));
+        debugln("Gl error: %d", glGetError()); 
 
     int err_count = error_list_errors_count(&errors);
     if (err_count > 0) {
         error_list_print_errors(&errors);
         MgMazeApp_destroy(self);
+        debugln("MgMazeApp_gl_realize failed.");
         return;
     }
     vec_GError_ptr_free(errors);
+    debugln("MgMazeApp_gl_realize done.");
 }
 
 void MgMazeApp_gl_unrealize(MgMazeApp* self) {

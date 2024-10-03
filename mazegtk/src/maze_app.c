@@ -1,3 +1,8 @@
+#include "better_c_std/prettify/debug.h"
+#include "gdk/gdk.h"
+#include "opengl_utils/framebuffer.h"
+#include "opengl_utils/mesh.h"
+#include <epoxy/gl_generated.h>
 #include <mazegtk/viewmodel.h>
 #include <mazegtk/maze_app.h>
 #include <mazegtk/domain.h>
@@ -50,8 +55,41 @@ void MgMazeApp_drag_ended(MgMazeApp* this) {
 }
 
 bool MgMazeApp_render_gl(MgMazeApp* this, GtkGLArea* widget, GdkGLContext* context) {
-    glClearColor (0, 0, 1.0, 0);
-    glClear (GL_COLOR_BUFFER_BIT);
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(widget));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(widget));
+    // if (this->private.fb_width != width || this->private.fb_height != height) {
+    //     debugln("Resizing framebuffers %d x %d -> %d x %d...", this->private.fb_width, this->private.fb_height, width, height);
+    //     framebuffer_free(this->private.read_framebuffer);
+    //     framebuffer_free(this->private.write_framebuffer);
+    //     this->private.read_framebuffer  = framebuffer_create(width, height, 1);
+    //     this->private.write_framebuffer = framebuffer_create(width, height, 1);
+    //     this->private.fb_width = width;
+    //     this->private.fb_height = height;
+    //     debugln("Resized.");
+    // }
+
+
+    // glBindFramebuffer(GL_FRAMEBUFFER, this->private.write_framebuffer.framebuffer);
+
+    // // Bind read FB as texture sampler
+    // glActiveTexture(GL_TEXTURE0);
+    // glBindTexture(GL_TEXTURE_2D, this->private.read_framebuffer.color_texture);
+
+    // glUseProgram(this->private.main_shader.program);
+    // int loc = glGetUniformLocation(this->private.main_shader.program, "u_read_texture");
+    // glUniform1i(loc, 0);  // GL_TEXTURE0 <- 0 is from here
+    
+    debug_push();
+    glViewport(0, 0, width, height);
+    glClearColor (0.5, 0, 0, 1);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL_INVALID_ENUM;
+    glUseProgram(this->private.main_shader.program);
+    mesh_bind(this->private.fullscreen_mesh);
+    mesh_draw(this->private.fullscreen_mesh);
+    mesh_unbind();
+
+    debug_pop();
     return true;
 }
 
