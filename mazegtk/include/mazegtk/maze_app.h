@@ -22,9 +22,6 @@ typedef struct {
         GtkBuilder* builder;
         GResource* resource;
 
-        int fb_width, fb_height;
-        Framebuffer read_framebuffer;
-        Framebuffer write_framebuffer;
         GlProgram   main_shader;
         Mesh        fullscreen_mesh;
 

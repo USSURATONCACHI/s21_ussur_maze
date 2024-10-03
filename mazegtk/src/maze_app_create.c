@@ -26,8 +26,6 @@
 // Load GResource
 // Create GtkApplication
 // Create GtkBuilder
-// Create read framebuffer
-// Create write framebuffer
 // Load main shader
 // Create fullscreen_mesh
 // Load references from ui
@@ -36,7 +34,6 @@ static MgMazeApp* alloc_app_uninit(GError** out_error);
 static GResource* register_resource(GError** out_error);
 static GtkApplication* create_gtk_app(GError** out_error, gpointer callbacks_user_data);
 static GtkBuilder* create_gtk_builder(GError** out_error);
-static Framebuffer create_framebuffer(int width, int height, GError** out_error);
 static GlProgram load_main_shader_program(GResource* resource, GError** out_error);
 static Mesh create_fullscreen_mesh(GError** out_error);
 static void null_out_ui_references(MgMazeApp* maze_app);
@@ -74,11 +71,8 @@ MgMazeApp* MgMazeApp_create(GError** out_error) {
         maze_app->private.builder  = create_gtk_builder(error_list_get_nullptr(&errors));
 
         null_out_ui_references(maze_app);
-        maze_app->private.read_framebuffer  = (Framebuffer){};
-        maze_app->private.write_framebuffer = (Framebuffer){};
         maze_app->private.main_shader       = (GlProgram){};
         maze_app->private.fullscreen_mesh   = (Mesh){};
-        maze_app->private.read_framebuffer  = (Framebuffer){};
     }
     int err_count = error_list_errors_count(&errors);
     if (err_count > 0) {
@@ -140,11 +134,6 @@ static GtkBuilder* create_gtk_builder(GError** out_error) {
     }
     return builder;
 
-}
-
-static Framebuffer create_framebuffer(int width, int height, GError** out_error) {
-    debugln("Creating Framebuffer...");
-    return framebuffer_create(width, height, 1);
 }
 
 static GlProgram load_main_shader_program(GResource* resource, GError** out_error) {
@@ -285,18 +274,8 @@ void MgMazeApp_gl_realize(MgMazeApp* self) {
 
     vec_GError_ptr errors = vec_GError_ptr_create();
 
-    self->private.fb_width          = 0;
-    self->private.fb_height         = 0;
-    self->private.read_framebuffer  = (Framebuffer){0, 0};
-    self->private.write_framebuffer = (Framebuffer){0, 0};
-    // self->private.read_framebuffer  = create_framebuffer(self->private.fb_width, self->private.fb_height, error_list_get_nullptr(&errors));
-    // self->private.write_framebuffer = create_framebuffer(self->private.fb_width, self->private.fb_height, error_list_get_nullptr(&errors));
-
-        debugln("Gl error: %d", glGetError()); 
     self->private.main_shader       = load_main_shader_program(self->private.resource, error_list_get_nullptr(&errors));
-        debugln("Gl error: %d", glGetError()); 
     self->private.fullscreen_mesh   = create_fullscreen_mesh  (error_list_get_nullptr(&errors));
-        debugln("Gl error: %d", glGetError()); 
 
     int err_count = error_list_errors_count(&errors);
     if (err_count > 0) {
@@ -315,8 +294,6 @@ void MgMazeApp_gl_unrealize(MgMazeApp* self) {
     
     mesh_delete(self->private.fullscreen_mesh);
     gl_program_free(self->private.main_shader);
-    framebuffer_free(self->private.write_framebuffer);
-    framebuffer_free(self->private.read_framebuffer);
 }
 
 G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(void* widget, MgMazeApp* app) {
