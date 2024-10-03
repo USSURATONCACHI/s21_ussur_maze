@@ -33,6 +33,7 @@ typedef struct {
         GtkLabel*  ref_loading_text;
         GtkWidget* ref_dropdown_ui;
         GtkWidget* ref_show_maze_ui;
+        GtkGLArea* ref_gl_area;
     } private;
 
 } MgMazeApp;
@@ -47,6 +48,10 @@ void MgMazeApp_destroy(MgMazeApp* self);
 void MgMazeApp_update_shown_state(MgMazeApp* self);
 void MgMazeApp_drag_moved(MgMazeApp* self);
 void MgMazeApp_drag_ended(MgMazeApp* self);
+
+void MgMazeApp_gl_realize(MgMazeApp* self);
+void MgMazeApp_gl_unrealize(MgMazeApp* self);
+
 
 G_MODULE_EXPORT void mg_maze_app_handle_activate(GtkWidget* widget, MgMazeApp* maze_app);
 G_MODULE_EXPORT void mg_maze_app_handle_destroy(GtkWidget *widget, MgMazeApp* maze_app);

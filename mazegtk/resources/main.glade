@@ -87,11 +87,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGLArea">
+              <object class="GtkGLArea" id="gl_area">
                 <property name="visible">True</property>
                 <property name="app-paintable">True</property>
                 <property name="can-focus">False</property>
+                <signal name="realize" handler="mg_maze_app_handle_gl_realize" swapped="no"/>
                 <signal name="render" handler="mg_maze_app_handle_render_gl" swapped="no"/>
+                <signal name="unrealize" handler="mg_maze_app_handle_gl_unrealize" swapped="no"/>
               </object>
               <packing>
                 <property name="resize">True</property>

@@ -87,7 +87,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGLArea">
+              <object class="GtkGLArea" id="gl_area">
                 <property name="visible">True</property>
                 <property name="app-paintable">True</property>
                 <property name="can-focus">False</property>
