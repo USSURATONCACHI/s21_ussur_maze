@@ -2,6 +2,7 @@
 #define MAZEGTK_VIEW_GTK_VIEW_H_
 
 #include <mazegtk/util/error_list.h>
+#include <mazegtk/controller/controller.h>
 
 #include <gtk/gtk.h>
 #include <opengl_utils/gl_program.h>
@@ -23,8 +24,7 @@ typedef struct {
     } waits;
 
     // Application-specific resources
-    void* model;
-    void* controller;
+    MgController* controller;
 
     GlProgram main_shader;
     Mesh      fullscreen_mesh;
@@ -32,7 +32,7 @@ typedef struct {
 } MgGtkView;
 
 
-MgGtkView* MgGtkView_create_sync(void* model, void* controller, int argc, char** argv, GError** out_error);
+MgGtkView* MgGtkView_create_sync(MgController* controller, int argc, char** argv, GError** out_error);
 void MgGtkView_free_sync(MgGtkView* view);
 bool MgGtkView_is_fine(const MgGtkView* view);
 

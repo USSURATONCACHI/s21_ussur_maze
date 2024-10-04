@@ -10,6 +10,7 @@ add_executable(s21_ussur_mazegtk
     src/model/camera.c
     
     src/controller/camera.c
+    src/controller/controller.c
 
     src/view/gtk_view_create.c
     src/view/gtk_view_free.c

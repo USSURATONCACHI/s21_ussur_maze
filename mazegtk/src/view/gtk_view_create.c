@@ -1,7 +1,7 @@
 #include <mazegtk/view/gtk_view.h>
 
 #include <mazegtk/util/error_list.h>
-#include <mazegtk/util/domain.h>
+#include <mazegtk/util/common_macros.h>
 
 #include <better_c_std/prettify.h>
 #include <better_c_std/string.h>
@@ -9,8 +9,6 @@
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
-
-#define PUTERR(out_error) if (out_error) (*(out_error))
 
 static MgGtkView* alloc_view_uninit(GError** out_error);
 static GResource* register_resource(GError** out_error);
@@ -26,7 +24,7 @@ typedef struct {
     char** argv;
 } ThreadArgument;
 
-MgGtkView* MgGtkView_create_sync(void* model, void* controller, int argc, char** argv, GError** out_error) {
+MgGtkView* MgGtkView_create_sync(MgController* controller, int argc, char** argv, GError** out_error) {
     debugln("MgGtkView_create_sync called");
     vec_GError_ptr errors = vec_GError_ptr_create();
 
@@ -34,7 +32,6 @@ MgGtkView* MgGtkView_create_sync(void* model, void* controller, int argc, char**
     MgGtkView* maze_app = alloc_view_uninit(error_list_get_nullptr(&errors));
 
     if (error_list_errors_count(&errors) == 0) {
-        maze_app->model = model;
         maze_app->controller = controller;
         maze_app->is_stopped = false;
         maze_app->resource = register_resource(error_list_get_nullptr(&errors));

@@ -7,12 +7,15 @@
 int main(int argc, char** argv) {    
     gtk_init(&argc, &argv);
 
-    MgCameraModel model = MgCameraModel_new(0.0, 0.0);
-    MgCameraController* controller = MgCameraController_new(&model);
+    MgModel model = {
+        .maze = mz_maze_create(50, 50),
+        .camera = MgCameraModel_new(0.0, 0.0),
+    };
+    MgController* controller = MgController_new(&model);
 
     debugln("Creating view...");
     GError* error = NULL;
-    MgGtkView* view = MgGtkView_create_sync(&model, &controller, argc, argv, &error);
+    MgGtkView* view = MgGtkView_create_sync(controller, argc, argv, &error);
     if (error) {
         debugln("Failed to create app due to error [%s][%d]: %s", g_quark_to_string(error->domain), error->code, error->message);
         MgGtkView_free_sync(view);
