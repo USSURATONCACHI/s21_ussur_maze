@@ -1,5 +1,5 @@
-#ifndef LIBMAZE_INCLUDE_MAZE_DIRECTIONS_STRUCT_H_
-#define LIBMAZE_INCLUDE_MAZE_DIRECTIONS_STRUCT_H_
+#ifndef LIBMAZE_DIRECTIONS_STRUCT_H_
+#define LIBMAZE_DIRECTIONS_STRUCT_H_
 
 #include <stdbool.h>
 
@@ -8,6 +8,6 @@ typedef struct {
     bool down : 1;
     bool left : 1;
     bool right : 1;
-} MazeDirections;
+} MzDirections;
 
-#endif // LIBMAZE_INCLUDE_MAZE_DIRECTIONS_STRUCT_H_
+#endif // LIBMAZE_DIRECTIONS_STRUCT_H_

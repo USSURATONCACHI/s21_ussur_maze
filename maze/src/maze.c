@@ -6,85 +6,85 @@
 #include <libmaze/cell_struct.h>
 #include <libmaze/maze.h>
 
-Maze maze_create(size_t width, size_t height) {
+MzMaze mz_maze_create(size_t width, size_t height) {
     size_t size_bits = width * height * 2; // each cell is 2 bits
     size_t size_bytes = (size_bits + 7) / 8;
     
     uint8_t* data = (uint8_t*) calloc(size_bytes, 1);
     assert_alloc(data);
 
-    return (Maze) {
+    return (MzMaze) {
         .width = width,
         .height = height,
         .raw_data = data,
     };
 }
-void maze_free(Maze maze) {
+void mz_maze_free(MzMaze maze) {
     free(maze.raw_data);
 }
 
-MazeCell maze_at(Maze maze, size_t x, size_t y) {
-    size_t pos_bits = (y * maze.width + x) * MAZE_CELL_SIZE_BITS;
+MzCell mz_maze_at(const MzMaze* maze, size_t x, size_t y) {
+    size_t pos_bits = (y * maze->width + x) * MZ_CELL_SIZE_BITS;
     size_t pos_bytes = pos_bits / 8;
     size_t rem_bits = pos_bits % 8;
-    uint8_t bitmask = MAZE_CELL_BITMASK(uint8_t, rem_bits);
+    uint8_t bitmask = MZ_CELL_BITMASK(uint8_t, rem_bits);
 
-    uint8_t data_byte = maze.raw_data[pos_bytes];
+    uint8_t data_byte = maze->raw_data[pos_bytes];
     uint8_t data = (data_byte & bitmask) >> rem_bits;
-    MazeCell cell = *((MazeCell*)&data);
+    MzCell cell = *((MzCell*)&data);
     return cell;
 }
-void maze_set_at(Maze maze, size_t x, size_t y, MazeCell cell) {
-    size_t pos_bits = (y * maze.width + x) * 2;
+void mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell cell) {
+    size_t pos_bits = (y * maze->width + x) * 2;
     size_t pos_bytes = pos_bits / 8;
     size_t rem_bits = pos_bits % 8;
-    uint8_t bitmask = MAZE_CELL_BITMASK(uint8_t, rem_bits);
+    uint8_t bitmask = MZ_CELL_BITMASK(uint8_t, rem_bits);
 
     uint8_t data = *((uint8_t*)&cell);
     uint8_t data_byte = (data << rem_bits) & bitmask;
-    maze.raw_data[pos_bytes] &= ~bitmask;
-    maze.raw_data[pos_bytes] |= data_byte;    
+    maze->raw_data[pos_bytes] &= ~bitmask;
+    maze->raw_data[pos_bytes] |= data_byte;    
 }
 
-void maze_fill_random(Maze maze) {
-    for (size_t y = 0; y < maze.height; y++) {
-        for (size_t x = 0; x < maze.width; x++) {
+void mz_maze_fill_random(MzMaze* maze) {
+    for (size_t y = 0; y < maze->height; y++) {
+        for (size_t x = 0; x < maze->width; x++) {
             int r = rand();
-            MazeCell cell = {
+            MzCell cell = {
                 .top_wall = r & 1 ? true : false,
                 .left_wall = r & 2 ? true : false,  
             };
 
-            maze_set_at(maze, x, y, cell);
+            mz_maze_set_at(maze, x, y, cell);
         }
     }
 }
 
 
-MazeDirections maze_where_can_go(Maze maze, size_t x, size_t y) {
-    MazeCell cell = maze_at(maze, x, y);
-    MazeCell bottom_cell = maze_at(maze, x, y + 1);
+MzDirections mz_maze_where_can_go(const MzMaze* maze, size_t x, size_t y) {
+    MzCell cell = mz_maze_at(maze, x, y);
+    MzCell bottom_cell = mz_maze_at(maze, x, y + 1);
 
     if (x == 0) cell.left_wall = true;
     if (y == 0) cell.top_wall = true;
 
-    MazeDirections result = {
+    MzDirections result = {
         .up    = !cell.top_wall,
         .left  = !cell.left_wall,
         .right = false,
         .down  = false,
     };
 
-    if (x + 1 < maze.width)
-        result.right = !maze_at(maze, x + 1, y).left_wall;
+    if (x + 1 < maze->width)
+        result.right = !mz_maze_at(maze, x + 1, y).left_wall;
 
-    if (y + 1 < maze.height)
-        result.down = !maze_at(maze, x + 1, y).top_wall;
+    if (y + 1 < maze->height)
+        result.down = !mz_maze_at(maze, x + 1, y).top_wall;
     
     return result;
 }
 
-void maze_print(Maze maze) {
+void mz_maze_print(const MzMaze* maze) {
     const char* cells[4][2] = {
         {"+ ", "  "}, // left_wall: false, top_wall: false,
         {"+ ", "| "}, // left_wall: true, top_wall: false,
@@ -92,10 +92,10 @@ void maze_print(Maze maze) {
         {"+-", "| "}, // left_wall: true, top_wall: true,
     };
 
-    for (size_t y = 0; y < maze.height; y++) {
+    for (size_t y = 0; y < maze->height; y++) {
         for (size_t row = 0; row < 2; row++) {
-            for (size_t x = 0; x < maze.width; x++) {
-                MazeCell cell = maze_at(maze, x, y);
+            for (size_t x = 0; x < maze->width; x++) {
+                MzCell cell = mz_maze_at(maze, x, y);
 
                 if (x == 0) cell.left_wall = true;
                 if (y == 0) cell.top_wall = true;
@@ -111,7 +111,7 @@ void maze_print(Maze maze) {
         }
     }
 
-    for (size_t x = 0; x < maze.width; x++)
+    for (size_t x = 0; x < maze->width; x++)
         printf("+-");
     printf("+\n");
 }
