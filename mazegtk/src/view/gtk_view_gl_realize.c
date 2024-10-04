@@ -70,6 +70,7 @@ static GlProgram load_main_shader_program(GResource* resource, GError** out_erro
         if (!bytes) {
             if (out_error)
                 *out_error = g_error_new(DOMAIN, 3, "Failed to load file data for fragment shader");
+            shader_free(vert);
             return (GlProgram) {};
         }
         gsize size;
