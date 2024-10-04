@@ -48,7 +48,7 @@ void error_list_first_to_g_error(const vec_GError_ptr* list, str_t prefix, GErro
     GError* error = list->data[0];
     if (err_count > 0 && out_error)
         *out_error = g_error_new(DOMAIN, 1, 
-            "%s. Total errors: %d: [%s][%d] %s",
+            "%s. Total errors: %d: [%s][%d] (First one: %s)",
             prefix.string,
             err_count,
             g_quark_to_string(error->domain), 

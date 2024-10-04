@@ -6,10 +6,6 @@ pkg_check_modules(Epoxy REQUIRED epoxy)
 
 add_executable(s21_ussur_mazegtk
     src/main.c
-    src/maze_app.c
-    src/maze_app_create.c
-    src/viewmodel.c
-    src/viewmodel_state.c
     
     src/model/camera.c
     
@@ -18,6 +14,7 @@ add_executable(s21_ussur_mazegtk
     src/view/gtk_view_create.c
     src/view/gtk_view_free.c
     src/view/gtk_view_gl_realize.c
+    src/view/gtk_view.c
 
     src/util/vec_g_error.c
     src/util/error_list.c

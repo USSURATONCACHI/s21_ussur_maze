@@ -36,6 +36,7 @@ MgGtkView* MgGtkView_create_sync(void* model, void* controller, int argc, char**
     if (error_list_errors_count(&errors) == 0) {
         maze_app->model = model;
         maze_app->controller = controller;
+        maze_app->is_stopped = false;
         maze_app->resource = register_resource(error_list_get_nullptr(&errors));
         maze_app->app      = create_gtk_app(error_list_get_nullptr(&errors), maze_app);
         maze_app->builder  = create_gtk_builder(error_list_get_nullptr(&errors));
@@ -172,6 +173,7 @@ static void handle_activate(void* widget, MgGtkView* view) {
     gtk_drag_dest_set(GTK_WIDGET(window), GTK_DEST_DEFAULT_ALL, target_entries, G_N_ELEMENTS(target_entries), GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_window_set_application(window, view->app);
     gtk_widget_show_all(GTK_WIDGET(window));
+    g_signal_connect(window, "destroy", G_CALLBACK(MgGtkView_handle_destroy), view);
 
     *(view->waits.is_activate_done) = true;
     debugln("handle_activate done");

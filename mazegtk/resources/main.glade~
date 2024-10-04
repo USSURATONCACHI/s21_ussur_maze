@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkWindow" id="main_window">
+  <object class="GtkWindow" id="main_window1">
     <property name="can-focus">False</property>
     <property name="default-width">600</property>
     <property name="default-height">400</property>
@@ -91,7 +91,9 @@
                 <property name="visible">True</property>
                 <property name="app-paintable">True</property>
                 <property name="can-focus">False</property>
+                <signal name="realize" handler="mg_maze_app_handle_gl_realize" swapped="no"/>
                 <signal name="render" handler="mg_maze_app_handle_render_gl" swapped="no"/>
+                <signal name="unrealize" handler="mg_maze_app_handle_gl_unrealize" swapped="no"/>
               </object>
               <packing>
                 <property name="resize">True</property>

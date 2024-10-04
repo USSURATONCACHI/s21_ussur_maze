@@ -21,6 +21,7 @@ typedef struct {
     GlProgram   main_shader;
     Mesh        fullscreen_mesh;
 
+    bool is_stopped;
     struct {
         vec_GError_ptr* create_errors_list;
         bool* is_activate_done;
@@ -30,5 +31,8 @@ typedef struct {
 
 MgGtkView* MgGtkView_create_sync(void* model, void* controller, int argc, char** argv, GError** out_error);
 void MgGtkView_free_sync(MgGtkView* view);
+bool MgGtkView_is_fine(const MgGtkView* view);
+
+void MgGtkView_handle_destroy(void* dont_care, MgGtkView* view);
 
 #endif // MAZEGTK_VIEW_GTK_VIEW_H_
