@@ -1,5 +1,5 @@
-#include <mazegtk/error_list.h>
-#include <mazegtk/domain.h>
+#include <mazegtk/util/error_list.h>
+#include <mazegtk/util/domain.h>
 
 #include <better_c_std/string/str_t.h>
 #include <better_c_std/prettify.h>

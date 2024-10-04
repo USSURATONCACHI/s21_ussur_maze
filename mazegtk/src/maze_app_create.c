@@ -1,7 +1,6 @@
 #include <mazegtk/maze_app.h>
-#include <mazegtk/domain.h>
-#include <mazegtk/vec_g_error.h>
-#include <mazegtk/error_list.h>
+#include <mazegtk/util/domain.h>
+#include <mazegtk/util/error_list.h>
 
 #include <string.h>
 #include <gio/gio.h>
@@ -9,7 +8,6 @@
 #include <gtk/gtk.h>
 #include <glib-object.h>
 
-#include <epoxy/gl_generated.h>
 #include <libmaze/maze_struct.h>
 
 #include <better_c_std/string/str_t.h>
@@ -281,6 +279,13 @@ void MgMazeApp_gl_realize(MgMazeApp* self) {
 
     self->private.main_shader       = load_main_shader_program(self->private.resource, error_list_get_nullptr(&errors));
     self->private.fullscreen_mesh   = create_fullscreen_mesh  (error_list_get_nullptr(&errors));
+    
+
+    // debugln("Creating SSBO...");
+    // GLuint ssbo = 0;
+    // glGenBuffers(GL_SHADER_STORAGE_BUFFER, &ssbo);
+    // glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    // glBufferData(GL_SHADER_STORAGE_BUFFER, 1, NULL, GL_DYNAMIC_DRAW);
 
     int err_count = error_list_errors_count(&errors);
     if (err_count > 0) {
@@ -301,10 +306,10 @@ void MgMazeApp_gl_unrealize(MgMazeApp* self) {
     gl_program_free(self->private.main_shader);
 }
 
-G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(void* widget, MgMazeApp* app) {
-    MgMazeApp_gl_realize(app);
-}
+// G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(void* widget, MgMazeApp* app) {
+//     MgMazeApp_gl_realize(app);
+// }
 
-G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(void* widget, MgMazeApp* app) {
-    MgMazeApp_gl_unrealize(app);
-}
+// G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(void* widget, MgMazeApp* app) {
+//     MgMazeApp_gl_unrealize(app);
+// }

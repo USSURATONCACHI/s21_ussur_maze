@@ -1,6 +1,6 @@
 #include <mazegtk/maze_app.h>
 #include <mazegtk/viewmodel.h>
-#include <mazegtk/domain.h>
+#include <mazegtk/util/domain.h>
 
 #include <stdbool.h>
 #include <glib.h>
@@ -8,7 +8,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <epoxy/gl.h>
-#include <epoxy/gl_generated.h>
 
 #include <better_c_std/prettify.h>
 #include <better_c_std/prettify.h>

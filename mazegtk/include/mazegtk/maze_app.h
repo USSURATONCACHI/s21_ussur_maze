@@ -5,6 +5,7 @@
 #include <mazegtk/viewmodel.h>
 #include <stdbool.h>
 
+#include <epoxy/gl.h>
 #include <opengl_utils/framebuffer.h>
 #include <opengl_utils/shader.h>
 #include <opengl_utils/gl_program.h>
@@ -24,6 +25,8 @@ typedef struct {
 
         GlProgram   main_shader;
         Mesh        fullscreen_mesh;
+        GLuint      ssbo_maze;
+        GLuint      ssbo_maze_size;
 
         GtkWindow* ref_main_window;
         GtkStack*  ref_main_window_stack;

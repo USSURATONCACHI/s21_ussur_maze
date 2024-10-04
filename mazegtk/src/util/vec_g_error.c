@@ -1,4 +1,4 @@
-#include <mazegtk/vec_g_error.h>
+#include <mazegtk/util/vec_g_error.h>
 
 static void GError_ptr_free(GError_ptr ptr) {
     if (ptr)
