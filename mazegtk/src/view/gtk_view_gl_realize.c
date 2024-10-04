@@ -1,6 +1,7 @@
 #include <mazegtk/view/gtk_view.h>
 #include <better_c_std/prettify.h>
 #include <mazegtk/util/getref.h>
+#include <mazegtk/util/error_list.h>
 
 #include <opengl_utils/gl_program.h>
 
@@ -19,22 +20,28 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(GtkGLArea* widget, MgGtkVie
 
 G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(GtkGLArea* widget, MgGtkView* view) {
     debugln("mg_maze_app_handle_gl_realize called");
+    vec_GError_ptr errors = vec_GError_ptr_create();
     gtk_gl_area_make_current(widget);
 
-    GError* error = NULL;
-    view->main_shader = load_main_shader_program(view->resource, &error);
-    if (error) {
-        debugln("Failed to create shader program [%s][%d]: %s", g_quark_to_string(error->domain), error->code, error->message);
-        return;
-    }
+    view->main_shader = load_main_shader_program(view->resource, error_list_get_nullptr(&errors));
+    view->fullscreen_mesh = create_fullscreen_mesh(error_list_get_nullptr(&errors));
+    glGenBuffers(1, &view->maze_ssbo);
 
-    view->fullscreen_mesh = create_fullscreen_mesh(&error);
-    if (error) {
-        debugln("Failed to create mesh [%s][%d]: %s", g_quark_to_string(error->domain), error->code, error->message);
+    if (error_list_errors_count(&errors) > 0) {
+        debugln("Failed to gl_realize.");
+        error_list_print_errors(&errors);
+        vec_GError_ptr_free(errors);
+
         gl_program_free(view->main_shader);
+        mesh_delete(view->fullscreen_mesh);
+        glDeleteBuffers(1, &view->maze_ssbo);
+
+        MgGtkView_handle_destroy(NULL, view); // Stop the app
         return;
+    } else {
+        vec_GError_ptr_free(errors);
+        debugln("mg_maze_app_handle_gl_realize done.");
     }
-    debugln("mg_maze_app_handle_gl_realize done.");
 }
 
 

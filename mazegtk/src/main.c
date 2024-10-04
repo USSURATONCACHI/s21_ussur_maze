@@ -7,10 +7,7 @@
 int main(int argc, char** argv) {    
     gtk_init(&argc, &argv);
 
-    debugln("Creating model...");
     MgCameraModel model = MgCameraModel_new(0.0, 0.0);
-
-    debugln("Creating controller...");
     MgCameraController* controller = MgCameraController_new(&model);
 
     debugln("Creating view...");
@@ -21,14 +18,12 @@ int main(int argc, char** argv) {
         MgGtkView_free_sync(view);
         return 1;
     }
-    debugln("View created");
 
+    gdk_threads_add_idle((void*)MgGtkView_startup_prepare, view);
     while (MgGtkView_is_fine(view)) {
         usleep(50 * 1000);
     }
 
-    debugln("Freeing...");
     MgGtkView_free_sync(view);
-    debugln("Freeing done");
     return 0;
 }

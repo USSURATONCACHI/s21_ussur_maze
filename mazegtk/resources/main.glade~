@@ -2,14 +2,14 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkWindow" id="main_window1">
+  <object class="GtkWindow" id="main_window">
     <property name="can-focus">False</property>
     <property name="default-width">600</property>
     <property name="default-height">400</property>
     <signal name="drag-leave" handler="mg_maze_app_handle_drag_leave" swapped="no"/>
     <signal name="drag-motion" handler="mg_maze_app_handle_drag_move" swapped="no"/>
     <child>
-      <object class="GtkStack" id="main_window_stack">
+      <object class="GtkStack" id="main_stack">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="transition-type">crossfade</property>
@@ -70,6 +70,7 @@
         </child>
         <child>
           <object class="GtkPaned" id="show_maze_ui">
+            <property name="name">show_maze_ui</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="position">200</property>
