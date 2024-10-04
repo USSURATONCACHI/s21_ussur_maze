@@ -1,4 +1,4 @@
-.PHONY: clean configure build install gtk test re
+.PHONY: clean configure build install gtk test
 .PHONY: r c b i
 
 ENV = $(shell cat env.txt)
@@ -13,8 +13,6 @@ r: clean
 c: configure
 b: build
 i: install
-
-re: clean configure build
 
 clean:
 	rm -rf build/
