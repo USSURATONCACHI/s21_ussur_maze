@@ -162,6 +162,13 @@ static void handle_activate(void* widget, MgGtkView* view) {
         return;
     }
 
+    // Load and apply the CSS
+    GtkCssProvider *provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_resource(provider, "/org/ussur/mazegtk/style.css");
+    GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(window));
+    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    g_object_unref(provider);
+
     // Other
     gtk_builder_connect_signals(view->builder, view);
     const GtkTargetEntry target_entries[] = {

@@ -59,10 +59,11 @@ void main() {
 }
 
 #define WALL_CUTOFF 0.5
-#define WALL_EXP_OFFSET 0.04 // More = wider wall
-#define WALL_BRIGHTNESS(coords) (1.0 / (1.0 + exp(64 * (abs((coords)) - WALL_EXP_OFFSET))) - WALL_CUTOFF) / (1.0 - WALL_CUTOFF)
-#define WALL_COLOR vec3(0.0, 0.0, 0.0)
-#define BG_COLOR vec3(0.8)
+#define WALL_EXP 256         // More = more sharp wall
+#define WALL_EXP_OFFSET 0.03 // More = wider wall
+#define WALL_BRIGHTNESS(coords) (1.0 / (1.0 + exp(WALL_EXP * (abs((coords)) - WALL_EXP_OFFSET))) - WALL_CUTOFF) / (1.0 - WALL_CUTOFF)
+#define WALL_COLOR vec3(1.0, 0.5, 0.0)
+#define BG_COLOR vec3(0.0)
 
 #define CLAMP(x, minval, maxval) min((maxval), max((minval), (x))) 
 #define COLOR_PICK(amount, color0, color1) (CLAMP(amount, 0.0, 1.0) * color1 + (1.0 - CLAMP(amount, 0.0, 1.0)) * color0)
@@ -131,8 +132,10 @@ vec4 render_pixel(vec2 in_maze_coords) {
     }
     float total_wall = min(1.0, vert_brightness + horz_brightness);
 
-    vec3 cell_color = vec3(1.0, 1.0, 1.0);
-    cell_color *= (length(in_cell_coords - 0.5) / (0.5 * sqrt(2))) * 0.2 + 0.8 - 0.3;
+    vec3 cell_color = vec3(0.0);
+    float how_close_to_border = length(in_cell_coords - 0.5) / (0.5 * sqrt(2));
+    float blend = how_close_to_border * 0.8 + 0.2;
+    cell_color = COLOR_PICK(blend, cell_color, vec3(0.125));
 
     vec4 out_color = vec4(WALL_COLOR * total_wall + cell_color * (1.0 - total_wall), 1.0);
     return out_color;

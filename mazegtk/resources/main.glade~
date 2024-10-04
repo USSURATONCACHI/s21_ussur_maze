@@ -75,7 +75,6 @@
             <property name="can-focus">True</property>
             <property name="position">200</property>
             <property name="position-set">True</property>
-            <property name="wide-handle">True</property>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
