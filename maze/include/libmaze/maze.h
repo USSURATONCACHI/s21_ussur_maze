@@ -11,6 +11,7 @@
 MzMaze mz_maze_create(size_t width, size_t height);
 void   mz_maze_free(MzMaze maze);
 void   mz_maze_fill_random(MzMaze* maze);
+size_t mz_maze_get_buffer_size(const MzMaze* maze);
 
 MzCell mz_maze_at(const MzMaze* maze, size_t x, size_t y);
 void   mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell value);

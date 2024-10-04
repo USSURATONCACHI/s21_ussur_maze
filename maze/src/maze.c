@@ -19,6 +19,13 @@ MzMaze mz_maze_create(size_t width, size_t height) {
         .raw_data = data,
     };
 }
+
+size_t mz_maze_get_buffer_size(const MzMaze* maze) {
+    size_t size_bits = maze->width * maze->height * 2; // each cell is 2 bits
+    size_t size_bytes = (size_bits + 7) / 8;
+    return size_bytes;
+}
+
 void mz_maze_free(MzMaze maze) {
     free(maze.raw_data);
 }
