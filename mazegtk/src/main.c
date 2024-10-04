@@ -8,9 +8,16 @@ int main(int argc, char** argv) {
     gtk_init(&argc, &argv);
 
     MgModel model = {
-        .maze = mz_maze_create(50, 50),
+        .maze = mz_maze_create(4, 4),
         .camera = MgCameraModel_new(0.0, 0.0),
     };
+    srand(time(NULL));
+    mz_maze_fill_random(&model.maze);
+    mz_maze_set_at(&model.maze, 1, 1, (MzCell) { true, true });
+
+    debugln("Maze size: %zu %zu", model.maze.width, model.maze.height);
+    mz_maze_print(&model.maze);
+
     MgController* controller = MgController_new(&model);
 
     debugln("Creating view...");

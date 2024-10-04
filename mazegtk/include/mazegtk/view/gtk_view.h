@@ -29,6 +29,7 @@ typedef struct {
     GlProgram main_shader;
     Mesh      fullscreen_mesh;
     GLuint    maze_ssbo;
+    GLuint    maze_size_ssbo;
 } MgGtkView;
 
 

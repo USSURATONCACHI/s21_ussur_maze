@@ -42,6 +42,11 @@ MzCell mz_maze_at(const MzMaze* maze, size_t x, size_t y) {
     return cell;
 }
 void mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell cell) {
+    if (x == 0)
+        cell.left_wall = true;
+    if (y == 0)
+        cell.top_wall = true;
+
     size_t pos_bits = (y * maze->width + x) * 2;
     size_t pos_bytes = pos_bits / 8;
     size_t rem_bits = pos_bits % 8;

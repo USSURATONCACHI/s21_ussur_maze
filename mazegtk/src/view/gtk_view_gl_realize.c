@@ -9,12 +9,18 @@ static GlProgram load_main_shader_program(GResource* resource, GError** out_erro
 static Mesh create_fullscreen_mesh(GError** out_error);
 static Shader load_shader_from_resource(GResource* resource, const char* resource_path, GLenum shader_type, GError** out_error);
 
+static void free_view_gl_resources(MgGtkView* view) {
+    mesh_delete(view->fullscreen_mesh);
+    gl_program_free(view->main_shader);
+    glDeleteBuffers(1, &view->maze_ssbo);
+    glDeleteBuffers(1, &view->maze_size_ssbo);
+
+}
+
 G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(GtkGLArea* widget, MgGtkView* view) {
     debugln("mg_maze_app_handle_gl_unrealize called");
     gtk_gl_area_make_current(widget);
-
-    mesh_delete(view->fullscreen_mesh);
-    gl_program_free(view->main_shader);
+    free_view_gl_resources(view);
     debugln("mg_maze_app_handle_gl_unrealize done");
 }
 
@@ -26,16 +32,13 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(GtkGLArea* widget, MgGtkView*
     view->main_shader = load_main_shader_program(view->resource, error_list_get_nullptr(&errors));
     view->fullscreen_mesh = create_fullscreen_mesh(error_list_get_nullptr(&errors));
     glGenBuffers(1, &view->maze_ssbo);
+    glGenBuffers(1, &view->maze_size_ssbo);
 
     if (error_list_errors_count(&errors) > 0) {
         debugln("Failed to gl_realize.");
         error_list_print_errors(&errors);
-        vec_GError_ptr_free(errors);
-
-        gl_program_free(view->main_shader);
-        mesh_delete(view->fullscreen_mesh);
-        glDeleteBuffers(1, &view->maze_ssbo);
-
+        vec_GError_ptr_free(errors);    
+        free_view_gl_resources(view);
         MgGtkView_handle_destroy(NULL, view); // Stop the app
         return;
     } else {
