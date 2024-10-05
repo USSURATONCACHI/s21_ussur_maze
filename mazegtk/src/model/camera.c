@@ -1,4 +1,5 @@
 #include <mazegtk/model/camera.h>
+#include <better_c_std/prettify.h>
 
 #include <stdbool.h>
 #include <float.h>
@@ -8,19 +9,26 @@
 #define CAMERA_ZOOM_EXP 1000.0
 #define CAMERA_VEL_EXP 128.0
 
-static double current_time_secs() {
-  static clock_t Start;
-  static bool IsInit = false;
 
-  clock_t now = clock();
+static double current_time_secs(void) {
+    static struct timespec start_time;
+    static int initialized = 0;  // Tracks if the start time is initialized
+    
+    struct timespec current_time;
+    clock_gettime(CLOCK_REALTIME, &current_time);
 
-  if (!IsInit) {
-    Start = now;
-    IsInit = true;
-  }
+    // Initialize start_time on the first call
+    if (!initialized) {
+        start_time = current_time;
+        initialized = 1;
+    }
 
-  return ((double)(now - Start)) / CLOCKS_PER_SEC;
+    // Return time relative to the start time
+    double seconds = (current_time.tv_sec - start_time.tv_sec);
+    double nanoseconds = (current_time.tv_nsec - start_time.tv_nsec) / 1e9;
+    return seconds + nanoseconds;
 }
+
 
 static float clamp(float x, float min, float max) {
   return x < min ? min : (x > max ? max : x);
@@ -98,10 +106,12 @@ void MgCameraModel_update_anim(MgCameraModel* self) {
   MgVector2 new_pos = MgCameraModel_pos(self);
   MgVector2 new_vel = MgCameraModel_vel(self);
   float new_zoom_vel = MgCameraModel_zoom_vel(self);
+  float new_zoom = MgCameraModel_zoom(self);
   double now = current_time_secs();
 
   self->pos = new_pos;
   self->vel = new_vel;
+  self->zoom = new_zoom;
   self->zoom_vel = new_zoom_vel;
   self->vel_start_time = now;
   self->zoom_vel_start_time = now;

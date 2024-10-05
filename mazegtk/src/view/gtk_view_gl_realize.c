@@ -24,8 +24,26 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(GtkGLArea* widget, MgGtkVie
     debugln("mg_maze_app_handle_gl_unrealize done");
 }
 
+gboolean on_timeout(gpointer data) {
+    GtkGLArea* gl_area = GTK_GL_AREA(data);
+    gtk_gl_area_queue_render(gl_area);
+    return G_SOURCE_CONTINUE; // Continue the timeout
+}
+
+
 G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(GtkGLArea* widget, MgGtkView* view) {
     debugln("mg_maze_app_handle_gl_realize called");
+    gtk_widget_add_events(
+        GTK_WIDGET(widget),
+        GDK_ENTER_NOTIFY_MASK |
+        GDK_LEAVE_NOTIFY_MASK |
+        GDK_POINTER_MOTION_MASK |
+        GDK_BUTTON_PRESS_MASK |
+        GDK_BUTTON_RELEASE_MASK |
+        GDK_SCROLL_MASK
+    );
+
+
     vec_GError_ptr errors = vec_GError_ptr_create();
     gtk_gl_area_make_current(widget);
 
@@ -33,6 +51,11 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(GtkGLArea* widget, MgGtkView*
     view->fullscreen_mesh = create_fullscreen_mesh(error_list_get_nullptr(&errors));
     glGenBuffers(1, &view->maze_ssbo);
     glGenBuffers(1, &view->maze_size_ssbo);
+    gint refresh_rate = 60; // Change this if your monitor has a different refresh rate
+    gint interval = 1000 / refresh_rate; // Interval in milliseconds
+
+    g_timeout_add(interval, on_timeout, widget);
+
 
     if (error_list_errors_count(&errors) > 0) {
         debugln("Failed to gl_realize.");

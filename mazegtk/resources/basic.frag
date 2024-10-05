@@ -20,6 +20,8 @@ out vec4 out_color;
 in vec2 f_tex_pos;
 
 uniform vec2 u_screen_size;
+uniform vec2 u_maze_pos_pix;
+uniform vec2 u_cell_size_pix;
 
 vec4 render_pixel(vec2 in_maze_coords);
 vec4 render_corner(vec2 in_maze_coords);
@@ -31,9 +33,8 @@ void main() {
     vec2 correct_tex_pos = vec2(f_tex_pos.x, 1.0 - f_tex_pos.y);
     vec2 pix_pos = correct_tex_pos * u_screen_size;
 
-
-    vec2 maze_pos_pix = vec2(50);
-    vec2 cell_size_pix = vec2(70);
+    vec2 maze_pos_pix = u_maze_pos_pix;
+    vec2 cell_size_pix = u_cell_size_pix;
 
     vec2 wh = vec2(width, height);
 

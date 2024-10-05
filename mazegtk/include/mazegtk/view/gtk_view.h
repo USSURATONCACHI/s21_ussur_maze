@@ -30,6 +30,9 @@ typedef struct {
     Mesh      fullscreen_mesh;
     GLuint    maze_ssbo;
     GLuint    maze_size_ssbo;
+
+    bool is_dragging;
+    int prev_x, prev_y;
 } MgGtkView;
 
 
