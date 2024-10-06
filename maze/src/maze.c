@@ -226,6 +226,7 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
 
     // Keep track of sets
     vec_size_t sets = vec_size_t_with_capacity(width * 2);
+    vec_size_t sets_re_buf = vec_size_t_with_capacity(width * 2);
     vec_size_t sets_chosen_cells = vec_size_t_with_capacity(width * 2);
 
     // Fill with unique sets
@@ -235,6 +236,7 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
     }
 
     for (size_t y = height - 1; ; y--) {
+        debugln("y = %zu", y);
         // 1. Add vertical walls
         for (size_t x = width - 1; x >= 1; x--) {
             MzCell cell = mz_maze_at(maze, x, y);
@@ -299,11 +301,27 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
         }
 
         SWAP(size_t*, row, next_row);
+
+        // 4. Reshuffle sets every N rows
+        // if (y % 10 == 0) {
+            sets_re_buf.length = 0;
+            for (size_t set_id = 0; set_id < sets.length; set_id++) {
+                if (sets.data[set_id] > 0) { // not empty set
+                    size_t new_set_id = sets_re_buf.length;
+                    vec_size_t_push(&sets_re_buf, sets.data[set_id]); // move set to a new vector
+                    sets.data[set_id] = new_set_id; // temporarily write set id into the old set location
+                }
+            }
+            for (size_t x = 0; x < width; x++)
+                row[x] = sets.data[row[x]]; // update sets ids
+            SWAP(vec_size_t, sets_re_buf, sets);
+        // }
         if (y == 0) break;
     }
 
     vec_size_t_free(sets_chosen_cells);
     vec_size_t_free(sets);
+    vec_size_t_free(sets_re_buf);
     free(row);
     free(next_row);
 }
