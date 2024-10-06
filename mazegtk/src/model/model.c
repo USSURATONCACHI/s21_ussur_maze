@@ -8,7 +8,8 @@ MgModel MgModel_new(size_t maze_width, size_t maze_height) {
         .camera = MgCameraModel_new(maze_width / 2.0f, maze_height / 2.0f),
     };
     srand(time(NULL));
-    mz_maze_fill_random(&model.maze);
+    // mz_maze_fill_random(&model.maze);
+    mz_maze_generate_perfect_eller(&model.maze);
 
     return model;
 }

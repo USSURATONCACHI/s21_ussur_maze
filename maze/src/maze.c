@@ -1,10 +1,22 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <better_c_std/prettify.h>
 #include <libmaze/directions_struct.h>
 #include <libmaze/cell_struct.h>
 #include <libmaze/maze.h>
+
+#undef VECTOR_H
+#undef VECTOR_C
+#undef VECTOR_NO_HEADERS
+#define VECTOR_MAKE_STATIC
+#define VECTOR_IMPLEMENTATION
+#define VECTOR_ITEM_TYPE size_t
+#include <better_c_std/vector.h>
+#undef VECTOR_MAKE_STATIC
+#undef VECTOR_IMPLEMENTATION
+#undef VECTOR_ITEM_TYPE
 
 MzMaze mz_maze_create(size_t width, size_t height) {
     size_t size_bits = width * height * 2; // each cell is 2 bits
@@ -196,6 +208,106 @@ vec_MzMaze mz_maze_generate_mipmaps(const MzMaze* maze) {
 
     return mipmaps;
 }
+
+
+// Function to generate a perfect maze using Eller's Algorithm
+void mz_maze_generate_perfect_eller(MzMaze* maze) {
+    assert_m(maze != NULL);
+    assert_m(maze->width > 0 && maze->height > 0);
+
+    size_t width = maze->width;
+    size_t height = maze->height;
+
+    // Create first row
+    size_t* row = calloc(width, sizeof(size_t));
+    size_t* next_row = calloc(width, sizeof(size_t));
+    assert_alloc(row);
+    assert_alloc(next_row);
+
+    // Keep track of sets
+    vec_size_t sets = vec_size_t_with_capacity(width * 2);
+    vec_size_t sets_chosen_cells = vec_size_t_with_capacity(width * 2);
+
+    // Fill with unique sets
+    for (size_t i = 0; i < width; i++) {
+        row[i] = sets.length;
+        vec_size_t_push(&sets, 1); // 1 cell in set
+    }
+
+    for (size_t y = height - 1; ; y--) {
+        // 1. Add vertical walls
+        for (size_t x = width - 1; x >= 1; x--) {
+            MzCell cell = mz_maze_at(maze, x, y);
+
+            bool should_add_left_wall = ((rand() % 100) + 1) < 50;
+            if (should_add_left_wall) {
+                cell.left_wall = true;
+            } else {
+                sets.data[row[x - 1]]--; // -1 from set size
+                sets.data[row[x]]++;     // +1 to current set
+                row[x - 1] = row[x];
+            }
+
+            mz_maze_set_at(maze, x, y, cell);
+
+            if (x == 0) break;
+        }
+
+        // 2. Pick a cell for each set
+        sets_chosen_cells.length = 0; // clear vector
+        for (size_t i = 0; i < sets.length; i++) {
+            size_t set_size = sets.data[i];
+            size_t chosen_cell = 0;
+            if (set_size > 1)
+                chosen_cell = ((size_t)rand()) % set_size;
+            vec_size_t_push(&sets_chosen_cells, chosen_cell);
+        }
+
+        // 2. Add horizontal walls
+        size_t prev_set_id = SIZE_MAX;
+        size_t cell_in_set_id = 0;
+        for (size_t x = width - 1; x >= 0; x--) {
+            size_t set_id = row[x];
+            if (prev_set_id != set_id) {
+                cell_in_set_id = 0;
+                prev_set_id = set_id;
+            } else {
+                cell_in_set_id++;
+            }
+
+            if (cell_in_set_id != sets_chosen_cells.data[set_id]) {
+                MzCell cell = mz_maze_at(maze, x, y);
+                cell.top_wall = true;
+                mz_maze_set_at(maze, x, y, cell);
+            }
+            if (x == 0) break;
+        }
+
+        // 3. Determine if next row should have same set & update sets sizes
+        memset(sets.data, 0, sizeof(size_t) * sets.length); // fill with zeros
+        for (size_t x = width - 1; x >= 0; x--) {
+            next_row[x] = row[x];
+
+            MzCell cell = mz_maze_at(maze, x, y);
+            if (cell.top_wall) { // assign a new set to it
+                next_row[x] = sets.length;
+                vec_size_t_push(&sets, 0);
+            }
+
+            sets.data[next_row[x]]++;
+            if (x == 0) break;
+        }
+
+        SWAP(size_t*, row, next_row);
+        if (y == 0) break;
+    }
+
+    vec_size_t_free(sets_chosen_cells);
+    vec_size_t_free(sets);
+    free(row);
+    free(next_row);
+}
+
 
 #define VECTOR_C MzMaze
 #define VECTOR_ITEM_DESTRUCTOR mz_maze_free

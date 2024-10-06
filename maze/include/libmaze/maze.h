@@ -23,5 +23,8 @@ void   mz_maze_print(const MzMaze* maze);
 MzDirections mz_maze_where_can_go(const MzMaze* maze, size_t x, size_t y);
 vec_MzMaze mz_maze_generate_mipmaps(const MzMaze* maze);
 
+void generate_maze_eller(MzMaze* maze);
+void mz_maze_generate_perfect_eller(MzMaze* maze);
+
 
 #endif // LIBMAZE_MAZE_H_
