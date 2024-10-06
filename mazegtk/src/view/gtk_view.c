@@ -15,43 +15,65 @@ G_MODULE_EXPORT void mg_maze_app_handle_render_gl(GtkGLArea* gl_area, GdkGLConte
     float cam_zoom = MgCameraController_zoom(camera);
     float cell_size = powf(ZOOM_EXP, cam_zoom);
     // debugln("Cam position: %f %f Zoom : %f", cam_pos.x, cam_pos.y, cam_zoom);
+    // glBindFramebuffer(GL_FRAMEBUFFER, view->inner.render_buffer.framebuffer);
 
     // Mipmap
-    size_t mipmaps_count = MgController_get_maze_mipmaps_count(view->controller);
-    float min_cell_size = 25.0;
-    // float mipmap_needed = -log2f(cell_size / min_cell_size);
-    float mipmap_needed = 0.0f;
-    mipmap_needed = CLAMP(mipmap_needed, 0.0, (float)(mipmaps_count - 1));
-    // debugln("mipmap_needed = %f , cell_size = %f", mipmap_needed, cell_size);
-
-    size_t mipmap_level = floorf(mipmap_needed);
-    float mipmap_mul = exp2f((float)mipmap_level);
-    const MazeSsbo* ssbo = &view->inner.maze_mipmaps.data[mipmap_level];
+    const MazeSsbo* ssbo = &view->inner.maze_ssbo;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo->data_buffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo->size_buffer);
-
-    const MazeSsbo* next_ssbo = &view->inner.maze_mipmaps.data[CLAMP(mipmap_level + 1, 0, mipmaps_count - 1)];
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, next_ssbo->data_buffer);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, next_ssbo->size_buffer);
 
     // Uniforms
     GLint loc_screen_width = glGetUniformLocation(view->inner.main_shader.program, "u_screen_size");
     GLint loc_cell_size    = glGetUniformLocation(view->inner.main_shader.program, "u_cell_size_pix");
     GLint loc_camera_pos   = glGetUniformLocation(view->inner.main_shader.program, "u_camera_pos");
-    GLint loc_mipmap_pos   = glGetUniformLocation(view->inner.main_shader.program, "u_mipmap_pos");
     glUniform2f(loc_screen_width, (float) width, (float) height);
-    glUniform2f(loc_cell_size, cell_size * mipmap_mul, cell_size * mipmap_mul);
-    glUniform2f(loc_camera_pos, cam_pos.x / mipmap_mul, cam_pos.y / mipmap_mul);
-    glUniform1f(loc_mipmap_pos, mipmap_needed);
+    glUniform2f(loc_cell_size, cell_size, cell_size);
+    glUniform2f(loc_camera_pos, cam_pos.x, cam_pos.y);
 
-    // -- 
-    glBindFramebuffer(GL_FRAMEBUFFER, 1);
-    glViewport(0, 0, width, height);
+    // === Render
     glClearColor (0.0, 0, 0, 1);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(view->inner.main_shader.program);
+
+    // Resize custom framebuffer 
+    size_t fb_width = width * 4;
+    size_t fb_height = height * 4;
+
+    if (fb_width != view->inner.fb_width || fb_height != view->inner.fb_height) {
+        framebuffer_resize(&view->inner.render_buffer, fb_width, fb_height, 1);
+        view->inner.fb_width = fb_width;
+        view->inner.fb_height = fb_height;
+    }
+
     mesh_bind(view->inner.fullscreen_mesh);
-    mesh_draw(view->inner.fullscreen_mesh);
+        // Render 1
+        // Draw to framebuffer 
+        glBindFramebuffer(GL_FRAMEBUFFER, view->inner.render_buffer.framebuffer);
+        glViewport(0, 0, fb_width, fb_height);
+        glUseProgram(view->inner.main_shader.program);
+        mesh_draw(view->inner.fullscreen_mesh);
+
+        // Generate mipmaps for the framebuffer's color texture
+        glBindTexture(GL_TEXTURE_2D, view->inner.render_buffer.color_texture);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    
+        // Render 2
+        // Draw main
+        gtk_gl_area_attach_buffers(gl_area);
+        glViewport(0, 0, width, height);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, view->inner.render_buffer.color_texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+
+        glUseProgram(view->inner.post_processing_shader.program);
+        int loc = glGetUniformLocation(view->inner.post_processing_shader.program, "u_read_texture");
+        glUniform1i(loc, 0);
+        mesh_draw(view->inner.fullscreen_mesh);
+    
+        // Bugs arise without this line:
+        glUseProgram(view->inner.main_shader.program);
     mesh_unbind();
 }
 

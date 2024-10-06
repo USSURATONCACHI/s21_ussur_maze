@@ -6,6 +6,7 @@
 #include <mazegtk/view/maze_ssbo.h>
 #include <opengl_utils/gl_program.h>
 #include <opengl_utils/mesh.h>
+#include <opengl_utils/framebuffer.h>
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -14,9 +15,13 @@ typedef struct {
     MgController* controller;
 
     // For rendering
-    Mesh         fullscreen_mesh;
-    GlProgram    main_shader;
-    vec_MazeSsbo maze_mipmaps;
+    Mesh        fullscreen_mesh;
+    GlProgram   main_shader;
+    GlProgram   post_processing_shader;
+    Framebuffer render_buffer;
+    MazeSsbo    maze_ssbo;
+
+    size_t fb_width, fb_height;
 
     // For camera controls
     bool is_dragging;

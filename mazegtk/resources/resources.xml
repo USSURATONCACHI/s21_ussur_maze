@@ -4,5 +4,6 @@
     <file>loading.svg</file>
     <file>common.vert</file>
     <file>basic.frag</file>
+    <file>post_processing.frag</file>
   </gresource>
 </gresources>
