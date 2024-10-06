@@ -1,7 +1,7 @@
 #ifndef MAZEGTK_MODEL_CAMERA_H_
 #define MAZEGTK_MODEL_CAMERA_H_
 
-#include <mazegtk/model/vector2.h>
+#include <mazegtk/util/vector2.h>
 
 typedef struct {
     MgVector2 pos;

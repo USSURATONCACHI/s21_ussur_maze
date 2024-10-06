@@ -1,7 +1,7 @@
 #ifndef MAZEGTK_CONTROLLER_CAMERA_H_
 #define MAZEGTK_CONTROLLER_CAMERA_H_
 
-#include <mazegtk/model/vector2.h>
+#include <mazegtk/util/vector2.h>
 
 typedef struct MgCameraController MgCameraController;
 

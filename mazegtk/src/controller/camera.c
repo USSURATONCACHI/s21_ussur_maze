@@ -1,57 +1,50 @@
-#include "better_c_std/prettify/assert.h"
 #include <mazegtk/controller/camera.h>
 #include <mazegtk/model/camera.h>
 #include <better_c_std/prettify.h>
 
-typedef struct {
-    MgCameraModel* model;
-} ControllerImpl;
 
 MgCameraController* MgCameraController_new(void* model_ref) {
-    ControllerImpl* cont = (ControllerImpl*) malloc(sizeof(ControllerImpl));
-    assert_alloc(cont);
-
-    cont->model = (MgCameraModel*) model_ref;
+    MgCameraModel* cont = (MgCameraModel*) model_ref;
     return (MgCameraController*)cont;
 }
 void MgCameraController_free(MgCameraController* controller) {
-    free(controller);
+    // nothing
 }
 
 MgVector2 MgCameraController_pos(const MgCameraController* self_in) {
-    const ControllerImpl* self = (void*)self_in;
-    return MgCameraModel_pos(self->model);
+    const MgCameraModel* model = (void*)self_in;
+    return MgCameraModel_pos(model);
 }
 
 MgVector2 MgCameraController_vel(const MgCameraController* self_in) {
-    const ControllerImpl* self = (void*)self_in;
-    return MgCameraModel_vel(self->model);
+    const MgCameraModel* model = (void*)self_in;
+    return MgCameraModel_vel(model);
 }
 
 float MgCameraController_zoom(const MgCameraController* self_in) {
-    const ControllerImpl* self = (void*)self_in;
-    return MgCameraModel_zoom(self->model);
+    const MgCameraModel* model = (void*)self_in;
+    return MgCameraModel_zoom(model);
 }
 
 void MgCameraController_update_anim(MgCameraController* self_in) {
-    const ControllerImpl* self = (void*)self_in;
-    MgCameraModel_update_anim(self->model);
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_update_anim(model);
 }
 
 
 void MgCameraController_on_zoom(MgCameraController* self_in, float delta) {
-    const ControllerImpl* self = (void*)self_in;
-    MgCameraModel_on_zoom(self->model, delta);
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_on_zoom(model, delta);
 }
 void MgCameraController_on_drag_start(MgCameraController* self_in) {
-    const ControllerImpl* self = (void*)self_in;
-    MgCameraModel_on_drag_start(self->model);
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_on_drag_start(model);
 }
 void MgCameraController_on_drag(MgCameraController* self_in, MgVector2 drag) {
-    const ControllerImpl* self = (void*)self_in;
-    MgCameraModel_on_drag(self->model, drag);
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_on_drag(model, drag);
 }
 void MgCameraController_on_drag_end(MgCameraController* self_in) {
-    const ControllerImpl* self = (void*)self_in;
-    MgCameraModel_on_drag_end(self->model);
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_on_drag_end(model);
 }

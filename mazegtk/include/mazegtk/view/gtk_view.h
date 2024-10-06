@@ -1,12 +1,10 @@
 #ifndef MAZEGTK_VIEW_GTK_VIEW_H_
 #define MAZEGTK_VIEW_GTK_VIEW_H_
 
-#include <mazegtk/util/error_list.h>
 #include <mazegtk/controller/controller.h>
+#include <mazegtk/view/gtk_view_inner.h>
 
 #include <gtk/gtk.h>
-#include <opengl_utils/gl_program.h>
-#include <opengl_utils/mesh.h>
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
@@ -16,32 +14,36 @@ typedef struct {
     GtkApplication* app;
     GtkBuilder* builder;
     GResource* resource;
-
-    bool is_stopped;
-    struct {
-        vec_GError_ptr* create_errors_list;
-        bool* is_activate_done;
-    } waits;
+    GError* failed_error;
+    pthread_t thread;
+    bool is_thread_running;
 
     // Application-specific resources
     MgController* controller;
-
-    GlProgram main_shader;
-    Mesh      fullscreen_mesh;
-    GLuint    maze_ssbo;
-    GLuint    maze_size_ssbo;
-
-    bool is_dragging;
-    int prev_x, prev_y;
+    MgGtkViewInner inner;
 } MgGtkView;
 
+typedef struct {
+    bool is_ok;
+    union {
+        MgGtkView* ok;
+        GError* error;
+    };
+} MgGtkViewResult;
 
-MgGtkView* MgGtkView_create_sync(MgController* controller, int argc, char** argv, GError** out_error);
-void MgGtkView_free_sync(MgGtkView* view);
+typedef struct {
+    int argc;
+    char** argv;
+} MgDataForGtkLib;
+
+
+MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata);
+void MgGtkView_free(MgGtkView* view);
+
+void MgGtkView_fail_with_error(MgGtkView* view, GError* error);
 bool MgGtkView_is_fine(const MgGtkView* view);
 
-gboolean MgGtkView_startup_prepare(MgGtkView* view);
-
-void MgGtkView_handle_destroy(void* dont_care, MgGtkView* view);
+// gboolean MgGtkView_startup_prepare(MgGtkView* view);
+// void MgGtkView_handle_destroy(void* dont_care, MgGtkView* view);
 
 #endif // MAZEGTK_VIEW_GTK_VIEW_H_

@@ -1,107 +1,66 @@
 #include <mazegtk/view/gtk_view.h>
-
-#include <mazegtk/util/error_list.h>
+#include <mazegtk/util/result.h>
 #include <mazegtk/util/common_macros.h>
-
 #include <better_c_std/prettify.h>
-#include <better_c_std/string.h>
-
 #include <pthread.h>
-#include <time.h>
-#include <unistd.h>
 
-static MgGtkView* alloc_view_uninit(GError** out_error);
-static GResource* register_resource(GError** out_error);
-static GtkApplication* create_gtk_app(GError** out_error, gpointer callbacks_user_data);
-static GtkBuilder* create_gtk_builder(GError** out_error);
-
-static void* run_gtk_app(void* view);
-static void handle_activate(void* widget, MgGtkView* view);
+// Local
+typedef STRUCT_RESULT(GResource*, GError*) ResourceResult;
+static ResourceResult register_resource();
 
 typedef struct {
+    MgDataForGtkLib data;
     MgGtkView* view;
-    int argc;
-    char** argv;
-} ThreadArgument;
+} ThreadArg;
+static void app_run_function(ThreadArg* arg_heap);
 
-MgGtkView* MgGtkView_create_sync(MgController* controller, int argc, char** argv, GError** out_error) {
-    debugln("MgGtkView_create_sync called");
-    vec_GError_ptr errors = vec_GError_ptr_create();
+static void handle_destroy(void* dont_care, MgGtkView* view);
+static void handle_activate(void* couldnt_care_less, MgGtkView* view);
+// Local
 
-    // Allocate
-    MgGtkView* maze_app = alloc_view_uninit(error_list_get_nullptr(&errors));
+MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata) {
+    MgGtkViewResult result = OK(NULL);
 
-    if (error_list_errors_count(&errors) == 0) {
-        maze_app->controller = controller;
-        maze_app->is_stopped = false;
-        maze_app->resource = register_resource(error_list_get_nullptr(&errors));
-        maze_app->app      = create_gtk_app(error_list_get_nullptr(&errors), maze_app);
-        maze_app->builder  = create_gtk_builder(error_list_get_nullptr(&errors));
+    MgGtkView* view = (MgGtkView*) calloc(1, sizeof(MgGtkView));
+    assert_alloc(view);
+    view->controller = controller;
+
+    // RESOURCE
+    ResourceResult resource = register_resource();
+    if (!resource.is_ok) {
+        result = (MgGtkViewResult) ERR(resource.error);
+    } else {
+        view->resource = resource.ok;
+
+        // APPLICATION
+        view->app = gtk_application_new("org.ussur.mazegtk", G_APPLICATION_DEFAULT_FLAGS);
+        if (view->app == NULL) {
+            result = (MgGtkViewResult) ERR(GERROR_NEW("failed to create GtkApplication"));
+        } else {
+            g_signal_connect(view->app, "activate", G_CALLBACK(handle_activate), view);
+
+            // BUILDER
+            view->builder = gtk_builder_new_from_resource("/org/ussur/mazegtk/main.glade");
+            if (view->builder == NULL) {
+                result = (MgGtkViewResult) ERR(GERROR_NEW("failed to create GtkBuilder"));
+            } else {
+                result = (MgGtkViewResult) OK(view);
+            }
+        }
     }
-    if (error_list_errors_count(&errors) > 0) {
-        error_list_print_errors(&errors);
-        error_list_first_to_g_error(&errors, str_literal("Failed to create MazeApp"), out_error);
-        vec_GError_ptr_free(errors);
-        MgGtkView_free_sync(maze_app);
-        return NULL;
-    }
+    if (!result.is_ok)
+        MgGtkView_free(view);
 
-    // Continue into startup & realize state.
-    bool is_activate_done = false;
-    maze_app->waits.is_activate_done = &is_activate_done;
-    maze_app->waits.create_errors_list = &errors;
-    
-    ThreadArgument* arg = (ThreadArgument*)malloc(sizeof(ThreadArgument));
-    assert_alloc(arg);
-    *arg = (ThreadArgument){
-        .view = maze_app,
-        .argc = argc,
-        .argv = argv,
-    };
-    pthread_t thread;
-    int ret = pthread_create(&thread, NULL, run_gtk_app, arg);
-    
-    debugln("Waiting for GTK to activate and realize my application...");
-    while (!is_activate_done) {
-        usleep(1000);
-    }
+    // Run GTK app in other thread (because run function is blocking)
+    ThreadArg* thread_arg = (ThreadArg*)malloc(sizeof(ThreadArg));
+    *thread_arg = (ThreadArg) { .data = gdata, .view = view };
+    pthread_create(&view->thread, NULL, (void*)app_run_function, thread_arg);
+    view->is_thread_running = true;
 
-    maze_app->waits.is_activate_done = NULL;
-    maze_app->waits.create_errors_list = NULL;
-
-    debugln("View is done creating, checking...");
-    if (error_list_errors_count(&errors) > 0) {
-        debugln("Failed to create MgGtkView. Reasons: ");
-        error_list_print_errors(&errors);
-        error_list_first_to_g_error(&errors, str_literal("Failed to create MazeApp"), out_error);
-        vec_GError_ptr_free(errors);
-        MgGtkView_free_sync(maze_app);
-        return NULL;
-    }
-    debugln("No errors encountered");
-
-    return maze_app;
+    return result;
 }
 
-static void* run_gtk_app(void* arg_in) {
-    ThreadArgument* arg_heap = arg_in;
-    ThreadArgument arg = *arg_heap;
-    free(arg_heap);
-
-    g_application_run(G_APPLICATION(arg.view->app), arg.argc, arg.argv);
-
-    return NULL;
-}
-
-static MgGtkView* alloc_view_uninit(GError** out_error) {
-    debugln("Allocating MgGtkView...");
-    MgGtkView* maze_app = (MgGtkView*) calloc(1, sizeof(MgGtkView));
-    if (maze_app == NULL) {
-        *out_error = g_error_new(DOMAIN, 0, "failed to allocated memory for MgGtkView.");
-    }
-    return maze_app;
-}
-static GResource* register_resource(GError** out_error) {
+static ResourceResult register_resource() {
     debugln("Loading and registering resource...");
 
     const char* res_file = getenv(RESOURCES_ENV_VAR);
@@ -110,75 +69,79 @@ static GResource* register_resource(GError** out_error) {
     if (res_file == NULL)
         res_file = RESOURCES_DEFAULT_FILE;
 
-    GResource* resource = g_resource_load(res_file, out_error);
+    GError* error = NULL;
+    GResource* resource = g_resource_load(res_file, &error);
 
-    if (resource) {
-        g_message("Loaded resource from '%s'", res_file);
-        g_resources_register(resource);
-    }
+    if (error)
+        return (ResourceResult) ERR(error);
 
-    return resource;
-}
-static GtkApplication* create_gtk_app(GError** out_error, gpointer callbacks_user_data) {
-    debugln("Creating GtkApplication...");
-    GtkApplication* app = gtk_application_new("org.ussur.mazegtk", G_APPLICATION_DEFAULT_FLAGS);
-
-    if (app == NULL) {
-        PUTERR(out_error) = g_error_new_literal(DOMAIN, 0, "failed to create a GTK app.");
-    } else {
-        g_application_set_resource_base_path(G_APPLICATION (app), "/org/ussur/mazegtk/");
-        g_signal_connect(app, "activate", G_CALLBACK(handle_activate), callbacks_user_data);
-    }
-
-    return app;
-}
-static GtkBuilder* create_gtk_builder(GError** out_error) {
-    debugln("Creating GtkBuilder...");
-    GtkBuilder* builder = gtk_builder_new_from_resource("/org/ussur/mazegtk/main.glade");
-    if (builder == NULL) {
-        PUTERR(out_error) = g_error_new_literal(DOMAIN, 0, "failed to create a builder from resource.");
-    }
-    return builder;
-
+    g_resources_register(resource);
+    return (ResourceResult) OK(resource);
 }
 
-#define GETREF(variable, type, builder, name, out_error)                                 \
-    variable = type(gtk_builder_get_object((builder), (name)));                          \
-    if (variable == NULL && out_error) {                                                 \
-        *(out_error) = g_error_new(DOMAIN, 2, "Did not find widget %s in builder", name);\
-    }
 
-static void handle_activate(void* widget, MgGtkView* view) { 
-    debugln("handle_activate called");
-    vec_GError_ptr* errors = view->waits.create_errors_list;
+static void app_run_function(ThreadArg* arg_heap) {
+    ThreadArg arg = *arg_heap;
+    free(arg_heap);
 
-    GtkWindow* window;
-    GETREF(window, GTK_WINDOW, view->builder, "main_window", error_list_get_nullptr(errors));
+    g_application_run(G_APPLICATION(arg.view->app), arg.data.argc, arg.data.argv);
+    arg.view->is_thread_running = false;
+}
 
-    int err_count = error_list_errors_count(errors);
-    if (err_count > 0) {
-        debugln("handle_activate failed");
-        *(view->waits.is_activate_done) = true;
+void MgGtkView_free(MgGtkView* view) {
+    if (view->app && G_IS_APPLICATION(view->app))
+        g_application_quit(G_APPLICATION(view->app));
+
+    if (view->is_thread_running)
+        pthread_join(view->is_thread_running, NULL);
+
+    if (view->failed_error)
+        g_error_free(view->failed_error);
+
+    G_UNREF_SAFE(view->builder);
+    G_UNREF_SAFE(view->app);
+    if (view->resource)
+        g_resources_unregister(view->resource); 
+
+    free(view);
+}
+
+void MgGtkView_fail_with_error(MgGtkView* view, GError* error) {
+    if (view->app && G_IS_APPLICATION(view->app))
+        g_application_quit(G_APPLICATION(view->app));
+
+    if (view->failed_error)
+        g_error_free(view->failed_error);
+    view->failed_error = error;
+}
+
+bool MgGtkView_is_fine(const MgGtkView* view) {
+    return view->is_thread_running;
+}
+
+// Activate and Destroy signals
+
+static void handle_destroy(void* dont_care, MgGtkView* view) {
+    debugln("handle_destroy called");
+
+    if (G_IS_APPLICATION(view->app))
+        g_application_quit(G_APPLICATION(view->app));
+}
+
+static void handle_activate(void* couldnt_care_less, MgGtkView* view) {
+    gtk_builder_connect_signals(view->builder, view);
+    GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(view->builder, "main_window"));
+    if (window == NULL) {
+        MgGtkView_fail_with_error(view, GERROR_NEW("UI does not have a `main_window` widget"));
         return;
     }
 
-    // Load and apply the CSS
-    GtkCssProvider *provider = gtk_css_provider_new();
-    gtk_css_provider_load_from_resource(provider, "/org/ussur/mazegtk/style.css");
-    GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(window));
-    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-    g_object_unref(provider);
-
-    // Other
-    gtk_builder_connect_signals(view->builder, view);
-    const GtkTargetEntry target_entries[] = {
-        (GtkTargetEntry) { .target = "text/uri-list", 0, 0 },
-    };
+    // Allow dropdown
+    const GtkTargetEntry target_entries[] = {{ .target = "text/uri-list", 0, 0 }};
     gtk_drag_dest_set(GTK_WIDGET(window), GTK_DEST_DEFAULT_ALL, target_entries, G_N_ELEMENTS(target_entries), GDK_ACTION_COPY | GDK_ACTION_MOVE);
+
+    // Show window
+    g_signal_connect(window, "destroy", G_CALLBACK(handle_destroy), view);
     gtk_window_set_application(window, view->app);
     gtk_widget_show_all(GTK_WIDGET(window));
-    g_signal_connect(window, "destroy", G_CALLBACK(MgGtkView_handle_destroy), view);
-
-    *(view->waits.is_activate_done) = true;
-    debugln("handle_activate done");
 }

@@ -59,6 +59,7 @@ void mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell cell) {
 }
 
 void mz_maze_fill_random(MzMaze* maze) {
+    debugln("Maze size: %zu %zu", maze->width, maze->height);
     for (size_t y = 0; y < maze->height; y++) {
         for (size_t x = 0; x < maze->width; x++) {
             int r = rand();
@@ -127,3 +128,75 @@ void mz_maze_print(const MzMaze* maze) {
         printf("+-");
     printf("+\n");
 }
+
+static bool can_go_up(MzCell tl, MzCell tr, MzCell bl, MzCell br) {
+    if (tl.top_wall && tr.top_wall)
+        return false;
+
+    if (bl.top_wall && bl.top_wall)
+        return false;
+
+    bool has_wall_on_left = tl.top_wall || bl.top_wall;
+    bool has_wall_on_right = tr.top_wall || br.top_wall;
+    if (has_wall_on_left && has_wall_on_right && tr.left_wall)
+        return false;
+
+    return true;
+}
+
+static bool can_go_left(MzCell tl, MzCell tr, MzCell bl, MzCell br) {
+    if (tl.left_wall && bl.left_wall)
+        return false;
+
+    if (tr.left_wall && br.left_wall)
+        return false;
+
+    bool has_wall_on_top = tl.left_wall || tr.left_wall;
+    bool has_wall_on_bottom = br.left_wall || bl.left_wall;
+    if (has_wall_on_top && has_wall_on_bottom && bl.top_wall)
+        return false;
+
+    return true;
+}
+
+MzMaze mz_maze_get_mipmap_halved(const MzMaze* maze) {
+    size_t halved_width = maze->width / 2;
+    size_t halved_height = maze->height / 2;
+
+    MzMaze halved = mz_maze_create(halved_width, halved_height);
+
+    for (size_t y = 0; y < halved_height; y++) {
+        for (size_t x = 0; x < halved_width; x++) {
+            MzCell tl_cell = mz_maze_at(maze, x * 2 + 0, y * 2 + 0);
+            MzCell tr_cell = mz_maze_at(maze, x * 2 + 1, y * 2 + 0);
+            MzCell bl_cell = mz_maze_at(maze, x * 2 + 0, y * 2 + 1);
+            MzCell br_cell = mz_maze_at(maze, x * 2 + 1, y * 2 + 1); // dont need this cell?
+
+            bool top_wall = !can_go_up(tl_cell, tr_cell, bl_cell, br_cell);
+            bool left_wall = !can_go_left(tl_cell, tr_cell, bl_cell, br_cell);
+            mz_maze_set_at(&halved, x, y, (MzCell) { 
+                .top_wall = top_wall, 
+                .left_wall = left_wall
+            });
+        }
+    }
+
+    return halved;
+}
+
+vec_MzMaze mz_maze_generate_mipmaps(const MzMaze* maze) {
+    vec_MzMaze mipmaps = vec_MzMaze_create();
+
+    const MzMaze* last_mipmap = maze;
+    while (last_mipmap->width > 1 && last_mipmap->height > 1) {
+        MzMaze halved = mz_maze_get_mipmap_halved(last_mipmap);
+        vec_MzMaze_push(&mipmaps, halved);
+        last_mipmap = &mipmaps.data[mipmaps.length - 1];
+    }
+
+    return mipmaps;
+}
+
+#define VECTOR_C MzMaze
+#define VECTOR_ITEM_DESTRUCTOR mz_maze_free
+#include <better_c_std/vector.h> 

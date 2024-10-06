@@ -5,35 +5,31 @@
 
 
 int main(int argc, char** argv) {    
-    gtk_init(&argc, &argv);
-
-    MgModel model = {
-        .maze = mz_maze_create(4, 4),
-        .camera = MgCameraModel_new(0.0, 0.0),
-    };
-    srand(time(NULL));
-    mz_maze_fill_random(&model.maze);
-    mz_maze_set_at(&model.maze, 1, 1, (MzCell) { true, true });
-
-    debugln("Maze size: %zu %zu", model.maze.width, model.maze.height);
-    mz_maze_print(&model.maze);
-
+    // MODEL & CONTROLLEr
+    MgModel model = MgModel_new(128 , 128 );
     MgController* controller = MgController_new(&model);
 
+    // VIEW
     debugln("Creating view...");
-    GError* error = NULL;
-    MgGtkView* view = MgGtkView_create_sync(controller, argc, argv, &error);
-    if (error) {
-        debugln("Failed to create app due to error [%s][%d]: %s", g_quark_to_string(error->domain), error->code, error->message);
-        MgGtkView_free_sync(view);
+    
+    gtk_init(&argc, &argv);
+    MgGtkViewResult result = MgGtkView_create(controller, (MgDataForGtkLib){ argc, argv });
+    if (!result.is_ok) {
+        debugln("Failed to start due to error [%s][%d]: %s", g_quark_to_string(result.error->domain), result.error->code, result.error->message);
         return 1;
     }
 
-    gdk_threads_add_idle((void*)MgGtkView_startup_prepare, view);
-    while (MgGtkView_is_fine(view)) {
-        usleep(50 * 1000);
-    }
+    MgGtkView* view = result.ok;
 
-    MgGtkView_free_sync(view);
+    // Just wait while it runs
+    while (MgGtkView_is_fine(view))
+        usleep(50 * 1000); // sleep for 50 ms
+
+    if (view->failed_error)
+        debugln("Application failed with error:\n[%s][%d] %s", g_quark_to_string(view->failed_error->domain), view->failed_error->code, view->failed_error->message);
+
+    MgGtkView_free(view);
+    MgController_free(controller);
+    MgModel_free(model);
     return 0;
 }
