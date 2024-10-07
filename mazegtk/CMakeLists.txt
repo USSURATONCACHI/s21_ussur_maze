@@ -19,8 +19,6 @@ add_executable(s21_ussur_mazegtk
     src/view/gtk_view_inner.c
     src/view/gtk_view.c
     src/view/maze_ssbo.c
-    # src/view/gtk_view_gl_realize.c
-    # src/view/gtk_view.c
 
     src/util/vec_g_error.c
     src/util/error_list.c
