@@ -128,7 +128,7 @@ vec4 render_pixel(vec2 in_maze_coords) {
     float blend = how_close_to_border * 0.8 + 0.2;
     cell_color = COLOR_PICK(blend, cell_color, vec3(0.125));
 
-    vec2 grid_step = vec2(width, height) / 64.0;
+    vec2 grid_step = vec2(1024, 1024);
     vec2 in_grid_tmp = mod(in_maze_coords + grid_step / 2.0, grid_step) - grid_step / 2.0;
     in_grid_tmp.x = abs(in_grid_tmp.x) < (1.0 / u_cell_size_pix.x) ? 0.5 : 0.0;
     in_grid_tmp.y = abs(in_grid_tmp.y) < (1.0 / u_cell_size_pix.y) ? 0.5 : 0.0;

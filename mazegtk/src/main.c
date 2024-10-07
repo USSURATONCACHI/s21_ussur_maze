@@ -6,8 +6,8 @@
 
 int main(int argc, char** argv) {    
     // MODEL & CONTROLLEr
-    MgModel model = MgModel_new(64000, 64000);
-    // MgModel model = MgModel_new(128, 128);
+    // MgModel model = MgModel_new(64000, 64000);
+    MgModel model = MgModel_new(10, 10);
     MgController* controller = MgController_new(&model);
 
     // VIEW

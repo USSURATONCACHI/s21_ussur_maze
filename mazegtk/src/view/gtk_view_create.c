@@ -148,8 +148,8 @@ static void handle_activate(void* couldnt_care_less, MgGtkView* view) {
     {
         GtkCssProvider *provider = gtk_css_provider_new();
         gtk_css_provider_load_from_resource(provider, "/org/ussur/mazegtk/style.css");
-        GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(window));
-        gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+        GdkScreen *screen = gtk_window_get_screen(window);
+        gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
         g_object_unref(provider);
     }
 
