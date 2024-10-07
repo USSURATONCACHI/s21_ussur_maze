@@ -21,11 +21,22 @@ typedef struct {
     Framebuffer render_buffer;
     MazeSsbo    maze_ssbo;
 
+    double msaa_coef;
     size_t fb_width, fb_height;
 
     // For camera controls
     bool is_dragging;
-    int prev_x, prev_y;
+    int prev_x, prev_y; // can be uninitialized
+    double drag_sensitivity;
+    double zoom_speed;
+
+    // For camera UI (can be uninit)
+    struct {
+        gdouble cam_x, cam_y;
+        gdouble zoom;
+        gdouble zoom_speed;
+        gdouble drag_sensitivity;
+    } last_shown;
 } MgGtkViewInner;
 
 typedef STRUCT_RESULT(MgGtkViewInner, GError*) MgGtkViewInnerResult;

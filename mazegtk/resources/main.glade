@@ -2,6 +2,36 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkAdjustment" id="adjustment_cam_x">
+    <property name="lower">-1000000</property>
+    <property name="upper">1000000</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_cam_y">
+    <property name="lower">-1000000</property>
+    <property name="upper">1000000</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_cam_zoom">
+    <property name="lower">-1000</property>
+    <property name="upper">100</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_drag_sensitivity">
+    <property name="lower">-100</property>
+    <property name="upper">100</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_zoom_speed">
+    <property name="lower">1</property>
+    <property name="upper">100</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">10</property>
+  </object>
   <object class="GtkWindow" id="main_window">
     <property name="can-focus">False</property>
     <property name="default-width">600</property>
@@ -18,7 +48,7 @@
             <property name="name">show_maze_ui</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="position">200</property>
+            <property name="position">300</property>
             <property name="position-set">True</property>
             <property name="wide-handle">True</property>
             <child>
@@ -157,6 +187,45 @@
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Open maze from file...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Save</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Save As...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">5</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <placeholder/>
                                 </child>
                               </object>
@@ -223,7 +292,43 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Generate (Eller's algorithm)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Generate (Empty)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Crop current maze to size</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">5</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -237,7 +342,6 @@
                                 <property name="label" translatable="yes">Maze generation</property>
                                 <style>
                                   <class name="h2"/>
-                                  <class name=".h2"/>
                                 </style>
                               </object>
                             </child>
@@ -273,10 +377,18 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
+                                  <object class="GtkSpinButton" id="cam_pos_x">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">X camera position. Horizontal movement, positive is to the right.</property>
+                                    <property name="max-length">90</property>
+                                    <property name="placeholder-text" translatable="yes">X position</property>
+                                    <property name="adjustment">adjustment_cam_x</property>
+                                    <property name="climb-rate">1</property>
+                                    <property name="digits">5</property>
+                                    <property name="snap-to-ticks">True</property>
+                                    <property name="numeric">True</property>
+                                    <signal name="value-changed" handler="handle_cam_pos_x_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -285,10 +397,18 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
+                                  <object class="GtkSpinButton" id="cam_pos_y">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Y camera position. Vertical movement, positive is down.</property>
+                                    <property name="max-length">90</property>
+                                    <property name="placeholder-text" translatable="yes">Y position</property>
+                                    <property name="adjustment">adjustment_cam_y</property>
+                                    <property name="climb-rate">1</property>
+                                    <property name="digits">5</property>
+                                    <property name="snap-to-ticks">True</property>
+                                    <property name="numeric">True</property>
+                                    <signal name="value-changed" handler="handle_cam_pos_y_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -309,10 +429,18 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
+                                  <object class="GtkSpinButton" id="cam_zoom">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Zoom level, exponential. More is closer.</property>
+                                    <property name="max-length">90</property>
+                                    <property name="placeholder-text" translatable="yes">Zoom</property>
+                                    <property name="adjustment">adjustment_cam_zoom</property>
+                                    <property name="climb-rate">0.10</property>
+                                    <property name="digits">5</property>
+                                    <property name="snap-to-ticks">True</property>
+                                    <property name="numeric">True</property>
+                                    <signal name="value-changed" handler="handle_cam_zoom_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -326,6 +454,7 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
+                                    <signal name="clicked" handler="handle_reset_camera" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -379,9 +508,15 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
+                                  <object class="GtkSpinButton" id="drag_sensitivity">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="max-length">90</property>
+                                    <property name="adjustment">adjustment_drag_sensitivity</property>
+                                    <property name="digits">5</property>
+                                    <property name="snap-to-ticks">True</property>
+                                    <property name="numeric">True</property>
+                                    <signal name="value-changed" handler="handle_drag_sensitivity_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -402,9 +537,15 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
+                                  <object class="GtkSpinButton" id="zoom_speed">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="max-length">90</property>
+                                    <property name="adjustment">adjustment_zoom_speed</property>
+                                    <property name="digits">5</property>
+                                    <property name="snap-to-ticks">True</property>
+                                    <property name="numeric">True</property>
+                                    <signal name="value-changed" handler="handle_zoom_speed_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -418,6 +559,7 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
+                                    <signal name="clicked" handler="cam_controls_reset_to_default" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -464,7 +606,9 @@
               <object class="GtkGLArea" id="gl_area">
                 <property name="visible">True</property>
                 <property name="app-paintable">True</property>
-                <property name="can-focus">False</property>
+                <property name="can-focus">True</property>
+                <property name="has-focus">True</property>
+                <property name="is-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_STRUCTURE_MASK | GDK_SCROLL_MASK | GDK_SMOOTH_SCROLL_MASK</property>
                 <signal name="button-press-event" handler="handle_gl_area_button_press" swapped="no"/>
                 <signal name="button-release-event" handler="handle_gl_area_button_release" swapped="no"/>

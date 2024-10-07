@@ -51,6 +51,10 @@ MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* res
         .render_buffer = framebuffer,
         .fb_width      = 1000,
         .fb_height     = 1000,
+
+        .msaa_coef = 4.0,
+        .drag_sensitivity = 1.0,
+        .zoom_speed = 1.25,
     };
     return (MgGtkViewInnerResult) OK(inner);
 }

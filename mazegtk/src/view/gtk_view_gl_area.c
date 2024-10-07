@@ -44,7 +44,8 @@ static VoidResult realize(GtkGLArea* widget, MgGtkView* view) {
         GTK_WIDGET(widget),
         GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK |
         GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK |
-        GDK_BUTTON_RELEASE_MASK | GDK_SCROLL_MASK
+        GDK_BUTTON_RELEASE_MASK | GDK_SCROLL_MASK |
+        GDK_FOCUS_CHANGE_MASK
     );
 
     g_timeout_add(1000 / 60, on_timeout, widget);

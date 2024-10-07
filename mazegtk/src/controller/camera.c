@@ -26,6 +26,24 @@ float MgCameraController_zoom(const MgCameraController* self_in) {
     return MgCameraModel_zoom(model);
 }
 
+
+void MgCameraController_set_pos(MgCameraController* self_in, MgVector2 pos) {
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_set_pos(model, pos);
+}
+void MgCameraController_set_zoom(MgCameraController* self_in, float zoom) {
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_set_zoom(model, zoom);
+}
+void MgCameraController_stop_movement(MgCameraController* self_in) {
+    MgCameraModel* model = (void*)self_in;
+    MgCameraModel_update_anim(model);
+    model->vel.x = 0;
+    model->vel.y = 0;
+    model->zoom_vel = 0;
+}
+
+
 void MgCameraController_update_anim(MgCameraController* self_in) {
     MgCameraModel* model = (void*)self_in;
     MgCameraModel_update_anim(model);

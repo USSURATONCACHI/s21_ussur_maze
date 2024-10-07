@@ -12,6 +12,10 @@ MgVector2 MgCameraController_pos(const MgCameraController* self);
 MgVector2 MgCameraController_vel(const MgCameraController* self);
 float     MgCameraController_zoom(const MgCameraController* self);
 
+void MgCameraController_set_pos(MgCameraController* self, MgVector2 pos);
+void MgCameraController_set_zoom(MgCameraController* self, float zoom);
+void MgCameraController_stop_movement(MgCameraController* self);
+
 void MgCameraController_update_anim(MgCameraController* self);
 void MgCameraController_on_zoom(MgCameraController* self, float delta);
 void MgCameraController_on_drag_start(MgCameraController* self);
