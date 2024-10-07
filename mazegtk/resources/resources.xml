@@ -5,5 +5,6 @@
     <file>common.vert</file>
     <file>basic.frag</file>
     <file>post_processing.frag</file>
+    <file>style.css</file>
   </gresource>
 </gresources>
