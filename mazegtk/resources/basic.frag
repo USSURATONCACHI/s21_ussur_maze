@@ -38,7 +38,7 @@ vec4 render_bg(vec2 in_maze_coords);
 
 
 
-#define WALL_BRIGHTNESS(x) ((x < (sqrt(2) / length(u_cell_size_pix)) * 1.0) ? 1.0 : 0.0) 
+#define WALL_BRIGHTNESS(x) ((x < (sqrt(2) / length(u_cell_size_pix)) * 0.5) ? 1.0 : 0.0) 
 #define WALL_COLOR vec3(1.0, 0.5, 0.0)
 #define BG_COLOR vec3(0.0)
 
@@ -128,8 +128,16 @@ vec4 render_pixel(vec2 in_maze_coords) {
     float blend = how_close_to_border * 0.8 + 0.2;
     cell_color = COLOR_PICK(blend, cell_color, vec3(0.125));
 
-    vec4 out_color = vec4(WALL_COLOR * total_wall + cell_color * (1.0 - total_wall), 1.0);
-    return out_color;
+    vec2 grid_step = vec2(width, height) / 64.0;
+    vec2 in_grid_tmp = mod(in_maze_coords + grid_step / 2.0, grid_step) - grid_step / 2.0;
+    in_grid_tmp.x = abs(in_grid_tmp.x) < (1.0 / u_cell_size_pix.x) ? 0.5 : 0.0;
+    in_grid_tmp.y = abs(in_grid_tmp.y) < (1.0 / u_cell_size_pix.y) ? 0.5 : 0.0;
+    float total_grid = CLAMP(length(in_grid_tmp), 0.0, 1.0);
+
+    // cell_color = vec3(length(in_grid_tmp));
+    // vec3 c = WALL_COLOR * total_wall + cell_color * (1.0 - total_wall);
+    vec3 c = (WALL_COLOR * total_wall + cell_color * (1.0 - total_wall)) * (1.0 - total_grid) + vec3(1.0) * total_grid;
+    return vec4(c, 1.0);
 }
 
 // WALL BRIGHTNESS

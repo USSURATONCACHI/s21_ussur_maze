@@ -235,8 +235,11 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
         vec_size_t_push(&sets, 1); // 1 cell in set
     }
 
+    
+
     for (size_t y = height - 1; ; y--) {
-        debugln("y = %zu", y);
+        if (y % 100 == 0)
+            debugln("y = %zu", y);
         // 1. Add vertical walls
         for (size_t x = width - 1; x >= 1; x--) {
             MzCell cell = mz_maze_at(maze, x, y);
@@ -302,20 +305,19 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
 
         SWAP(size_t*, row, next_row);
 
-        // 4. Reshuffle sets every N rows
-        // if (y % 10 == 0) {
-            sets_re_buf.length = 0;
-            for (size_t set_id = 0; set_id < sets.length; set_id++) {
-                if (sets.data[set_id] > 0) { // not empty set
-                    size_t new_set_id = sets_re_buf.length;
-                    vec_size_t_push(&sets_re_buf, sets.data[set_id]); // move set to a new vector
-                    sets.data[set_id] = new_set_id; // temporarily write set id into the old set location
-                }
+        // 4. Filter out all non-empty sets
+        sets_re_buf.length = 0;
+        for (size_t set_id = 0; set_id < sets.length; set_id++) {
+            if (sets.data[set_id] > 0) { // not empty set
+                size_t new_set_id = sets_re_buf.length;
+                vec_size_t_push(&sets_re_buf, sets.data[set_id]); // move set to a new vector
+                sets.data[set_id] = new_set_id; // temporarily write set id into the old set location
             }
-            for (size_t x = 0; x < width; x++)
-                row[x] = sets.data[row[x]]; // update sets ids
-            SWAP(vec_size_t, sets_re_buf, sets);
-        // }
+        }
+        for (size_t x = 0; x < width; x++)
+            row[x] = sets.data[row[x]]; // update sets ids
+        SWAP(vec_size_t, sets_re_buf, sets);
+
         if (y == 0) break;
     }
 
