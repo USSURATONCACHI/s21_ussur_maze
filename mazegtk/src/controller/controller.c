@@ -41,7 +41,6 @@ void MgController_create_maze_eller(MgController* self, size_t maze_width, size_
     mz_maze_free(self->model->maze);
     self->model->maze = mz_maze_create(maze_width, maze_height);
     mz_maze_generate_perfect_eller(&self->model->maze);
-    mz_maze_print(&self->model->maze);
 }
 void MgController_create_maze_random(MgController* self, size_t maze_width, size_t maze_height) {
     mz_maze_free(self->model->maze);

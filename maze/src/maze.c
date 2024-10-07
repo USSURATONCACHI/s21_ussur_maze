@@ -219,6 +219,7 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
     assert_m(maze != NULL);
     assert_m(maze->width > 0 && maze->height > 0);
 
+    memset(maze->raw_data, 255, mz_maze_get_buffer_size(maze));
     size_t width = maze->width;
     size_t height = maze->height;
 
@@ -245,13 +246,24 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
         if (y % 100 == 0)
             debugln("y = %zu", y);
         // 1. Add vertical walls
+        size_t replace_set = SIZE_MAX;
         for (size_t x = width - 1; x >= 1; x--) {
-            MzCell cell = mz_maze_at(maze, x, y);
+            if (row[x] == replace_set) {
+                sets.data[row[x]]--;
+                row[x] = row[x + 1];
+                sets.data[row[x]]++;
+            }
 
+            MzCell cell = mz_maze_at(maze, x, y);
+            
             bool should_add_left_wall = ((rand() % 100) + 1) < 50;
-            if (should_add_left_wall) {
+            if (y == 0)
+                should_add_left_wall = false;
+
+            if (row[x] == row[x - 1] || should_add_left_wall) {
                 cell.left_wall = true;
             } else {
+                replace_set = row[x - 1];
                 sets.data[row[x - 1]]--; // -1 from set size
                 sets.data[row[x]]++;     // +1 to current set
                 row[x - 1] = row[x];
@@ -284,7 +296,20 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
                 cell_in_set_id++;
             }
 
-            if (cell_in_set_id != sets_chosen_cells.data[set_id]) {
+            size_t set_size = sets.data[row[x]];
+            size_t chosen_cell = sets_chosen_cells.data[set_id];
+            bool put_horz_wall = true;
+            if (cell_in_set_id == chosen_cell) {
+                put_horz_wall = false;
+            } 
+            // else if (cell_in_set_id == (set_size - 1 - chosen_cell)) {
+            //     put_horz_wall = true;
+            // } else {
+            //     put_horz_wall = (rand() & 1) > 0;
+            // }
+
+
+            if (put_horz_wall) {
                 MzCell cell = mz_maze_at(maze, x, y);
                 cell.top_wall = true;
                 mz_maze_set_at(maze, x, y, cell);
@@ -306,7 +331,6 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
             sets.data[next_row[x]]++;
             if (x == 0) break;
         }
-
         SWAP(size_t*, row, next_row);
 
         // 4. Filter out all non-empty sets
