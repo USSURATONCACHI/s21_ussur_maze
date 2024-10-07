@@ -122,6 +122,7 @@ bool MgGtkView_is_fine(const MgGtkView* view) {
 // Activate and Destroy signals
 
 static void handle_destroy(void* dont_care, MgGtkView* view) {
+    unused(dont_care);
     debugln("handle_destroy called");
 
     if (G_IS_APPLICATION(view->app))
@@ -129,6 +130,7 @@ static void handle_destroy(void* dont_care, MgGtkView* view) {
 }
 
 static void handle_activate(void* couldnt_care_less, MgGtkView* view) {
+    unused(couldnt_care_less);
     gtk_builder_connect_signals(view->builder, view);
     GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(view->builder, "main_window"));
     if (window == NULL) {

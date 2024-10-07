@@ -11,7 +11,10 @@ static void generate_fb_mipmaps(MgGtkView* view);
 static void render_pass_main(GtkGLArea* gl_area, MgGtkView* view);
 static void render_pass_post_proc(GtkGLArea* gl_area, MgGtkView* view);
 
+
+
 G_MODULE_EXPORT void mg_maze_app_handle_render_gl(GtkGLArea* gl_area, GdkGLContext* context, MgGtkView* view) {
+    unused(context);
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(gl_area));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(gl_area));
 
@@ -83,9 +86,7 @@ static void render_pass_main(GtkGLArea* gl_area, MgGtkView* view) {
 }
 
 static void render_pass_post_proc(GtkGLArea* gl_area, MgGtkView* view) {
-    int width = gtk_widget_get_allocated_width(GTK_WIDGET(gl_area));
-    int height = gtk_widget_get_allocated_height(GTK_WIDGET(gl_area));
-
+    unused(gl_area);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, view->inner.render_buffer.color_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -110,6 +111,7 @@ static void render_pass_post_proc(GtkGLArea* gl_area, MgGtkView* view) {
     //;
 
 static void update_camera_ui(GtkGLArea* gl_area, MgGtkView* view) {
+    unused(gl_area);
     MgCameraController* camera = MgController_get_camera(view->controller);
     MgVector2 cam_pos = MgCameraController_pos(camera);
     float cam_zoom = MgCameraController_zoom(camera);
@@ -148,13 +150,18 @@ G_MODULE_EXPORT void handle_gen_maze_height_value_changed(GtkSpinButton* widget,
 }
 
 G_MODULE_EXPORT void handle_generate_eller(GtkWidget* widget, MgGtkView* view) {
+    unused(widget);
     MgController_create_maze_eller(view->controller, view->inner.gen_maze_w, view->inner.gen_maze_h);
+
+
     MgGtkViewInner_upload_maze_to_gpu(&view->inner);
 }
 G_MODULE_EXPORT void handle_generate_empty(GtkWidget* widget, MgGtkView* view) {
+    unused(widget);
     MgController_create_maze_empty(view->controller, view->inner.gen_maze_w, view->inner.gen_maze_h);
     MgGtkViewInner_upload_maze_to_gpu(&view->inner);
 }
 G_MODULE_EXPORT void handle_generate_cropped(GtkWidget* widget, MgGtkView* view) {
-    
+    unused(widget);
+    unused(view);
 }

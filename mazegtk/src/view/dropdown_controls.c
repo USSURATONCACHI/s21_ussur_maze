@@ -9,6 +9,11 @@ G_MODULE_EXPORT gboolean mg_maze_app_handle_drag_move(
     guint time,
     MgGtkView* view
 ) {
+    unused(widget);
+    unused(context);
+    unused(time);
+    unused(x);
+    unused(y);
     GtkStack* stack = GTK_STACK(gtk_builder_get_object(view->builder, "main_stack"));
     if (stack == NULL)
         return FALSE;
@@ -25,6 +30,9 @@ G_MODULE_EXPORT gboolean mg_maze_app_handle_drag_leave(
     guint time,
     MgGtkView* view
 ) {
+    unused(widget);
+    unused(context);
+    unused(time);
     GtkStack* stack = GTK_STACK(gtk_builder_get_object(view->builder, "main_stack"));
     if (stack == NULL)
         return FALSE;

@@ -16,6 +16,7 @@ G_MODULE_EXPORT void handle_zoom_speed_changed(GtkSpinButton* widget, MgGtkView*
 }
 
 G_MODULE_EXPORT void cam_controls_reset_to_default(GtkButton* widget, MgGtkView* view) {
+    unused(widget);
     view->inner.zoom_speed = 1.25;
     view->inner.drag_sensitivity = 1.0;
 }

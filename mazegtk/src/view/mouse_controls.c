@@ -12,6 +12,7 @@ static void get_cursor(GtkGLArea* gl_area, gint* x, gint* y) {
 }
 
 G_MODULE_EXPORT gboolean handle_gl_area_button_press(GtkGLArea* gl_area, GdkEventButton* event, MgGtkView* view) { 
+    unused(event);
     MgCameraController* camera = MgController_get_camera(view->controller);
     MgCameraController_update_anim(camera);
     MgCameraController_on_drag_start(camera);
@@ -27,12 +28,15 @@ G_MODULE_EXPORT gboolean handle_gl_area_button_press(GtkGLArea* gl_area, GdkEven
 }
 
 G_MODULE_EXPORT gboolean handle_gl_area_button_release(GtkGLArea* gl_area, GdkEventButton* event, MgGtkView* view) { 
+    unused(gl_area);
+    unused(event);
     MgCameraController* camera = MgController_get_camera(view->controller);
     MgCameraController_on_drag_end(camera);
     view->inner.is_dragging = false;
     return FALSE;
 }
 G_MODULE_EXPORT void handle_gl_area_motion(GtkGLArea* gl_area, GdkEventMotion* event, MgGtkView* view) {
+    unused(event);
     if (view->inner.is_dragging) {
         gint x, y;
         get_cursor(gl_area, &x, &y);
@@ -54,6 +58,7 @@ G_MODULE_EXPORT void handle_gl_area_motion(GtkGLArea* gl_area, GdkEventMotion* e
 #define SCROLL_SENSITIVITY 0.1
 
 G_MODULE_EXPORT gboolean handle_gl_area_scroll(GtkGLArea* gl_area, GdkEventScroll* event, MgGtkView* view) { 
+    unused(gl_area);
     MgCameraController* camera = MgController_get_camera(view->controller);
 
     MgCameraController_update_anim(camera);

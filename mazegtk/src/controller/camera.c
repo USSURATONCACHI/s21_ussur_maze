@@ -8,6 +8,7 @@ MgCameraController* MgCameraController_new(void* model_ref) {
     return (MgCameraController*)cont;
 }
 void MgCameraController_free(MgCameraController* controller) {
+    unused(controller);
     // nothing
 }
 

@@ -92,7 +92,6 @@ void mz_maze_fill_random(MzMaze* maze) {
 
 MzDirections mz_maze_where_can_go(const MzMaze* maze, size_t x, size_t y) {
     MzCell cell = mz_maze_at(maze, x, y);
-    MzCell bottom_cell = mz_maze_at(maze, x, y + 1);
 
     if (x == 0) cell.left_wall = true;
     if (y == 0) cell.top_wall = true;
@@ -230,9 +229,9 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
     assert_alloc(next_row);
 
     // Keep track of sets
-    vec_size_t sets = vec_size_t_with_capacity(width * 2);
-    vec_size_t sets_re_buf = vec_size_t_with_capacity(width * 2);
-    vec_size_t sets_chosen_cells = vec_size_t_with_capacity(width * 2);
+    vec_size_t sets = vec_size_t_with_capacity(width);
+    vec_size_t sets_re_buf = vec_size_t_with_capacity(width);
+    vec_size_t sets_chosen_cells = vec_size_t_with_capacity(width);
 
     // Fill with unique sets
     for (size_t i = 0; i < width; i++) {
@@ -243,51 +242,52 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
     
 
     for (size_t y = height - 1; ; y--) {
-        if (y % 100 == 0)
+        if (y % 64 == 0)
             debugln("y = %zu", y);
         // 1. Add vertical walls
         for (size_t x = width - 1; x >= 1; x--) {
-            MzCell cell = mz_maze_at(maze, x, y);
             
-            bool should_add_left_wall = ((rand() % 100) + 1) < 50;
+            bool should_add_left_wall = (rand() & 1) > 0;
             if (y == 0)
                 should_add_left_wall = false;
 
             if (row[x] == row[x - 1] || should_add_left_wall) {
+                MzCell cell = mz_maze_at(maze, x, y);
                 cell.left_wall = true;
+                mz_maze_set_at(maze, x, y, cell);
             } else {
                 // merge sets
                 size_t replace_from = row[x - 1];
+                sets.data[replace_from] = 0;
                 size_t replace_to = row[x];
 
                 for (size_t x1 = 0; x1 < width; x1++) {
                     if (row[x1] == replace_from) {
-                        sets.data[replace_from]--;
                         row[x1] = replace_to;
                         sets.data[replace_to]++;
                     }
                 }
             }
 
-            mz_maze_set_at(maze, x, y, cell);
 
             if (x == 0) break;
         }
 
         // 2. Pick a cell for each set
-        sets_chosen_cells.length = 0; // clear vector
+        sets_chosen_cells.length = sets.length; // clear vector
         for (size_t i = 0; i < sets.length; i++) {
             size_t set_size = sets.data[i];
             size_t chosen_cell = 0;
             if (set_size > 1)
                 chosen_cell = ((size_t)rand()) % set_size;
-            vec_size_t_push(&sets_chosen_cells, chosen_cell);
+            sets_chosen_cells.data[chosen_cell] = chosen_cell;
         }
 
         // 2. Add horizontal walls
         size_t prev_set_id = SIZE_MAX;
         size_t cell_in_set_id = 0;
-        for (size_t x = width - 1; x >= 0; x--) {
+        memset(sets.data, 0, sizeof(size_t) * sets.length); // fill with zeros
+        for (size_t x = width - 1; true; x--) {
             size_t set_id = row[x];
             if (prev_set_id != set_id) {
                 cell_in_set_id = 0;
@@ -312,22 +312,13 @@ void mz_maze_generate_perfect_eller(MzMaze* maze) {
                 MzCell cell = mz_maze_at(maze, x, y);
                 cell.top_wall = true;
                 mz_maze_set_at(maze, x, y, cell);
-            }
-            if (x == 0) break;
-        }
 
-        // 3. Determine if next row should have same set & update sets sizes
-        memset(sets.data, 0, sizeof(size_t) * sets.length); // fill with zeros
-        for (size_t x = width - 1; x >= 0; x--) {
-            next_row[x] = row[x];
-
-            MzCell cell = mz_maze_at(maze, x, y);
-            if (cell.top_wall) { // assign a new set to it
                 next_row[x] = sets.length;
-                vec_size_t_push(&sets, 0);
+                vec_size_t_push(&sets, 1);
+            } else {
+                next_row[x] = row[x];
+                sets.data[next_row[x]]++;
             }
-
-            sets.data[next_row[x]]++;
             if (x == 0) break;
         }
         SWAP(size_t*, row, next_row);
