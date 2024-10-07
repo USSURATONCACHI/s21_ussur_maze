@@ -19,6 +19,13 @@ add_executable(s21_ussur_mazegtk
     src/view/gtk_view_inner.c
     src/view/gtk_view.c
     src/view/maze_ssbo.c
+    
+    src/view/camera_controls_input.c
+    src/view/camera_ui_input.c
+    src/view/dropdown_controls.c
+    src/view/grabby_cursor.c
+    src/view/mouse_controls.c
+
 
     src/util/vec_g_error.c
     src/util/error_list.c
