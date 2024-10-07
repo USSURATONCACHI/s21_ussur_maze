@@ -11,11 +11,12 @@ typedef struct MgController MgController;
 MgController* MgController_new(MgModel* model_ref);
 void MgController_free(MgController* controller);
 
-size_t  MgController_get_maze_mipmaps_count(MgController* self);
-
-MgMazeController* MgController_get_maze(MgController* self, size_t mipmap_level);
-
+MgMazeController* MgController_get_maze(MgController* self);
 MgCameraController* MgController_get_camera(MgController* self);
+
+void MgController_create_maze_empty(MgController* self, size_t maze_width, size_t maze_height);
+void MgController_create_maze_eller(MgController* self, size_t maze_width, size_t maze_height);
+void MgController_create_maze_random(MgController* self, size_t maze_width, size_t maze_height);
 
 
 #endif // MAZEGTK_CONTROLLER_CONTROLLER_H_

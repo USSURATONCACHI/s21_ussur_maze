@@ -18,7 +18,7 @@ G_MODULE_EXPORT void mg_maze_app_handle_render_gl(GtkGLArea* gl_area, GdkGLConte
     update_camera_ui(gl_area, view);
     resize_framebuffer(gl_area, view);
 
-    // Render pass 1 - to internal framebuffer
+    // Render pass 1 : to internal framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, view->inner.render_buffer.framebuffer);
     glViewport(0, 0, view->inner.fb_width, view->inner.fb_height);
     render_pass_main(gl_area, view);
@@ -26,12 +26,14 @@ G_MODULE_EXPORT void mg_maze_app_handle_render_gl(GtkGLArea* gl_area, GdkGLConte
     // Mipmaps (for MSAA effect)
     generate_fb_mipmaps(view);
 
-    // Render pass 2 - to gl area
+    // Render pass 2 : to GtkGLArea
     gtk_gl_area_attach_buffers(gl_area);
     glViewport(0, 0, width, height);
     render_pass_post_proc(gl_area, view);
 
-    // Bugs arise without this line because (faulty videodriver)
+    // Bugs arise without this line (because of faulty videodriver)
+    //      I do not fully understand the logic behind this bug, but it
+    //      requires the program to set glUseProgram for my shader AFTER rendering.
     glUseProgram(view->inner.main_shader.program);
 }
 
@@ -39,6 +41,7 @@ static void resize_framebuffer(GtkGLArea* gl_area, MgGtkView* view)    {
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(gl_area));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(gl_area));
     
+
     size_t fb_width = (size_t)(width * view->inner.msaa_coef);
     size_t fb_height = (size_t)(height * view->inner.msaa_coef);
 
@@ -111,11 +114,47 @@ static void update_camera_ui(GtkGLArea* gl_area, MgGtkView* view) {
     MgVector2 cam_pos = MgCameraController_pos(camera);
     float cam_zoom = MgCameraController_zoom(camera);
 
-    // Update X value
-    UPDATE_GDOUBLE(view->builder, "cam_pos_x", view->inner.last_shown.cam_x,    cam_pos.x);
-    UPDATE_GDOUBLE(view->builder, "cam_pos_y", view->inner.last_shown.cam_y,    cam_pos.y);
-    UPDATE_GDOUBLE(view->builder, "cam_zoom",  view->inner.last_shown.zoom, cam_zoom );
+    UPDATE_GDOUBLE(view->builder, "cam_pos_x", view->inner.last_shown.cam_x, cam_pos.x);
+    UPDATE_GDOUBLE(view->builder, "cam_pos_y", view->inner.last_shown.cam_y, cam_pos.y);
+    UPDATE_GDOUBLE(view->builder, "cam_zoom",  view->inner.last_shown.zoom, cam_zoom);
 
     UPDATE_GDOUBLE(view->builder, "drag_sensitivity", view->inner.last_shown.drag_sensitivity, view->inner.drag_sensitivity);
     UPDATE_GDOUBLE(view->builder, "zoom_speed", view->inner.last_shown.zoom_speed, view->inner.zoom_speed);
+
+    UPDATE_GDOUBLE(view->builder, "msaa_coef", view->inner.last_shown.msaa_coef, view->inner.msaa_coef);
+
+    UPDATE_GDOUBLE(view->builder, "gen_maze_width", view->inner.last_shown.gen_maze_w, view->inner.gen_maze_w);
+    UPDATE_GDOUBLE(view->builder, "gen_maze_height", view->inner.last_shown.gen_maze_h, view->inner.gen_maze_h);
+
+}
+
+G_MODULE_EXPORT void handle_msaa_coef_value_changed(GtkSpinButton* widget, MgGtkView* view) {
+    gdouble val = gtk_spin_button_get_value(widget);
+    if (val == view->inner.last_shown.msaa_coef)
+        return;
+    view->inner.msaa_coef = val;
+}
+G_MODULE_EXPORT void handle_gen_maze_width_value_changed(GtkSpinButton* widget, MgGtkView* view) {
+    gdouble val = gtk_spin_button_get_value(widget);
+    if (val == view->inner.last_shown.gen_maze_w)
+        return;
+    view->inner.gen_maze_w = val;
+}
+G_MODULE_EXPORT void handle_gen_maze_height_value_changed(GtkSpinButton* widget, MgGtkView* view) {
+    gdouble val = gtk_spin_button_get_value(widget);
+    if (val == view->inner.last_shown.gen_maze_h)
+        return;
+    view->inner.gen_maze_h = val;
+}
+
+G_MODULE_EXPORT void handle_generate_eller(GtkWidget* widget, MgGtkView* view) {
+    MgController_create_maze_eller(view->controller, view->inner.gen_maze_w, view->inner.gen_maze_h);
+    MgGtkViewInner_upload_maze_to_gpu(&view->inner);
+}
+G_MODULE_EXPORT void handle_generate_empty(GtkWidget* widget, MgGtkView* view) {
+    MgController_create_maze_empty(view->controller, view->inner.gen_maze_w, view->inner.gen_maze_h);
+    MgGtkViewInner_upload_maze_to_gpu(&view->inner);
+}
+G_MODULE_EXPORT void handle_generate_cropped(GtkWidget* widget, MgGtkView* view) {
+    
 }

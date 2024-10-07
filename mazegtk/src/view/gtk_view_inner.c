@@ -30,14 +30,6 @@ MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* res
 
     // Upload mipmaps to GPU
     MazeSsbo maze_ssbo = MazeSsbo_create();
-    MgMazeController* maze = MgController_get_maze(controller, 0);
-    MazeSsbo_upload(
-        &maze_ssbo, 
-        MgMazeController_width(maze), 
-        MgMazeController_height(maze), 
-        MgMazeController_data_size(maze), 
-        MgMazeController_data_buffer(maze)
-    );
 
     // Return sucess
     MgGtkViewInner inner = (MgGtkViewInner){
@@ -55,8 +47,26 @@ MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* res
         .msaa_coef = 4.0,
         .drag_sensitivity = 1.0,
         .zoom_speed = 1.25,
+
+        .gen_maze_w = 128,
+        .gen_maze_h = 128,
     };
+
+    MgGtkViewInner_upload_maze_to_gpu(&inner);
+
     return (MgGtkViewInnerResult) OK(inner);
+}
+
+void MgGtkViewInner_upload_maze_to_gpu(MgGtkViewInner* view_inner) {
+    MgMazeController* maze = MgController_get_maze(view_inner->controller);
+    MazeSsbo_upload(
+        &view_inner->maze_ssbo, 
+        MgMazeController_width(maze), 
+        MgMazeController_height(maze), 
+        MgMazeController_data_size(maze), 
+        MgMazeController_data_buffer(maze)
+    );
+    
 }
 
 void MgGtkViewInner_free(MgGtkViewInner view_inner) {

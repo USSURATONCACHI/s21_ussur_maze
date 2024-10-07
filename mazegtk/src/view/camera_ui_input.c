@@ -33,7 +33,7 @@ G_MODULE_EXPORT void handle_cam_zoom_value_changed(GtkSpinButton* widget, MgGtkV
 }
 
 G_MODULE_EXPORT void handle_reset_camera(GtkSpinButton* widget, MgGtkView* view) {
-    MgMazeController* maze = MgController_get_maze(view->controller, 0);
+    MgMazeController* maze = MgController_get_maze(view->controller);
     size_t width = MgMazeController_width(maze);
     size_t height = MgMazeController_height(maze);
 

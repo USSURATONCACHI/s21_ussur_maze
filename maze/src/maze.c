@@ -18,9 +18,15 @@
 #undef VECTOR_IMPLEMENTATION
 #undef VECTOR_ITEM_TYPE
 
+
+static size_t get_buffer_size(size_t w, size_t h) {
+    size_t size_bits = w * h * 2; // each cell is 2 bits
+    size_t size_bytes = ((size_bits + 31) / 32) * 4; // pad to 4 bytes
+    return size_bytes;
+}
+
 MzMaze mz_maze_create(size_t width, size_t height) {
-    size_t size_bits = width * height * 2; // each cell is 2 bits
-    size_t size_bytes = (size_bits + 7) / 8;
+    size_t size_bytes = get_buffer_size(width, height);
     
     uint8_t* data = (uint8_t*) calloc(size_bytes, 1);
     assert_alloc(data);
@@ -33,9 +39,7 @@ MzMaze mz_maze_create(size_t width, size_t height) {
 }
 
 size_t mz_maze_get_buffer_size(const MzMaze* maze) {
-    size_t size_bits = maze->width * maze->height * 2; // each cell is 2 bits
-    size_t size_bytes = (size_bits + 7) / 8;
-    return size_bytes;
+    return get_buffer_size(maze->width, maze->height);
 }
 
 void mz_maze_free(MzMaze maze) {
