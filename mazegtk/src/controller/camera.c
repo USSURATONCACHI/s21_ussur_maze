@@ -72,7 +72,7 @@ void MgCameraController_set_drag_sens(MgCameraController* self, long double s) {
 }
 void MgCameraController_set_zoom_sens(MgCameraController* self, long double s) {
     BcstdCamera* camera = (void*)self;
-    BcstdCamera_set_vel_zoom(camera, s);
+    camera->zoom_sensitivity = s;
 }
 void MgCameraController_reset_camera(MgCameraController* self) {
     unused(self);

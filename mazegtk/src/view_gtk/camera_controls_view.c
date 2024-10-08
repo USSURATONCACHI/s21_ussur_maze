@@ -1,4 +1,5 @@
 #include <mazegtk/view_gtk/camera_controls_view.h>
+#include <mazegtk/view_gtk/ui_update_macros.h>
 #include <mazegtk/util/common_macros.h>
 #include <better_c_std/prettify.h>
 
@@ -43,6 +44,15 @@ void MgCameraControlsView_free(MgCameraControlsView* view) {
     if (view->reset_btn) g_signal_handlers_disconnect_by_data(view->reset_btn, view);
 
     free(view);
+}
+
+void MgCameraControlsView_update_ui(MgCameraControlsView* view) {
+    MgVector2 cam_pos = MgCameraController_get_pos(view->controller);
+    long double cam_zoom = MgCameraController_get_zoom(view->controller);
+
+    UPDATE_SPINBTN_GDOUBLE(view->x_btn,    view->last_shown.cam_x, cam_pos.x);
+    UPDATE_SPINBTN_GDOUBLE(view->y_btn,    view->last_shown.cam_y, cam_pos.y);
+    UPDATE_SPINBTN_GDOUBLE(view->zoom_btn, view->last_shown.zoom,  cam_zoom);
 }
 
 // ==

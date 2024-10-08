@@ -24,4 +24,6 @@ typedef struct {
 MgCameraControlsView* MgCameraControlsView_create(GtkBuilder* ui, MgCameraController* controller);
 void MgCameraControlsView_free(MgCameraControlsView* view);
 
+void MgCameraControlsView_update_ui(MgCameraControlsView* view);
+
 #endif // MAZEGTK_VIEW_GTK_CAMERA_CONTROLS_VIEW_H_

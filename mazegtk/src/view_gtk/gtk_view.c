@@ -97,3 +97,20 @@ G_MODULE_EXPORT void handle_generate_cropped(GtkWidget* widget, MgGtkView* view)
     unused(widget);
     unused(view);
 }
+
+
+
+G_MODULE_EXPORT gboolean dont_scroll_unless_focused(GtkWidget *widget) {
+    if (gtk_widget_is_focus(widget)) {
+        return FALSE;
+    } else {
+        g_signal_stop_emission_by_name(widget, "scroll-event");
+        return FALSE;
+    }
+}
+
+G_MODULE_EXPORT gboolean handle_grab_focus(GtkWidget* widget) { 
+    debugln(__PRETTY_FUNCTION__);
+    gtk_widget_grab_focus(GTK_WIDGET(widget));
+    return FALSE; 
+}

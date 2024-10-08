@@ -15,9 +15,9 @@
     <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment_cam_zoom">
-    <property name="lower">-1000</property>
+    <property name="lower">-100</property>
     <property name="upper">100</property>
-    <property name="step-increment">0.10</property>
+    <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="adjustment_drag_sensitivity">
@@ -43,9 +43,9 @@
     <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment_zoom_speed">
-    <property name="lower">1</property>
+    <property name="lower">-100</property>
     <property name="upper">100</property>
-    <property name="step-increment">0.01</property>
+    <property name="step-increment">0.5</property>
     <property name="page-increment">10</property>
   </object>
   <object class="GtkWindow" id="main_window">
@@ -79,8 +79,10 @@
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
                         <property name="margin-end">20</property>
                         <property name="orientation">vertical</property>
+                        <signal name="button-press-event" handler="handle_grab_focus" swapped="no"/>
                         <child>
                           <object class="GtkExpander">
                             <property name="visible">True</property>
@@ -265,6 +267,7 @@
                           <object class="GtkExpander">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="has-focus">True</property>
                             <property name="margin-top">15</property>
                             <property name="expanded">True</property>
                             <child>
@@ -293,6 +296,7 @@
                                     <property name="adjustment">adjustment_gen_maze_width</property>
                                     <property name="climb-rate">10</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_gen_maze_width_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -310,6 +314,7 @@
                                     <property name="adjustment">adjustment_gen_maze_height</property>
                                     <property name="climb-rate">10</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_gen_maze_height_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -418,6 +423,7 @@
                                     <property name="digits">5</property>
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_cam_pos_x_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -438,6 +444,7 @@
                                     <property name="digits">5</property>
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_cam_pos_y_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -470,6 +477,7 @@
                                     <property name="digits">5</property>
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_cam_zoom_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -546,6 +554,7 @@
                                     <property name="digits">5</property>
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_drag_sensitivity_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -575,6 +584,7 @@
                                     <property name="digits">5</property>
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_zoom_speed_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -651,6 +661,7 @@
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">4</property>
+                                    <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
                                     <signal name="value-changed" handler="handle_msaa_coef_value_changed" swapped="no"/>
                                   </object>
                                   <packing>

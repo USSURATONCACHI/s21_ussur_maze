@@ -59,11 +59,9 @@ static void h_drag_sensitivity_changed(GtkSpinButton* widget, MgCameraSettingsVi
 // Zoom speed changed
 static void h_zoom_speed_changed(GtkSpinButton* widget, MgCameraSettingsView* view) {
     gdouble val = gtk_spin_button_get_value(widget);
-    debugln("%lf (against %lf)", val, view->last_shown.zoom_speed);
     if (val == view->last_shown.zoom_speed)
         return;
 
-    debugln("Setting the zoom sensitivity");
     MgCameraController_set_zoom_sens(view->controller, val);
 }
 
