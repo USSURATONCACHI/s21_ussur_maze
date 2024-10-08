@@ -1,6 +1,6 @@
-#include <mazegtk/view/gtk_view_inner.h>
+#include <mazegtk/view_gtk/gtk_view_inner.h>
 #include <mazegtk/util/common_macros.h>
-#include <mazegtk/util/result.h>
+#include <better_c_std/result.h>
 
 #include <better_c_std/prettify.h>
 
@@ -45,8 +45,6 @@ MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* res
         .fb_height     = 1000,
 
         .msaa_coef = 4.0,
-        .drag_sensitivity = 1.0,
-        .zoom_speed = 1.25,
 
         .gen_maze_w = 128,
         .gen_maze_h = 128,

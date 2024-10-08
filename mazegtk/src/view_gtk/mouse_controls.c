@@ -1,4 +1,4 @@
-#include <mazegtk/view/gtk_view.h>
+#include <mazegtk/view_gtk/gtk_view.h>
 #include <gtk/gtk.h>
 #include <math.h>
 
@@ -46,11 +46,10 @@ G_MODULE_EXPORT void handle_gl_area_motion(GtkGLArea* gl_area, GdkEventMotion* e
         view->inner.prev_x = x;
         view->inner.prev_y = y;
 
-        double drag_sens = view->inner.drag_sensitivity;
 
         MgCameraController* camera = MgController_get_camera(view->controller);
-        float cell_size = powf(view->inner.zoom_speed, MgCameraController_zoom(camera));
-        MgCameraController_on_drag(camera, (MgVector2) { -dx * drag_sens / cell_size, -dy * drag_sens / cell_size });
+        long double cell_size = MgCameraController_get_cell_size(camera);
+        MgCameraController_on_drag(camera, (MgVector2) { -dx / cell_size, -dy / cell_size });
     }
 }
 

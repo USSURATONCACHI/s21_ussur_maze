@@ -9,7 +9,9 @@ extern "C" {
 }
 
 TEST(MzMaze, Create) {
-    MzMaze maze = mz_maze_create(150, 151);
+    MzMazeResult res = mz_maze_create(150, 151);
+    ASSERT_TRUE(res.is_ok);
+    MzMaze maze = res.ok;
 
     EXPECT_EQ(maze.width, 150);
     EXPECT_EQ(maze.height, 151);
@@ -19,7 +21,9 @@ TEST(MzMaze, Create) {
 
 
 TEST(MzMaze, WritePersists) {
-    MzMaze maze = mz_maze_create(2, 2);
+    MzMazeResult res = mz_maze_create(2, 2);
+    ASSERT_TRUE(res.is_ok);
+    MzMaze maze = res.ok;
 
     for (size_t x = 0; x < maze.width; x++) {
         for (size_t y = 0; y < maze.height; y++) {
@@ -41,7 +45,9 @@ TEST(MzMaze, WritePersists) {
 }
 
 TEST(MzMaze, Print) {
-    MzMaze maze = mz_maze_create(9, 4);
+    MzMazeResult res = mz_maze_create(9, 4);
+    ASSERT_TRUE(res.is_ok);
+    MzMaze maze = res.ok;
 
     mz_maze_set_at(&maze, 1, 1, (MzCell) {
         .top_wall = true,
@@ -60,7 +66,9 @@ TEST(MzMaze, Print) {
 }
 
 TEST(MzMaze, Directions) {
-    MzMaze maze = mz_maze_create(9, 4);
+    MzMazeResult res = mz_maze_create(9, 4);
+    ASSERT_TRUE(res.is_ok);
+    MzMaze maze = res.ok;
 
     mz_maze_set_at(&maze, 1, 1, (MzCell) {
         .top_wall = true,
@@ -85,7 +93,10 @@ TEST(MzMaze, Directions) {
 }
 
 TEST(MzMaze, Random) {
-    MzMaze maze = mz_maze_create(9, 6);
+    MzMazeResult res = mz_maze_create(9, 6);
+    ASSERT_TRUE(res.is_ok);
+    MzMaze maze = res.ok;
+
     srand(time(NULL));
     mz_maze_fill_random(&maze);
     mz_maze_print(&maze);

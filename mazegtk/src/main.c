@@ -1,6 +1,6 @@
-#include <mazegtk/model/camera.h>
+#include <better_c_std/camera/camera.h>
 #include <mazegtk/controller/camera.h>
-#include <mazegtk/view/gtk_view.h>
+#include <mazegtk/view_gtk/gtk_view.h>
 #include <better_c_std/prettify.h>
 
 

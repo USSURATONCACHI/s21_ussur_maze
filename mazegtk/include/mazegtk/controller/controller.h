@@ -14,9 +14,14 @@ void MgController_free(MgController* controller);
 MgMazeController* MgController_get_maze(MgController* self);
 MgCameraController* MgController_get_camera(MgController* self);
 
-void MgController_create_maze_empty(MgController* self, size_t maze_width, size_t maze_height);
-void MgController_create_maze_eller(MgController* self, size_t maze_width, size_t maze_height);
-void MgController_create_maze_random(MgController* self, size_t maze_width, size_t maze_height);
+typedef enum {
+    MG_SUCCESS,
+    MG_NOT_ENOUGH_MEMORY,
+} MgCreateError; 
+
+MgCreateError MgController_create_maze_empty(MgController* self, size_t maze_width, size_t maze_height);
+MgCreateError MgController_create_maze_eller(MgController* self, size_t maze_width, size_t maze_height);
+MgCreateError MgController_create_maze_random(MgController* self, size_t maze_width, size_t maze_height);
 
 
 #endif // MAZEGTK_CONTROLLER_CONTROLLER_H_

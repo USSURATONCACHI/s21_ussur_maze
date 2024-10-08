@@ -1,5 +1,5 @@
-#include <mazegtk/view/gtk_view.h>
-#include <mazegtk/util/result.h>
+#include <mazegtk/view_gtk/gtk_view.h>
+#include <better_c_std/result.h>
 #include <mazegtk/util/common_macros.h>
 #include <better_c_std/prettify.h>
 

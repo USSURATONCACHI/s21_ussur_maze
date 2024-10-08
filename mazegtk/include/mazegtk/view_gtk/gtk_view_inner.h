@@ -2,8 +2,8 @@
 #define MAZEGTK_VIEW_GTK_VIEW_INNER_H_
 
 #include <mazegtk/controller/controller.h>
-#include <mazegtk/util/result.h>
-#include <mazegtk/view/maze_ssbo.h>
+#include <better_c_std/result.h>
+#include <mazegtk/view_gtk/maze_ssbo.h>
 #include <opengl_utils/gl_program.h>
 #include <opengl_utils/mesh.h>
 #include <opengl_utils/framebuffer.h>
@@ -27,8 +27,6 @@ typedef struct {
     // For camera & camera controls
     bool is_dragging;
     int prev_x, prev_y; // can be uninitialized
-    double drag_sensitivity;
-    double zoom_speed;
 
     // For maze generation
     size_t gen_maze_w, gen_maze_h;
@@ -44,12 +42,22 @@ typedef struct {
 
         size_t gen_maze_w, gen_maze_h;
     } last_shown;
+
+    // For off-thread maze generation
+    struct {
+        size_t threads_count;
+        pthread_t* threads;
+        bool should_cancel;
+
+    } thread_gen;
 } MgGtkViewInner;
 
 typedef STRUCT_RESULT(MgGtkViewInner, GError*) MgGtkViewInnerResult;
 
 MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* resource);
 void MgGtkViewInner_free(MgGtkViewInner view_inner);
+
+void MgGtkViewInner_thread_gen_eller();
 
 void MgGtkViewInner_upload_maze_to_gpu(MgGtkViewInner* view_inner);
 

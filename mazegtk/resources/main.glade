@@ -52,8 +52,6 @@
     <property name="can-focus">False</property>
     <property name="default-width">600</property>
     <property name="default-height">400</property>
-    <signal name="drag-leave" handler="mg_maze_app_handle_drag_leave" swapped="no"/>
-    <signal name="drag-motion" handler="mg_maze_app_handle_drag_move" swapped="no"/>
     <child>
       <object class="GtkStack" id="main_stack">
         <property name="visible">True</property>
@@ -481,7 +479,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="reset_camera">
                                     <property name="label" translatable="yes">Reset camera</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -503,7 +501,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Camera</property>
+                                <property name="label" translatable="yes">Camera controls</property>
                                 <style>
                                   <class name="h2"/>
                                 </style>
@@ -586,7 +584,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="cam_settings_reset">
                                     <property name="label" translatable="yes">Reset to default</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -608,7 +606,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Camera controls</property>
+                                <property name="label" translatable="yes">Camera settings</property>
                                 <style>
                                   <class name="h2"/>
                                 </style>
@@ -708,6 +706,7 @@
                 <signal name="motion-notify-event" handler="handle_gl_area_motion" swapped="no"/>
                 <signal name="realize" handler="mg_maze_app_handle_gl_realize" swapped="no"/>
                 <signal name="render" handler="mg_maze_app_handle_render_gl" swapped="no"/>
+                <signal name="render" handler="mg_maze_app_handle_update_ui" swapped="no"/>
                 <signal name="scroll-event" handler="handle_gl_area_scroll" swapped="no"/>
                 <signal name="unrealize" handler="mg_maze_app_handle_gl_unrealize" swapped="no"/>
               </object>
@@ -734,7 +733,7 @@
             <property name="ratio">0.8500000238418579</property>
             <child>
               <!-- n-columns=1 n-rows=1 -->
-              <object class="GtkGrid" id="loading_box">
+              <object class="GtkGrid" id="loading_box1">
                 <property name="width-request">200</property>
                 <property name="height-request">60</property>
                 <property name="visible">True</property>
@@ -742,7 +741,7 @@
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <child>
-                  <object class="GtkLabel" id="loading_ui_text">
+                  <object class="GtkLabel" id="loading_ui_text1">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
@@ -779,6 +778,84 @@
             <property name="name">page1</property>
             <property name="title" translatable="yes">page1</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkAspectFrame" id="error_ui">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label-xalign">0.5</property>
+            <property name="shadow-type">none</property>
+            <property name="ratio">0.8500000238418579</property>
+            <child>
+              <!-- n-columns=1 n-rows=2 -->
+              <object class="GtkGrid">
+                <property name="width-request">400</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="hexpand">True</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="stock">gtk-dialog-error</property>
+                        <property name="icon_size">6</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="error_text_label">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="label" translatable="yes">Error encountered</property>
+                        <attributes>
+                          <attribute name="font-desc" value="Sans 16"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="label" translatable="yes">Continue</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="hexpand">False</property>
+                    <signal name="clicked" handler="handle_error_continue" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">page3</property>
+            <property name="title" translatable="yes">page3</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>

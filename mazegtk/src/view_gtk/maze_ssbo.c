@@ -1,5 +1,5 @@
 #include <epoxy/gl.h>
-#include <mazegtk/view/maze_ssbo.h>
+#include <mazegtk/view_gtk/maze_ssbo.h>
 
 MazeSsbo MazeSsbo_create() {
     GLuint buffers[2];

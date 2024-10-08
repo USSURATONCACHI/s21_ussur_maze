@@ -1,10 +1,7 @@
-#include <mazegtk/view/gtk_view.h>
-#include <mazegtk/view/gtk_view_inner.h>
+#include <gtk/gtk.h>
+#include <mazegtk/view_gtk/gtk_view.h>
 #include <math.h>
 
-#include <better_c_std/prettify.h>
-
-static void update_camera_ui(GtkGLArea* gl_area, MgGtkView* view);
 static void resize_framebuffer(GtkGLArea* gl_area, MgGtkView* view);
 
 static void generate_fb_mipmaps(MgGtkView* view);
@@ -14,11 +11,11 @@ static void render_pass_post_proc(GtkGLArea* gl_area, MgGtkView* view);
 
 
 G_MODULE_EXPORT void mg_maze_app_handle_render_gl(GtkGLArea* gl_area, GdkGLContext* context, MgGtkView* view) {
+    mg_maze_app_handle_update_ui(gl_area, context, view);
     unused(context);
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(gl_area));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(gl_area));
 
-    update_camera_ui(gl_area, view);
     resize_framebuffer(gl_area, view);
 
     // Render pass 1 : to internal framebuffer
@@ -65,9 +62,8 @@ static void render_pass_main(GtkGLArea* gl_area, MgGtkView* view) {
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(gl_area));
 
     MgCameraController* camera = MgController_get_camera(view->controller);
-    MgVector2 cam_pos = MgCameraController_pos(camera);
-    float cam_zoom = MgCameraController_zoom(camera);
-    float cell_size = powf(view->inner.zoom_speed, cam_zoom);
+    MgVector2 cam_pos = MgCameraController_get_pos(camera);
+    float cell_size = MgCameraController_get_cell_size(camera);
     
     GLint loc_screen_width = glGetUniformLocation(view->inner.main_shader.program, "u_screen_size");
     GLint loc_cell_size    = glGetUniformLocation(view->inner.main_shader.program, "u_cell_size_pix");
@@ -99,69 +95,3 @@ static void render_pass_post_proc(GtkGLArea* gl_area, MgGtkView* view) {
     mesh_draw(view->inner.fullscreen_mesh);
 }
 
-
-#define UPDATE_GDOUBLE(builder, name, last_shown_var, new_value) \
-    {                                                                                             \
-        GtkSpinButton* updating_btn = GTK_SPIN_BUTTON(gtk_builder_get_object((builder), (name))); \
-        if (updating_btn && !gtk_widget_is_focus(GTK_WIDGET(updating_btn))) {                     \
-            (last_shown_var) = (new_value);                                                       \
-            gtk_spin_button_set_value(updating_btn, (last_shown_var));                            \
-        }                                                                                         \
-    }                                                                                             \
-    //;
-
-static void update_camera_ui(GtkGLArea* gl_area, MgGtkView* view) {
-    unused(gl_area);
-    MgCameraController* camera = MgController_get_camera(view->controller);
-    MgVector2 cam_pos = MgCameraController_pos(camera);
-    float cam_zoom = MgCameraController_zoom(camera);
-
-    UPDATE_GDOUBLE(view->builder, "cam_pos_x", view->inner.last_shown.cam_x, cam_pos.x);
-    UPDATE_GDOUBLE(view->builder, "cam_pos_y", view->inner.last_shown.cam_y, cam_pos.y);
-    UPDATE_GDOUBLE(view->builder, "cam_zoom",  view->inner.last_shown.zoom, cam_zoom);
-
-    UPDATE_GDOUBLE(view->builder, "drag_sensitivity", view->inner.last_shown.drag_sensitivity, view->inner.drag_sensitivity);
-    UPDATE_GDOUBLE(view->builder, "zoom_speed", view->inner.last_shown.zoom_speed, view->inner.zoom_speed);
-
-    UPDATE_GDOUBLE(view->builder, "msaa_coef", view->inner.last_shown.msaa_coef, view->inner.msaa_coef);
-
-    UPDATE_GDOUBLE(view->builder, "gen_maze_width", view->inner.last_shown.gen_maze_w, view->inner.gen_maze_w);
-    UPDATE_GDOUBLE(view->builder, "gen_maze_height", view->inner.last_shown.gen_maze_h, view->inner.gen_maze_h);
-
-}
-
-G_MODULE_EXPORT void handle_msaa_coef_value_changed(GtkSpinButton* widget, MgGtkView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->inner.last_shown.msaa_coef)
-        return;
-    view->inner.msaa_coef = val;
-}
-G_MODULE_EXPORT void handle_gen_maze_width_value_changed(GtkSpinButton* widget, MgGtkView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->inner.last_shown.gen_maze_w)
-        return;
-    view->inner.gen_maze_w = val;
-}
-G_MODULE_EXPORT void handle_gen_maze_height_value_changed(GtkSpinButton* widget, MgGtkView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->inner.last_shown.gen_maze_h)
-        return;
-    view->inner.gen_maze_h = val;
-}
-
-G_MODULE_EXPORT void handle_generate_eller(GtkWidget* widget, MgGtkView* view) {
-    unused(widget);
-    MgController_create_maze_eller(view->controller, view->inner.gen_maze_w, view->inner.gen_maze_h);
-
-
-    MgGtkViewInner_upload_maze_to_gpu(&view->inner);
-}
-G_MODULE_EXPORT void handle_generate_empty(GtkWidget* widget, MgGtkView* view) {
-    unused(widget);
-    MgController_create_maze_empty(view->controller, view->inner.gen_maze_w, view->inner.gen_maze_h);
-    MgGtkViewInner_upload_maze_to_gpu(&view->inner);
-}
-G_MODULE_EXPORT void handle_generate_cropped(GtkWidget* widget, MgGtkView* view) {
-    unused(widget);
-    unused(view);
-}

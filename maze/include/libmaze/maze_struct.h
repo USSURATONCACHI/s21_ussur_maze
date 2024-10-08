@@ -10,7 +10,12 @@ typedef struct {
     size_t height;
 } MzMaze;
 
-#define VECTOR_H MzMaze
-#include <better_c_std/vector.h> 
+#include <better_c_std/result.h>
+
+typedef enum {
+    NOT_ENOUGH_MEMORY,
+} MzError;
+
+typedef STRUCT_RESULT(MzMaze, MzError) MzMazeResult;
 
 #endif // LIBMAZE_MAZE_STRUCT_H_

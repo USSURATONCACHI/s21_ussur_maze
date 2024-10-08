@@ -1,5 +1,5 @@
-#include <mazegtk/view/gtk_view.h>
-#include <mazegtk/util/result.h>
+#include <mazegtk/view_gtk/gtk_view.h>
+#include <better_c_std/result.h>
 #include <mazegtk/util/common_macros.h>
 #include <better_c_std/prettify.h>
 #include <pthread.h>
@@ -41,15 +41,32 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
 
             // BUILDER
             view->builder = gtk_builder_new_from_resource("/org/ussur/mazegtk/main.glade");
-            if (view->builder == NULL) {
+            if (view->builder == NULL)
                 result = (MgGtkViewResult) ERR(GERROR_NEW("failed to create GtkBuilder"));
-            } else {
+            else
                 result = (MgGtkViewResult) OK(view);
-            }
         }
     }
     if (!result.is_ok)
         MgGtkView_free(view);
+
+    view->camera_controls = MgCameraControlsView_create(view->builder, MgController_get_camera(view->controller));  
+    view->camera_settings = MgCameraSettingsView_create(view->builder, MgController_get_camera(view->controller));  
+    MgDropdownViewResult dropdown_res = MgDropdownView_create(view->builder, view->controller);
+    if (dropdown_res.is_ok) {
+        view->dropdown = dropdown_res.ok;
+    } else {
+        debugln("Skibussy sigma error: [%s][%d] %s", g_quark_to_string(dropdown_res.error->domain), dropdown_res.error->code, dropdown_res.error->message);
+        g_error_free(dropdown_res.error);
+    }
+    
+    MgGrabbyCursorViewResult grabby_cursor_res = MgGrabbyCursorView_create(view->builder, "gl_area");
+    if (grabby_cursor_res.is_ok) {
+        view->grabby_cursor_view = grabby_cursor_res.ok;
+    } else {
+        debugln("Skibussy sigma error: [%s][%d] %s", g_quark_to_string(grabby_cursor_res.error->domain), grabby_cursor_res.error->code, grabby_cursor_res.error->message);
+        g_error_free(grabby_cursor_res.error);
+    }
 
     // Run GTK app in other thread (because run function is blocking)
     ThreadArg* thread_arg = (ThreadArg*)malloc(sizeof(ThreadArg));
@@ -89,6 +106,11 @@ static void app_run_function(ThreadArg* arg_heap) {
 }
 
 void MgGtkView_free(MgGtkView* view) {
+    MgCameraControlsView_free(view->camera_controls);  view->camera_controls    = NULL;
+    MgCameraSettingsView_free(view->camera_settings);  view->camera_settings    = NULL;
+    MgDropdownView_free(view->dropdown);               view->dropdown           = NULL;
+    MgGrabbyCursorView_free(view->grabby_cursor_view); view->grabby_cursor_view = NULL;
+
     if (view->app && G_IS_APPLICATION(view->app))
         g_application_quit(G_APPLICATION(view->app));
 
@@ -137,10 +159,6 @@ static void handle_activate(void* couldnt_care_less, MgGtkView* view) {
         MgGtkView_fail_with_error(view, GERROR_NEW("UI does not have a `main_window` widget"));
         return;
     }
-
-    // Allow dropdown
-    const GtkTargetEntry target_entries[] = {{ .target = "text/uri-list", 0, 0 }};
-    gtk_drag_dest_set(GTK_WIDGET(window), GTK_DEST_DEFAULT_ALL, target_entries, G_N_ELEMENTS(target_entries), GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
     // Show window
     g_signal_connect(window, "destroy", G_CALLBACK(handle_destroy), view);

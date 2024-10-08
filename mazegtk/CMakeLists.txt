@@ -7,28 +7,25 @@ pkg_check_modules(Epoxy REQUIRED epoxy)
 add_executable(s21_ussur_mazegtk
     src/main.c
     
-    src/model/camera.c
     src/model/model.c
     
     src/controller/camera.c
     src/controller/controller.c
     src/controller/maze.c
 
-    src/view/gtk_view_create.c
-    src/view/gtk_view_gl_area.c
-    src/view/gtk_view_inner.c
-    src/view/gtk_view.c
-    src/view/maze_ssbo.c
     
-    src/view/camera_controls_input.c
-    src/view/camera_ui_input.c
-    src/view/dropdown_controls.c
-    src/view/grabby_cursor.c
-    src/view/mouse_controls.c
-
-
-    src/util/vec_g_error.c
-    src/util/error_list.c
+    src/view_gtk/camera_controls_view.c
+    src/view_gtk/camera_settings_view.c
+    src/view_gtk/dropdown_view.c
+    src/view_gtk/grabby_cursor_view.c
+    src/view_gtk/gtk_view_create.c
+    src/view_gtk/gtk_view_gl_area.c
+    src/view_gtk/gtk_view_inner.c
+    src/view_gtk/gtk_view.c
+    src/view_gtk/maze_ssbo.c
+    src/view_gtk/mouse_controls.c
+    src/view_gtk/render.c
+    src/view_gtk/update_ui.c
 )
 
 target_include_directories(s21_ussur_mazegtk PRIVATE ${GTK3_INCLUDE_DIRS})

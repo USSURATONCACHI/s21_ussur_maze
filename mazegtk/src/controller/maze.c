@@ -1,5 +1,5 @@
 #include <mazegtk/controller/maze.h>
-#include <mazegtk/model/camera.h>
+#include <better_c_std/camera/camera.h>
 #include <better_c_std/prettify.h>
 
 #include <libmaze/maze.h>
