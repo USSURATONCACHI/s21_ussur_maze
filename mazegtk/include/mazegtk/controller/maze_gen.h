@@ -4,10 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <libmaze/maze_struct.h>
+#include <mazegtk/controller/maze.h>
 
 typedef struct MgMazeGenController MgMazeGenController;
 
-MgMazeGenController* MgMazeGenController_new(MzMaze* maze);
+MgMazeGenController* MgMazeGenController_new(MgMazeController* maze_controller); // depends on another controller
 void MgMazeGenController_free(MgMazeGenController* controller);
 
 void MgMazeGenController_gen_eller(MgMazeGenController* self);

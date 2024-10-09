@@ -4,26 +4,52 @@
 
 #include <libmaze/maze.h>
 
+struct MgMazeController {
+    MzMaze* maze;
+    size_t maze_update_id;
+    size_t last_maze_check_id;
+};
+
 MgMazeController* MgMazeController_new(MzMaze* maze) {
-    return (MgMazeController*)maze;
+    MgMazeController* controller = (void*) malloc(sizeof(MgMazeController));
+    assert_alloc(controller);
+
+    *controller = (MgMazeController) {
+        .maze = maze,
+        .maze_update_id = 0,
+        .last_maze_check_id = 0,
+    };
+
+    return controller;
 }
 void MgMazeController_free(MgMazeController* controller) {
-    unused(controller);
+    free(controller);
 }
 
-uint8_t* MgMazeController_data_buffer(MgMazeController* self_in) {
-    MzMaze* maze = (void*)self_in;
-    return maze->raw_data;
+void MgMazeController_set_maze(MgMazeController* self, MzMaze new_maze) {
+    mz_maze_free(*self->maze);
+    *self->maze = new_maze;
+    self->maze_update_id++;
 }
-size_t MgMazeController_data_size(MgMazeController* self_in) {
-    MzMaze* maze = (void*)self_in;
-    return mz_maze_get_buffer_size(maze);
+MzMaze* MgMazeController_get_maze(MgMazeController* self) {
+    return self->maze;
 }
-size_t MgMazeController_width(MgMazeController* self_in) {
-    MzMaze* maze = (void*)self_in;
-    return maze->width;
+bool MgMazeController_was_maze_updated(const MgMazeController* self) {
+    return self->maze_update_id > self->last_maze_check_id;
 }
-size_t MgMazeController_height(MgMazeController* self_in) {
-    MzMaze* maze = (void*)self_in;
-    return maze->height;
+void MgMazeController_maze_was_updated(MgMazeController* self) {
+    self->last_maze_check_id = self->maze_update_id;
+}
+
+uint8_t* MgMazeController_data_buffer(MgMazeController* self) {
+    return self->maze->raw_data;
+}
+size_t MgMazeController_data_size(MgMazeController* self) {
+    return mz_maze_get_buffer_size(self->maze);
+}
+size_t MgMazeController_width(MgMazeController* self) {
+    return self->maze->width;
+}
+size_t MgMazeController_height(MgMazeController* self) {
+    return self->maze->height;
 }

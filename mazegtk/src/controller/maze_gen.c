@@ -3,19 +3,19 @@
 #include <libmaze/maze.h>
 
 struct MgMazeGenController {
-    MzMaze* maze;
+    MgMazeController* maze_ctl;
     size_t gen_width;
     size_t gen_height;
 };
 
-MgMazeGenController* MgMazeGenController_new(MzMaze* maze) {
-    assert_m(maze != NULL);
+MgMazeGenController* MgMazeGenController_new(MgMazeController* maze_controller) {
+    assert_m(maze_controller != NULL);
 
     MgMazeGenController* controller = (void*)malloc(sizeof(MgMazeGenController));
     assert_alloc(controller);
 
     *controller = (MgMazeGenController) {
-        .maze = maze,
+        .maze_ctl = maze_controller,
         .gen_width = 10,
         .gen_height = 10,
     };
@@ -31,10 +31,8 @@ void MgMazeGenController_free(MgMazeGenController* controller) {
 
 void MgMazeGenController_gen_eller(MgMazeGenController* self) {
     MzMazeResult res = mz_maze_generate_perfect_eller(self->gen_width, self->gen_height);
-
     if (res.is_ok) {
-        mz_maze_free(*self->maze);
-        *self->maze = res.ok;
+        MgMazeController_set_maze(self->maze_ctl, res.ok);
     } else {
         debugln("TODO: err %d", res.error);
     }
@@ -43,19 +41,18 @@ void MgMazeGenController_gen_empty(MgMazeGenController* self) {
     MzMazeResult res = mz_maze_create(self->gen_width, self->gen_height);
 
     if (res.is_ok) {
-        mz_maze_free(*self->maze);
-        *self->maze = res.ok;
+        MgMazeController_set_maze(self->maze_ctl, res.ok);
     } else {
         debugln("TODO: err %d", res.error);
     }
 
 }
 void MgMazeGenController_gen_crop(MgMazeGenController* self) {
-    MzMazeResult res = mz_maze_crop_to_size(self->maze, self->gen_width, self->gen_height);
+    MzMaze* maze = MgMazeController_get_maze(self->maze_ctl);
+    MzMazeResult res = mz_maze_crop_to_size(maze, self->gen_width, self->gen_height);
 
     if (res.is_ok) {
-        mz_maze_free(*self->maze);
-        *self->maze = res.ok;
+        MgMazeController_set_maze(self->maze_ctl, res.ok);
     } else {
         debugln("TODO: err %d", res.error);
     }

@@ -10,9 +10,16 @@ typedef struct MgMazeController MgMazeController;
 MgMazeController* MgMazeController_new(MzMaze* maze);
 void MgMazeController_free(MgMazeController* controller);
 
+bool MgMazeController_was_maze_updated(const MgMazeController* self);
+void MgMazeController_maze_was_updated(MgMazeController* self);
+
 uint8_t* MgMazeController_data_buffer(MgMazeController* self);
 size_t   MgMazeController_data_size  (MgMazeController* self);
 size_t   MgMazeController_width      (MgMazeController* self);
 size_t   MgMazeController_height     (MgMazeController* self);
+
+// For inter-controller use
+void MgMazeController_set_maze(MgMazeController* self, MzMaze new_maze);
+MzMaze* MgMazeController_get_maze(MgMazeController* self);
 
 #endif // MAZEGTK_CONTROLLER_MAZE_H_
