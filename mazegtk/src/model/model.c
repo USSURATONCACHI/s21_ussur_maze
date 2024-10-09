@@ -34,5 +34,4 @@ void MgModel_reset_camera(MgModel* self) {
 void MgModel_reset_camera_settings(MgModel* self) {
     self->camera.drag_sensitivity = (BcstdVec2) { 1.0, 1.0 };
     self->camera.zoom_sensitivity = 4.0;
-
 }

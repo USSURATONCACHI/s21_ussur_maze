@@ -3,6 +3,7 @@
 
 // #include <better_c_std/camera/vec23.h>
 #include <better_c_std/camera/camera.h>
+#include <mazegtk/model/model.h>
 #include <mazegtk/util/vector2.h>
 
 // Opaque pointers are used instead of full defined structs to
@@ -10,7 +11,8 @@
 // This way, internals are simply inaccessible.
 typedef struct MgCameraController MgCameraController;
 
-MgCameraController* MgCameraController_new(BcstdCamera* model_ref);
+// `MgModel*` is needed purely to reset settings when requested
+MgCameraController* MgCameraController_new(BcstdCamera* camera, MgModel* model);
 void MgCameraController_free(MgCameraController* controller);
 
 // Getters

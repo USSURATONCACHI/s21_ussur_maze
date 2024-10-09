@@ -19,7 +19,7 @@ MgController* MgController_new(MgModel* model_ref) {
 
     *cont = (MgController) {
         .model = model_ref,
-        .camera_controller   = MgCameraController_new(&model_ref->camera),
+        .camera_controller   = MgCameraController_new(&model_ref->camera, model_ref),
         .maze_controller     = MgMazeController_new(&model_ref->maze),
         .maze_gen_controller = NULL,
     };
