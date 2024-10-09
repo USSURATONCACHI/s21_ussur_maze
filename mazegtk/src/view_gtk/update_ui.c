@@ -13,23 +13,7 @@ G_MODULE_EXPORT void mg_maze_app_handle_update_ui(GtkGLArea* gl_area, GdkGLConte
 
 static void update_camera_ui(MgGtkView* view) {
     MgCameraControlsView_update_ui(view->camera_controls);
-    // MgCameraController* camera = MgController_get_camera(view->controller);
-    // MgVector2 cam_pos = MgCameraController_get_pos(camera);
-    // double cam_zoom = (double)MgCameraController_get_zoom(camera);
-    // double drag_sens = (double)MgCameraController_get_drag_sens(camera);
-    // double zoom_sens = (double)MgCameraController_get_zoom_sens(camera);
-
-    // UPDATE_GDOUBLE(view->builder, "cam_pos_x", view->inner.last_shown.cam_x, cam_pos.x);
-    // UPDATE_GDOUBLE(view->builder, "cam_pos_y", view->inner.last_shown.cam_y, cam_pos.y);
-    // UPDATE_GDOUBLE(view->builder, "cam_zoom",  view->inner.last_shown.zoom, cam_zoom);
-
-    // UPDATE_GDOUBLE(view->builder, "drag_sensitivity", view->inner.last_shown.drag_sensitivity, drag_sens);
-    // UPDATE_GDOUBLE(view->builder, "zoom_speed", view->inner.last_shown.zoom_speed, zoom_sens);
-
-    // UPDATE_GDOUBLE(view->builder, "msaa_coef", view->inner.last_shown.msaa_coef, view->inner.msaa_coef);
-
-    // UPDATE_GDOUBLE(view->builder, "gen_maze_width", view->inner.last_shown.gen_maze_w, view->inner.gen_maze_w);
-    // UPDATE_GDOUBLE(view->builder, "gen_maze_height", view->inner.last_shown.gen_maze_h, view->inner.gen_maze_h);
+    MgCameraSettingsView_update_ui(view->camera_settings);
 }
 
 

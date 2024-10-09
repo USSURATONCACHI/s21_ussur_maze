@@ -12,6 +12,7 @@ MgModel MgModel_new(size_t maze_width, size_t maze_height) {
         .maze = res.ok,
         .camera = BcstdCamera_create(),
     };
+    MgModel_reset_camera_settings(&model);
     MgModel_reset_camera(&model);
     return model;
 }
@@ -31,6 +32,7 @@ void MgModel_reset_camera(MgModel* self) {
 }
 
 void MgModel_reset_camera_settings(MgModel* self) {
-    self->camera = BcstdCamera_create();
-    MgModel_reset_camera(self);
+    self->camera.drag_sensitivity = (BcstdVec2) { 1.0, 1.0 };
+    self->camera.zoom_sensitivity = 4.0;
+
 }

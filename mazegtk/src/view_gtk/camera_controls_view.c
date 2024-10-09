@@ -61,28 +61,19 @@ void MgCameraControlsView_update_ui(MgCameraControlsView* view) {
 
 // X changed
 static void h_x_changed(GtkSpinButton* widget, MgCameraControlsView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->last_shown.cam_x)
-        return;
-
+    CHECK_GDOUBLE_CHANGED(val, widget, view->last_shown.cam_x);
     MgCameraController_set_x(view->controller, val);
 }
 
 // Y changed
 static void h_y_changed(GtkSpinButton* widget, MgCameraControlsView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->last_shown.cam_y)
-        return;
-
+    CHECK_GDOUBLE_CHANGED(val, widget, view->last_shown.cam_y);
     MgCameraController_set_y(view->controller, val);
 }
 
 // Zoom changed
 static void h_zoom_changed(GtkSpinButton* widget, MgCameraControlsView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->last_shown.zoom)
-        return;
-
+    CHECK_GDOUBLE_CHANGED(val, widget, view->last_shown.zoom);
     MgCameraController_set_zoom(view->controller, val);
 }
 

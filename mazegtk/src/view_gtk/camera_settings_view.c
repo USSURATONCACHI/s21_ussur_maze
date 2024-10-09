@@ -1,4 +1,5 @@
 #include <mazegtk/view_gtk/camera_settings_view.h>
+#include <mazegtk/view_gtk/ui_update_macros.h>
 #include <mazegtk/util/common_macros.h>
 #include <better_c_std/prettify.h>
 
@@ -42,6 +43,14 @@ void MgCameraSettingsView_free(MgCameraSettingsView* view) {
     free(view);
 }
 
+void MgCameraSettingsView_update_ui(MgCameraSettingsView* view) {
+    long double zoom_sens = MgCameraController_get_zoom_sens(view->controller);
+    long double drag_sens = MgCameraController_get_drag_sens(view->controller);
+
+    UPDATE_SPINBTN_GDOUBLE(view->drag_sensitivity_btn, view->last_shown.drag_sensitivity, drag_sens);
+    UPDATE_SPINBTN_GDOUBLE(view->zoom_speed_btn,       view->last_shown.zoom_speed,       zoom_sens);
+}
+
 
 // ==
 // Handlers
@@ -49,19 +58,13 @@ void MgCameraSettingsView_free(MgCameraSettingsView* view) {
 
 // Drag sensitivity changed
 static void h_drag_sensitivity_changed(GtkSpinButton* widget, MgCameraSettingsView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->last_shown.drag_sensitivity)
-        return;
-
+    CHECK_GDOUBLE_CHANGED(val, widget, view->last_shown.drag_sensitivity);
     MgCameraController_set_drag_sens(view->controller, val);
 }
 
 // Zoom speed changed
 static void h_zoom_speed_changed(GtkSpinButton* widget, MgCameraSettingsView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->last_shown.zoom_speed)
-        return;
-
+    CHECK_GDOUBLE_CHANGED(val, widget, view->last_shown.zoom_speed);
     MgCameraController_set_zoom_sens(view->controller, val);
 }
 

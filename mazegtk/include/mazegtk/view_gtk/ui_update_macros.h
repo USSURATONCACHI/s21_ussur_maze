@@ -10,4 +10,11 @@
     }                                                                                   \
     //;
 
+#define CHECK_GDOUBLE_CHANGED(varname, widget, check_against) \
+    gdouble (varname) = gtk_spin_button_get_value(widget);    \
+    if ((varname) == (check_against))                         \
+        return;                                               \
+    (check_against) = val;                                    \
+    // ;
+
 #endif // MAZEGTK_VIEW_GTK_UI_UPDATE_MACROS_H_
