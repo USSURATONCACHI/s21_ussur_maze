@@ -1,5 +1,5 @@
-#ifndef MAZEGTK_VIEW_GTK_CAMERA_SETTINGS_VIEW_H_
-#define MAZEGTK_VIEW_GTK_CAMERA_SETTINGS_VIEW_H_
+#ifndef MAZEGTK_VIEW_GTK_SUBVIEWS_CAMERA_SETTINGS_VIEW_H_
+#define MAZEGTK_VIEW_GTK_SUBVIEWS_CAMERA_SETTINGS_VIEW_H_
 
 #include <mazegtk/controller/camera.h>
 #include <gtk/gtk.h>
@@ -24,4 +24,4 @@ void MgCameraSettingsView_free(MgCameraSettingsView* view);
 
 void MgCameraSettingsView_update_ui(MgCameraSettingsView* view);
 
-#endif // MAZEGTK_VIEW_GTK_CAMERA_SETTINGS_VIEW_H_
+#endif // MAZEGTK_VIEW_GTK_SUBVIEWS_CAMERA_SETTINGS_VIEW_H_

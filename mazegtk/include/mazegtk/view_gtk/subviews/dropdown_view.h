@@ -1,5 +1,5 @@
-#ifndef MAZEGTK_VIEW_GTK_DROPDOWN_VIEW_H_
-#define MAZEGTK_VIEW_GTK_DROPDOWN_VIEW_H_
+#ifndef MAZEGTK_VIEW_GTK_SUBVIEWS_DROPDOWN_VIEW_H_
+#define MAZEGTK_VIEW_GTK_SUBVIEWS_DROPDOWN_VIEW_H_
 
 #include <mazegtk/controller/controller.h>
 #include <better_c_std/result.h>
@@ -20,4 +20,4 @@ typedef STRUCT_RESULT(MgDropdownView*, GError*) MgDropdownViewResult;
 MgDropdownViewResult MgDropdownView_create(GtkBuilder* ui, MgController* controller);
 void MgDropdownView_free(MgDropdownView* view);
 
-#endif // MAZEGTK_VIEW_GTK_DROPDOWN_VIEW_H_
+#endif // MAZEGTK_VIEW_GTK_SUBVIEWS_DROPDOWN_VIEW_H_

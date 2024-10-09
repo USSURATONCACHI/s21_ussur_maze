@@ -2,14 +2,15 @@
 #define MAZEGTK_VIEW_GTK_VIEW_H_
 
 #include <gtk/gtk.h>
+#include <better_c_std/result.h>
 #include <mazegtk/controller/controller.h>
 #include <mazegtk/view_gtk/gtk_view_inner.h>
 
-#include <mazegtk/view_gtk/camera_controls_view.h>
-#include <mazegtk/view_gtk/camera_settings_view.h>
-#include <mazegtk/view_gtk/dropdown_view.h>
-#include <mazegtk/view_gtk/grabby_cursor_view.h>
-#include <mazegtk/view_gtk/maze_gen_view.h>
+#include <mazegtk/view_gtk/subviews/camera_controls_view.h>
+#include <mazegtk/view_gtk/subviews/camera_settings_view.h>
+#include <mazegtk/view_gtk/subviews/dropdown_view.h>
+#include <mazegtk/view_gtk/subviews/grabby_cursor_view.h>
+#include <mazegtk/view_gtk/subviews/maze_gen_view.h>
 
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
@@ -35,19 +36,12 @@ typedef struct {
     MgGtkViewInner inner;
 } MgGtkView;
 
-typedef struct {
-    bool is_ok;
-    union {
-        MgGtkView* ok;
-        GError* error;
-    };
-} MgGtkViewResult;
+typedef STRUCT_RESULT(MgGtkView*, GError*) MgGtkViewResult;
 
 typedef struct {
     int argc;
     char** argv;
 } MgDataForGtkLib;
-
 
 MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata);
 void MgGtkView_free(MgGtkView* view);

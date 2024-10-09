@@ -1,5 +1,5 @@
-#ifndef MAZEGTK_VIEW_MAZE_GEN_VIEW_H_
-#define MAZEGTK_VIEW_MAZE_GEN_VIEW_H_
+#ifndef MAZEGTK_VIEW_GTK_SUBVIEWS_MAZE_GEN_VIEW_H_
+#define MAZEGTK_VIEW_GTK_SUBVIEWS_MAZE_GEN_VIEW_H_
 
 #include <mazegtk/controller/maze_gen.h>
 #include <gtk/gtk.h>
@@ -27,4 +27,4 @@ void MgMazeGenView_free(MgMazeGenView* view);
 
 void MgMazeGenView_update_ui(MgMazeGenView* view);
 
-#endif // MAZEGTK_VIEW_MAZE_GEN_VIEW_H_
+#endif // MAZEGTK_VIEW_GTK_SUBVIEWS_MAZE_GEN_VIEW_H_

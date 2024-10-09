@@ -14,12 +14,11 @@ add_executable(s21_ussur_mazegtk
     src/controller/maze.c
     src/controller/maze_gen.c
 
-    
-    src/view_gtk/camera_controls_view.c
-    src/view_gtk/camera_settings_view.c
-    src/view_gtk/dropdown_view.c
-    src/view_gtk/grabby_cursor_view.c
-    src/view_gtk/maze_gen_view.c
+    src/view_gtk/subviews/camera_controls_view.c
+    src/view_gtk/subviews/camera_settings_view.c
+    src/view_gtk/subviews/dropdown_view.c
+    src/view_gtk/subviews/grabby_cursor_view.c
+    src/view_gtk/subviews/maze_gen_view.c
 
     src/view_gtk/gtk_view_create.c
     src/view_gtk/gtk_view_gl_area.c

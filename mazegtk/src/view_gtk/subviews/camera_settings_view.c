@@ -1,5 +1,5 @@
-#include <mazegtk/view_gtk/camera_settings_view.h>
-#include <mazegtk/view_gtk/ui_update_macros.h>
+#include <mazegtk/view_gtk/subviews/camera_settings_view.h>
+#include <mazegtk/view_gtk/subviews/ui_update_macros.h>
 #include <mazegtk/util/common_macros.h>
 #include <better_c_std/prettify.h>
 

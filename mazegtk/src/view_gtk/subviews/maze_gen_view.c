@@ -1,5 +1,5 @@
-#include <mazegtk/view_gtk/maze_gen_view.h>
-#include <mazegtk/view_gtk/ui_update_macros.h>
+#include <mazegtk/view_gtk/subviews/maze_gen_view.h>
+#include <mazegtk/view_gtk/subviews/ui_update_macros.h>
 #include <better_c_std/prettify.h>
 
 static void h_gen_w_changed(GtkSpinButton* widget, MgMazeGenView* view);

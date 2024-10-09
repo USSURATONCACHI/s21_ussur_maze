@@ -1,5 +1,5 @@
-#ifndef MAZEGTK_VIEW_GTK_UI_UPDATE_MACROS_H_
-#define MAZEGTK_VIEW_GTK_UI_UPDATE_MACROS_H_
+#ifndef MAZEGTK_VIEW_GTK_SUBVIEWS_UI_UPDATE_MACROS_H_
+#define MAZEGTK_VIEW_GTK_SUBVIEWS_UI_UPDATE_MACROS_H_
 
 #define UPDATE_SPINBTN_GDOUBLE(updating_btn, last_shown_var, new_value) \
     {                                                                                   \
@@ -17,4 +17,4 @@
     (check_against) = val;                                    \
     // ;
 
-#endif // MAZEGTK_VIEW_GTK_UI_UPDATE_MACROS_H_
+#endif // MAZEGTK_VIEW_GTK_SUBVIEWS_UI_UPDATE_MACROS_H_
