@@ -11,13 +11,13 @@
 #include <mazegtk/view_gtk/subviews/grabby_cursor_view.h>
 #include <mazegtk/view_gtk/subviews/maze_gen_view.h>
 #include <mazegtk/view_gtk/subviews/gl_maze_view.h>
-
+#include <mazegtk/view_gtk/subviews/camera_mouse_view.h>
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
 
 // This main `MgGtkView` just aggregates all the small subviews, and does nothing on its own.
-
+// To add new functionality - just add more subviews in here (and call `_ui_update`s or `_renders` in render handle, if needed)
 typedef struct {
     // Resources to manage Gtk GL app
     GtkApplication* app;
@@ -32,13 +32,14 @@ typedef struct {
                             // However, i don't think just creating a window and rendering to it would be worth
                             // covering all parts of my code with unions, state checks, and ownership managing.
 
-    // Application-specific resources
+    // Application-specific functionality parts
     MgCameraControlsView* view_camera_controls;
     MgCameraSettingsView* view_camera_settings;
     MgDropdownView*       view_dropdown;
     MgGrabbyCursorView*   view_grabby_cursor;
     MgMazeGenView*        view_maze_gen;
     MgGlMazeView*         view_gl_maze;
+    MgCameraMouseView*    view_camera_mouse;
 
     MgController* controller;
 } MgGtkView;

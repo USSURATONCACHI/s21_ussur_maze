@@ -66,6 +66,7 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
         .view_camera_controls = MgCameraControlsView_create(builder, MgController_get_camera(controller)),
         .view_camera_settings = MgCameraSettingsView_create(builder, MgController_get_camera(controller)),
         .view_maze_gen        = MgMazeGenView_create(builder, MgController_get_maze_gen(controller)),
+        .view_camera_mouse    = MgCameraMouseView_create(builder, MgController_get_camera(controller)),
 
         // other fields are zeroed out by calloc
     };
@@ -138,6 +139,7 @@ void MgGtkView_free(MgGtkView* view) {
     MgDropdownView_free(view->view_dropdown);
     MgGrabbyCursorView_free(view->view_grabby_cursor);
     MgMazeGenView_free(view->view_maze_gen);
+    MgCameraMouseView_free(view->view_camera_mouse);
     // MgGlMazeView can only be freed before signal "GtkGLArea::unrealize"
 
     if (view->app && G_IS_APPLICATION(view->app))
