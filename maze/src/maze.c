@@ -35,6 +35,20 @@ MzMazeResult mz_maze_create(size_t width, size_t height) {
     }
 }
 
+
+MzMazeResult mz_maze_crop_to_size(const MzMaze* old_one, size_t width, size_t height) {
+    MzMazeResult res = mz_maze_create(width, height);
+
+    if (res.is_ok) {
+        for (size_t y = 0; y < res.ok.height && y < old_one->height; y++)
+            for (size_t x = 0; x < res.ok.width && x < old_one->width; x++)
+                mz_maze_set_at(&res.ok, x, y, mz_maze_at(old_one, x, y));
+    }
+
+    return res;
+}
+
+
 size_t mz_maze_get_buffer_size(const MzMaze* maze) {
     return get_buffer_size(maze->width, maze->height);
 }

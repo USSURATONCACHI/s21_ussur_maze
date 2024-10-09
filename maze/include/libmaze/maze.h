@@ -10,6 +10,7 @@
 
 MzMazeResult mz_maze_create(size_t width, size_t height);
 MzMazeResult mz_maze_generate_perfect_eller(size_t width, size_t height);
+MzMazeResult mz_maze_crop_to_size(const MzMaze* old_one, size_t width, size_t height);
 MzMazeResult mz_maze_get_mipmap_halved(const MzMaze* maze);
 
 
