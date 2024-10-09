@@ -12,12 +12,15 @@ add_executable(s21_ussur_mazegtk
     src/controller/camera.c
     src/controller/controller.c
     src/controller/maze.c
+    src/controller/maze_gen.c
 
     
     src/view_gtk/camera_controls_view.c
     src/view_gtk/camera_settings_view.c
     src/view_gtk/dropdown_view.c
     src/view_gtk/grabby_cursor_view.c
+    src/view_gtk/maze_gen_view.c
+
     src/view_gtk/gtk_view_create.c
     src/view_gtk/gtk_view_gl_area.c
     src/view_gtk/gtk_view_inner.c
@@ -56,6 +59,14 @@ install(
 
 # === Resources ====
 file(GLOB_RECURSE GRESOURCE_FILES "resources/*")
+
+# Filter out tmp files created by Glade
+foreach(file ${GRESOURCE_FILES})
+    if(file MATCHES "~$" OR file MATCHES "^~" OR file MATCHES "^#")
+        list(REMOVE_ITEM GRESOURCE_FILES ${file})
+    endif()
+endforeach()
+
 set(GRESOURCE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/s21_ussur_mazegtk.gresource)
 
 add_custom_command(
