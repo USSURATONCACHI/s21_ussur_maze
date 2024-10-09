@@ -7,6 +7,7 @@
 #include <mazegtk/controller/maze.h>
 #include <mazegtk/controller/camera.h>
 #include <mazegtk/view_gtk/maze_ssbo.h>
+#include <mazegtk/view_gtk/render_settings_store.h>
 
 #include <opengl_utils/mesh.h>
 #include <opengl_utils/gl_program.h>
@@ -15,6 +16,7 @@
 typedef struct {
     MgMazeController* mazectl;
     MgCameraController* cameractl;
+    MgRenderSettingsStore* settings_store;
 
     GtkGLArea* gl_area;
 
@@ -29,7 +31,12 @@ typedef struct {
 
 typedef STRUCT_RESULT(MgGlMazeView*, GError*) MgGlMazeViewResult;
 
-MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* mazectl, MgCameraController* cameractl);
+MgGlMazeViewResult MgGlMazeView_create(
+    GtkBuilder* ui, GResource* resource, 
+    MgMazeController* mazectl, 
+    MgCameraController* cameractl,
+    MgRenderSettingsStore* settings_store
+);
 void MgGlMazeView_free(MgGlMazeView* view);
 
 void MgGlMazeView_render(MgGlMazeView* view);

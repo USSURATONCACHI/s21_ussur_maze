@@ -51,7 +51,8 @@ static VoidResult realize(GtkGLArea* widget, MgGtkView* view) {
         view->builder, 
         view->resource, 
         MgController_get_maze(view->controller),
-        MgController_get_camera(view->controller)
+        MgController_get_camera(view->controller),
+        view->store_render_settings
     );
     if (!result.is_ok)
         return (VoidResult) ERR(result.error);

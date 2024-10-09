@@ -12,6 +12,9 @@
 #include <mazegtk/view_gtk/subviews/maze_gen_view.h>
 #include <mazegtk/view_gtk/subviews/gl_maze_view.h>
 #include <mazegtk/view_gtk/subviews/camera_mouse_view.h>
+#include <mazegtk/view_gtk/subviews/render_settings_view.h>
+
+#include <mazegtk/view_gtk/render_settings_store.h>
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
@@ -29,10 +32,12 @@ typedef struct {
     bool is_thread_running; // This struct/class provides synchronous interface to this whole process.
                             // 
                             // GTK callbacks approach would maybe work nice, if I turned my entire program into a state-machine.
-                            // However, i don't think just creating a window and rendering to it would be worth
-                            // covering all parts of my code with unions, state checks, and ownership managing.
+                            // I think GTK UI does not worth that.
 
     // Application-specific functionality parts
+    // In C++ all these would be std::unique_ptr<...> . By pointer, because they will be provided as callback user data.
+    MgRenderSettingsStore* store_render_settings;
+
     MgCameraControlsView* view_camera_controls;
     MgCameraSettingsView* view_camera_settings;
     MgDropdownView*       view_dropdown;
@@ -40,6 +45,7 @@ typedef struct {
     MgMazeGenView*        view_maze_gen;
     MgGlMazeView*         view_gl_maze;
     MgCameraMouseView*    view_camera_mouse;
+    MgRenderSettingsView* view_render_settings;
 
     MgController* controller;
 } MgGtkView;

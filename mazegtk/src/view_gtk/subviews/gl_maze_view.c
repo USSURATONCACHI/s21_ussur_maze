@@ -19,10 +19,16 @@ static void render_pass_main(MgGlMazeView* self);
 static void render_pass_post_proc(MgGlMazeView* self);
 // Local
 
-MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* mazectl, MgCameraController* cameractl) {
-    if (ui == NULL)        return (MgGlMazeViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
-    if (mazectl == NULL)   return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgMazeController provided"));
-    if (cameractl == NULL) return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgCameraController provided"));
+MgGlMazeViewResult MgGlMazeView_create(
+    GtkBuilder* ui, GResource* resource, 
+    MgMazeController* mazectl, 
+    MgCameraController* cameractl,
+    MgRenderSettingsStore* settings_store
+) {
+    if (ui == NULL)             return (MgGlMazeViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
+    if (mazectl == NULL)        return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgMazeController provided"));
+    if (cameractl == NULL)      return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgCameraController provided"));
+    if (settings_store == NULL) return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgRenderSettingsStore provided"));
     // `resource` can be null, that will just lead to an error return from failing to load shaders.
 
     GtkGLArea* gl_area = GTK_GL_AREA(gtk_builder_get_object(ui, "gl_area"));
@@ -45,6 +51,7 @@ MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMa
     *view = (MgGlMazeView) {
         .mazectl = mazectl,
         .cameractl = cameractl,
+        .settings_store = settings_store,
         .gl_area = gl_area,
 
         .fullscreen_mesh        = create_fullscreen_mesh(), 
@@ -117,7 +124,7 @@ static void resize_framebuffer(MgGlMazeView* self) {
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(self->gl_area));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(self->gl_area));
 
-    long double msaa_coef = 4.0; // TODO: make settings
+    long double msaa_coef = self->settings_store->msaa_resolution_coef;
     size_t fb_width = (size_t)(width * msaa_coef);
     size_t fb_height = (size_t)(height * msaa_coef);
 

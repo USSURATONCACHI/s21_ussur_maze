@@ -49,6 +49,9 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
     MgDropdownViewResult dropdown_res = MgDropdownView_create(builder, controller);
     MgGrabbyCursorViewResult grabby_cursor_res = MgGrabbyCursorView_create(builder, "gl_area");
 
+    // Stores
+    MgRenderSettingsStore* store_render_settings = MgRenderSettingsStore_new();
+
     // Aggregate
     MgGtkView* view = (void*) calloc(1, sizeof(MgGtkView));
     assert_alloc(view);
@@ -59,6 +62,8 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
         .builder  = NON_NULL_OR_GERR_REPORT(builder, &errors, "failed to create GtkBuilder"),
         .resource = resource,
 
+        .store_render_settings = store_render_settings,
+
         .view_dropdown      = OK_OR_NULL_WITH_GERR_REPORT(dropdown_res, &errors),
         .view_grabby_cursor = OK_OR_NULL_WITH_GERR_REPORT(grabby_cursor_res, &errors),
         .view_gl_maze       = NULL, // We can only use GL functions after GtkGLArea::realize signal is sent. For now it will be null.
@@ -67,8 +72,9 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
         .view_camera_settings = MgCameraSettingsView_create(builder, MgController_get_camera(controller)),
         .view_maze_gen        = MgMazeGenView_create(builder, MgController_get_maze_gen(controller)),
         .view_camera_mouse    = MgCameraMouseView_create(builder, MgController_get_camera(controller)),
+        .view_render_settings = MgRenderSettingsView_create(builder, store_render_settings),
 
-        // other fields are zeroed out by calloc
+        // other fields are zeroed out by `calloc`
     };
 
     // Check for errors
@@ -141,6 +147,8 @@ void MgGtkView_free(MgGtkView* view) {
     MgMazeGenView_free(view->view_maze_gen);
     MgCameraMouseView_free(view->view_camera_mouse);
     // MgGlMazeView can only be freed before signal "GtkGLArea::unrealize"
+
+    MgRenderSettingsStore_free(view->store_render_settings);
 
     if (view->app && G_IS_APPLICATION(view->app))
         g_application_quit(G_APPLICATION(view->app));
