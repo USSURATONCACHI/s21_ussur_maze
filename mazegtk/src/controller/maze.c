@@ -16,7 +16,7 @@ MgMazeController* MgMazeController_new(MzMaze* maze) {
 
     *controller = (MgMazeController) {
         .maze = maze,
-        .maze_update_id = 0,
+        .maze_update_id = 1,
         .last_maze_check_id = 0,
     };
 

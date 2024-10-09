@@ -7,8 +7,10 @@ static gboolean h_drag_move(GtkWidget* widget, GdkDragContext* context, gint x, 
 static gboolean h_drag_leave(GtkWidget* widget, GdkDragContext* context, guint time, MgDropdownView* view);
 
 MgDropdownViewResult MgDropdownView_create(GtkBuilder* ui, MgController* controller) {
-    assert_m(ui != NULL);
-    assert_m(controller != NULL);
+    if (ui == NULL)
+        return (MgDropdownViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
+    if (controller == NULL)
+        return (MgDropdownViewResult) ERR(GERROR_NEW("No MgController provided"));
 
     // Get required UI elements
     GtkWindow* window      = GTK_WINDOW(gtk_builder_get_object(ui, "main_window"));

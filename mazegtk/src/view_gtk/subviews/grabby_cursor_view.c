@@ -9,7 +9,10 @@ static gboolean h_enter(GtkWidget* widget, GdkEventCrossing* event, MgGrabbyCurs
 static gboolean h_leave(GtkWidget* widget, GdkEventCrossing* event, MgGrabbyCursorView* view);
 
 MgGrabbyCursorViewResult MgGrabbyCursorView_create(GtkBuilder* ui, const char* widget_name) {
-    assert_m(ui != NULL);
+    if (ui == NULL)
+        return (MgGrabbyCursorViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
+    if (widget_name == NULL)
+        return (MgGrabbyCursorViewResult) ERR(GERROR_NEW("No widget name provided"));
 
     // Get required UI elements
     GtkWidget* widget = GTK_WIDGET(gtk_builder_get_object(ui, widget_name));

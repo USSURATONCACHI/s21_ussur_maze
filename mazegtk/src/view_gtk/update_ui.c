@@ -12,9 +12,9 @@ G_MODULE_EXPORT void mg_maze_app_handle_update_ui(GtkGLArea* gl_area, GdkGLConte
 
 
 static void update_camera_ui(MgGtkView* view) {
-    MgCameraControlsView_update_ui(view->camera_controls);
-    MgCameraSettingsView_update_ui(view->camera_settings);
-    MgMazeGenView_update_ui(view->maze_gen);
+    MgCameraControlsView_update_ui(view->view_camera_controls);
+    MgCameraSettingsView_update_ui(view->view_camera_settings);
+    MgMazeGenView_update_ui(view->view_maze_gen);
 }
 
 

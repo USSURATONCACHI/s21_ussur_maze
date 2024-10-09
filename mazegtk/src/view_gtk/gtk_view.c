@@ -1,6 +1,4 @@
 #include <mazegtk/view_gtk/gtk_view.h>
-#include <mazegtk/view_gtk/gtk_view_inner.h>
-#include <math.h>
 #include <mazegtk/util/common_macros.h>
 
 #include <better_c_std/prettify.h>

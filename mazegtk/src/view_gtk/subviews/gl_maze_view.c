@@ -1,7 +1,7 @@
-#include <mazegtk/view_gtk/gtk_view_inner.h>
+#include <mazegtk/view_gtk/subviews/gl_maze_view.h>
 #include <mazegtk/util/common_macros.h>
-#include <better_c_std/result.h>
 
+#include <better_c_std/result.h>
 #include <better_c_std/prettify.h>
 
 // Local
@@ -13,64 +13,86 @@ static GlProgramResult load_main_shader_program(GResource* resource, const char*
 static Mesh create_fullscreen_mesh();
 // Local
 
+MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* controller) {
+    if (ui == NULL)
+        return (MgGlMazeViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
+    if (controller == NULL)
+        return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgMazeController provided"));
+    // `resource` can be null, that will just lead to an error return from failing to load shaders.
 
-MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* resource) {
     GlProgramResult main_shader = load_main_shader_program(resource, "/org/ussur/mazegtk/common.vert", "/org/ussur/mazegtk/basic.frag");
     if (!main_shader.is_ok)
-        return (MgGtkViewInnerResult) ERR(main_shader.error);
+        return (MgGlMazeViewResult) ERR(main_shader.error);
 
     GlProgramResult pp_shader = load_main_shader_program(resource, "/org/ussur/mazegtk/common.vert", "/org/ussur/mazegtk/post_processing.frag");
     if (!pp_shader.is_ok) {
         gl_program_free(main_shader.ok);
-        return (MgGtkViewInnerResult) ERR(pp_shader.error);
+        return (MgGlMazeViewResult) ERR(pp_shader.error);
     }
 
-    Mesh fullscreen_mesh = create_fullscreen_mesh();
-    Framebuffer framebuffer = framebuffer_create(1000, 1000, 1);
+    MgGlMazeView* view = (void*) malloc(sizeof(MgGlMazeView));
+    assert_alloc(view);
 
-    // Upload mipmaps to GPU
-    MazeSsbo maze_ssbo = MazeSsbo_create();
+    *view = (MgGlMazeView) {
+        .controller = controller,
 
-    // Return sucess
-    MgGtkViewInner inner = (MgGtkViewInner){
-        .controller             = controller,
-        .is_dragging            = false,
-        .fullscreen_mesh        = fullscreen_mesh,
+        .gl_area = GTK_GL_AREA(gtk_builder_get_object(ui, "gl_area")),
+
+        .fullscreen_mesh        = create_fullscreen_mesh(), 
         .main_shader            = main_shader.ok,
         .post_processing_shader = pp_shader.ok,
-        .maze_ssbo              = maze_ssbo,
 
-        .render_buffer = framebuffer,
-        .fb_width      = 1000,
-        .fb_height     = 1000,
+        .maze_ssbo = MazeSsbo_create(),
 
-        .msaa_coef = 4.0,
+        .render_buffer = framebuffer_create(10, 10),
+        .fb_width  = 10,
+        .fb_height = 10,
     };
 
-    MgGtkViewInner_upload_maze_to_gpu(&inner);
-
-    return (MgGtkViewInnerResult) OK(inner);
+    return (MgGlMazeViewResult) OK(view);
 }
 
-void MgGtkViewInner_upload_maze_to_gpu(MgGtkViewInner* view_inner) {
-    MgMazeController* maze = MgController_get_maze(view_inner->controller);
-    MazeSsbo_upload(
-        &view_inner->maze_ssbo, 
-        MgMazeController_width(maze), 
-        MgMazeController_height(maze), 
-        MgMazeController_data_size(maze), 
-        MgMazeController_data_buffer(maze)
-    );
+void MgGlMazeView_free(MgGlMazeView* view) {
+    if (view == NULL)
+        return;
+
+    if (view->gl_area) g_signal_handlers_disconnect_by_data(view->gl_area, view);
+
+    gl_program_free(view->main_shader);
+    gl_program_free(view->post_processing_shader);
+    framebuffer_free(view->render_buffer);
+    mesh_delete(view->fullscreen_mesh);
+    MazeSsbo_free(view->maze_ssbo);
+
+    free(view);
+}
+
+void MgGlMazeView_render(MgGlMazeView* view) {
+    debugln("TODO");
+}
+
+
+
+// void MgGtkViewInner_upload_maze_to_gpu(MgGtkViewInner* view_inner) {
+//     MgMazeController* maze = MgController_get_maze(view_inner->controller);
+//     MazeSsbo_upload(
+//         &view_inner->maze_ssbo, 
+//         MgMazeController_width(maze), 
+//         MgMazeController_height(maze), 
+//         MgMazeController_data_size(maze), 
+//         MgMazeController_data_buffer(maze)
+//     );
     
-}
+// }
 
-void MgGtkViewInner_free(MgGtkViewInner view_inner) {
-    MazeSsbo_free(view_inner.maze_ssbo);
-    framebuffer_free(view_inner.render_buffer);
-    mesh_delete(view_inner.fullscreen_mesh);
-    gl_program_free(view_inner.post_processing_shader);
-    gl_program_free(view_inner.main_shader);
-}
+// void MgGtkViewInner_free(MgGtkViewInner view_inner) {
+//     MazeSsbo_free(view_inner.maze_ssbo);
+//     framebuffer_free(view_inner.render_buffer);
+//     mesh_delete(view_inner.fullscreen_mesh);
+//     gl_program_free(view_inner.post_processing_shader);
+//     gl_program_free(view_inner.main_shader);
+// }
+
 
 
 // Local
@@ -88,7 +110,6 @@ static GlProgramResult load_main_shader_program(GResource* resource, const char*
         shader_free(vert.ok);
         return (GlProgramResult) ERR(vert.error);
     }
-
 
     GlProgram result = gl_program_from_2_shaders(&vert.ok, &frag.ok);
     shader_free(vert.ok);

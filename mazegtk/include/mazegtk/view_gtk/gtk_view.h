@@ -4,13 +4,13 @@
 #include <gtk/gtk.h>
 #include <better_c_std/result.h>
 #include <mazegtk/controller/controller.h>
-#include <mazegtk/view_gtk/gtk_view_inner.h>
 
 #include <mazegtk/view_gtk/subviews/camera_controls_view.h>
 #include <mazegtk/view_gtk/subviews/camera_settings_view.h>
 #include <mazegtk/view_gtk/subviews/dropdown_view.h>
 #include <mazegtk/view_gtk/subviews/grabby_cursor_view.h>
 #include <mazegtk/view_gtk/subviews/maze_gen_view.h>
+#include <mazegtk/view_gtk/subviews/gl_maze_view.h>
 
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
@@ -27,20 +27,20 @@ typedef struct {
     GError* failed_error;   // We run gtk in separate thread, because glib only provides quite inflexible async callback
     pthread_t thread;       // interfaces. This really breaks the line of execution and decimate readability.
     bool is_thread_running; // This struct/class provides synchronous interface to this whole process.
-
+                            // 
                             // GTK callbacks approach would maybe work nice, if I turned my entire program into a state-machine.
                             // However, i don't think just creating a window and rendering to it would be worth
                             // covering all parts of my code with unions, state checks, and ownership managing.
 
     // Application-specific resources
-    MgCameraControlsView* camera_controls;
-    MgCameraSettingsView* camera_settings;
-    MgDropdownView*       dropdown;
-    MgGrabbyCursorView*   grabby_cursor_view;
-    MgMazeGenView*        maze_gen;
+    MgCameraControlsView* view_camera_controls;
+    MgCameraSettingsView* view_camera_settings;
+    MgDropdownView*       view_dropdown;
+    MgGrabbyCursorView*   view_grabby_cursor;
+    MgMazeGenView*        view_maze_gen;
+    MgGlMazeView*         view_gl_maze;
 
     MgController* controller;
-    MgGtkViewInner inner;
 } MgGtkView;
 
 typedef STRUCT_RESULT(MgGtkView*, GError*) MgGtkViewResult;
@@ -56,6 +56,7 @@ void MgGtkView_free(MgGtkView* view);
 void MgGtkView_fail_with_error(MgGtkView* view, GError* error);
 void MgGtkView_show_error_screen(MgGtkView* view, GError* error);
 bool MgGtkView_is_fine(const MgGtkView* view);
+void MgGtkView_join_thread(const MgGtkView* view);
 
 G_MODULE_EXPORT void mg_maze_app_handle_update_ui(GtkGLArea* gl_area, GdkGLContext* context, MgGtkView* view);
 

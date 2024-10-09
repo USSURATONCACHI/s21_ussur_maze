@@ -1,6 +1,8 @@
 #include <mazegtk/view_gtk/gtk_view.h>
-#include <better_c_std/result.h>
+#include <mazegtk/view_gtk/subviews/gl_maze_view.h>
 #include <mazegtk/util/common_macros.h>
+
+#include <better_c_std/result.h>
 #include <better_c_std/prettify.h>
 
 typedef struct {} Void;
@@ -32,21 +34,21 @@ gboolean on_timeout(gpointer data) {
 }
 
 static VoidResult realize(GtkGLArea* widget, MgGtkView* view) {
-    // Create inner (opengl data)
     gtk_gl_area_make_current(widget);
-    MgGtkViewInnerResult result = MgGtkViewInner_new(view->controller, view->resource);
+
+    MgGlMazeViewResult result = MgGlMazeView_create(view->builder, view->resource, MgController_get_maze(view->controller));
     if (!result.is_ok)
         return (VoidResult) ERR(result.error);
-    view->inner = result.ok;
+    view->view_gl_maze = result.ok;
 
     // Allow mouse events on GLArea
-    gtk_widget_add_events(
-        GTK_WIDGET(widget),
-        GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK |
-        GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK |
-        GDK_BUTTON_RELEASE_MASK | GDK_SCROLL_MASK |
-        GDK_FOCUS_CHANGE_MASK
-    );
+    // gtk_widget_add_events(
+    //     GTK_WIDGET(widget),
+    //     GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK |
+    //     GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK |
+    //     GDK_BUTTON_RELEASE_MASK | GDK_SCROLL_MASK |
+    //     GDK_FOCUS_CHANGE_MASK
+    // );
 
     g_timeout_add(1000 / 60, on_timeout, widget);
     return (VoidResult) OK({});
@@ -55,6 +57,7 @@ static VoidResult realize(GtkGLArea* widget, MgGtkView* view) {
 // Unrealize
 static VoidResult unrealize(GtkGLArea* widget, MgGtkView* view) {
     gtk_gl_area_make_current(widget);
-    MgGtkViewInner_free(view->inner);
+    MgGlMazeView_free(view->view_gl_maze);
+    view->view_gl_maze = NULL;
     return (VoidResult) OK({});
 }

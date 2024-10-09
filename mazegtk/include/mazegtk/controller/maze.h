@@ -13,7 +13,7 @@ typedef struct MgMazeController MgMazeController;
 MgMazeController* MgMazeController_new(MzMaze* maze);
 void MgMazeController_free(MgMazeController* controller);
 
-bool MgMazeController_was_maze_updated(const MgMazeController* self);
+bool MgMazeController_was_maze_updated(const MgMazeController* self);  // check if updated since last call to `MgMazeController_maze_was_updated`
 void MgMazeController_maze_was_updated(MgMazeController* self);
 
 uint8_t* MgMazeController_data_buffer(MgMazeController* self);

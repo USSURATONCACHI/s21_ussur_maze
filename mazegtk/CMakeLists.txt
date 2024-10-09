@@ -19,10 +19,10 @@ add_executable(s21_ussur_mazegtk
     src/view_gtk/subviews/dropdown_view.c
     src/view_gtk/subviews/grabby_cursor_view.c
     src/view_gtk/subviews/maze_gen_view.c
+    src/view_gtk/subviews/gl_maze_view.c
 
     src/view_gtk/gtk_view_create.c
     src/view_gtk/gtk_view_gl_area.c
-    src/view_gtk/gtk_view_inner.c
     src/view_gtk/gtk_view.c
     src/view_gtk/maze_ssbo.c
     src/view_gtk/mouse_controls.c

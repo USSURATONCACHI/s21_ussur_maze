@@ -9,8 +9,8 @@ static void h_zoom_speed_changed(GtkSpinButton* widget, MgCameraSettingsView* vi
 static void h_reset_default(GtkButton* widget, MgCameraSettingsView* view);
 
 MgCameraSettingsView* MgCameraSettingsView_create(GtkBuilder* ui, MgCameraController* controller) {
-    assert_m(ui != NULL);
-    assert_m(controller != NULL);
+    if (ui == NULL || controller == NULL)
+        return NULL;
 
     MgCameraSettingsView* view = (void*) malloc(sizeof(MgCameraSettingsView));
     assert_alloc(view);

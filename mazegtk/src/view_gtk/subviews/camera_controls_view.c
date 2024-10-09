@@ -9,8 +9,8 @@ static void h_zoom_changed(GtkSpinButton* widget, MgCameraControlsView* view);
 static void h_reset_camera(GtkSpinButton* widget, MgCameraControlsView* view);
 
 MgCameraControlsView* MgCameraControlsView_create(GtkBuilder* ui, MgCameraController* controller) {
-    assert_m(ui != NULL);
-    assert_m(controller != NULL);
+    if (ui == NULL || controller == NULL)
+        return NULL;
 
     MgCameraControlsView* view = (void*) malloc(sizeof(MgCameraControlsView));
     assert_alloc(view);

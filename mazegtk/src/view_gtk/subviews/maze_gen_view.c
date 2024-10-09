@@ -10,8 +10,8 @@ static void h_gen_empty(GtkButton* widget, MgMazeGenView* view);
 static void h_gen_crop(GtkButton* widget, MgMazeGenView* view);
 
 MgMazeGenView* MgMazeGenView_create(GtkBuilder* ui, MgMazeGenController* controller) {
-    assert_m(ui != NULL);
-    assert_m(controller != NULL);
+    if (ui == NULL || controller == NULL)
+        return NULL;
 
     MgMazeGenView* view = (void*) malloc(sizeof(MgMazeGenView));
     assert_alloc(view);
