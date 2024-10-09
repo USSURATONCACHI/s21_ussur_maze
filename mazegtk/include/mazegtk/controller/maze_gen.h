@@ -7,7 +7,7 @@
 #include <mazegtk/controller/maze.h>
 
 // Opaque pointers are used instead of full defined structs to
-// not encourage coders (me) to use parts of inner implementation in view layer.
+// not encourage any usage of parts of inner implementation in view layer.
 // This way, internals are simply inaccessible.
 typedef struct MgMazeGenController MgMazeGenController;
 
@@ -21,6 +21,6 @@ void MgMazeGenController_gen_crop(MgMazeGenController* self);
 size_t MgMazeGenController_get_gen_width (MgMazeGenController* self);
 size_t MgMazeGenController_get_gen_height(MgMazeGenController* self);
 void   MgMazeGenController_set_gen_width (MgMazeGenController* self, size_t new_width);
-void   MgMazeGenController_set_gen_height(MgMazeGenController* self, size_t new_width);
+void   MgMazeGenController_set_gen_height(MgMazeGenController* self, size_t new_height);
 
 #endif  // MAZEGTK_CONTROLLER_MAZE_GEN_H_

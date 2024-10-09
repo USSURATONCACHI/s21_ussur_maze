@@ -8,7 +8,7 @@
 #include <mazegtk/model/model.h>
 
 // Opaque pointers are used instead of full defined structs to
-// not encourage coders (me) to use parts of inner implementation in view layer.
+// not encourage any usage of parts of inner implementation in view layer.
 // This way, internals are simply inaccessible.
 typedef struct MgController MgController;
 

@@ -6,7 +6,7 @@
 #include <mazegtk/util/vector2.h>
 
 // Opaque pointers are used instead of full defined structs to
-// not encourage coders (me) to use parts of inner implementation in view layer.
+// not encourage any usage of parts of inner implementation in view layer.
 // This way, internals are simply inaccessible.
 typedef struct MgCameraController MgCameraController;
 
@@ -33,8 +33,8 @@ void MgCameraController_set_zoom_sens (MgCameraController* self, long double s);
 void MgCameraController_reset_camera  (MgCameraController* self);
 void MgCameraController_reset_settings(MgCameraController* self);
 
-// Functions to call on events
-void MgCameraController_update_anim  (MgCameraController* self);
+// Event handlers
+void MgCameraController_update_anim  (MgCameraController* self); // Doubtful if even needed. Maybe will be removed later
 void MgCameraController_on_zoom      (MgCameraController* self, float delta);
 void MgCameraController_on_drag_start(MgCameraController* self);
 void MgCameraController_on_drag      (MgCameraController* self, MgVector2 drag);
