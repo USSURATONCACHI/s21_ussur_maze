@@ -700,6 +700,7 @@
                 <property name="is-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_STRUCTURE_MASK | GDK_SCROLL_MASK | GDK_SMOOTH_SCROLL_MASK</property>
                 <signal name="realize" handler="mg_maze_app_handle_gl_realize" swapped="no"/>
+                <signal name="render" handler="mg_maze_app_handle_gl_render" swapped="no"/>
                 <signal name="unrealize" handler="mg_maze_app_handle_gl_unrealize" swapped="no"/>
               </object>
               <packing>

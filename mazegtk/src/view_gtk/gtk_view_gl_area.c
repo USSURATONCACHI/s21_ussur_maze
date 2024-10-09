@@ -18,6 +18,13 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(GtkGLArea* widget, MgGtkView*
         return;
     }
 }
+
+G_MODULE_EXPORT void mg_maze_app_handle_gl_render(GtkGLArea* gl_area, GdkGLContext* context, MgGtkView* view) {
+    unused(gl_area);
+    unused(context);
+    MgGlMazeView_render(view->view_gl_maze);
+}
+
 G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(GtkGLArea* widget, MgGtkView* view) {
     VoidResult result = unrealize(widget, view);
     if (!result.is_ok) {
@@ -36,19 +43,15 @@ gboolean on_timeout(gpointer data) {
 static VoidResult realize(GtkGLArea* widget, MgGtkView* view) {
     gtk_gl_area_make_current(widget);
 
-    MgGlMazeViewResult result = MgGlMazeView_create(view->builder, view->resource, MgController_get_maze(view->controller));
+    MgGlMazeViewResult result = MgGlMazeView_create(
+        view->builder, 
+        view->resource, 
+        MgController_get_maze(view->controller),
+        MgController_get_camera(view->controller)
+    );
     if (!result.is_ok)
         return (VoidResult) ERR(result.error);
     view->view_gl_maze = result.ok;
-
-    // Allow mouse events on GLArea
-    // gtk_widget_add_events(
-    //     GTK_WIDGET(widget),
-    //     GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK |
-    //     GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK |
-    //     GDK_BUTTON_RELEASE_MASK | GDK_SCROLL_MASK |
-    //     GDK_FOCUS_CHANGE_MASK
-    // );
 
     g_timeout_add(1000 / 60, on_timeout, widget);
     return (VoidResult) OK({});

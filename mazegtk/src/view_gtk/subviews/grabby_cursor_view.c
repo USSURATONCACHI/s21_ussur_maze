@@ -18,6 +18,8 @@ MgGrabbyCursorViewResult MgGrabbyCursorView_create(GtkBuilder* ui, const char* w
     GtkWidget* widget = GTK_WIDGET(gtk_builder_get_object(ui, widget_name));
     if (widget == NULL) return (MgGrabbyCursorViewResult) ERR(GERROR_NEW("No `%s` widget provided", widget_name));
 
+    gtk_widget_add_events(widget, gtk_widget_get_events(widget) | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+
     return (MgGrabbyCursorViewResult) OK(MgGrabbyCursorView_from_widget(widget));
 }
 

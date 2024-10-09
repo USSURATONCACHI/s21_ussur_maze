@@ -9,22 +9,31 @@ typedef STRUCT_RESULT(GlProgram, GError*) GlProgramResult;
 typedef STRUCT_RESULT(Shader, GError*) ShaderResult;
 
 static ShaderResult load_shader_from_resource(GResource* resource, const char* resource_path, GLenum shader_type);
-static GlProgramResult load_main_shader_program(GResource* resource, const char* vert_path, const char* frag_path);
+static GlProgramResult load_shader_program(GResource* resource, const char* vert_path, const char* frag_path);
 static Mesh create_fullscreen_mesh();
+
+static void upload_maze_to_gpu(MgGlMazeView* self);
+static void resize_framebuffer(MgGlMazeView* self);
+static void generate_fb_mipmaps(MgGlMazeView* self);
+static void render_pass_main(MgGlMazeView* self);
+static void render_pass_post_proc(MgGlMazeView* self);
 // Local
 
-MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* controller) {
-    if (ui == NULL)
-        return (MgGlMazeViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
-    if (controller == NULL)
-        return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgMazeController provided"));
+MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* mazectl, MgCameraController* cameractl) {
+    if (ui == NULL)        return (MgGlMazeViewResult) ERR(GERROR_NEW("No GtkBuilder provided"));
+    if (mazectl == NULL)   return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgMazeController provided"));
+    if (cameractl == NULL) return (MgGlMazeViewResult) ERR(GERROR_NEW("No MgCameraController provided"));
     // `resource` can be null, that will just lead to an error return from failing to load shaders.
 
-    GlProgramResult main_shader = load_main_shader_program(resource, "/org/ussur/mazegtk/common.vert", "/org/ussur/mazegtk/basic.frag");
+    GtkGLArea* gl_area = GTK_GL_AREA(gtk_builder_get_object(ui, "gl_area"));
+    if (gl_area == NULL)
+        return (MgGlMazeViewResult) ERR(GERROR_NEW("No widget `gl_area`"));
+
+    GlProgramResult main_shader = load_shader_program(resource, "/org/ussur/mazegtk/common.vert", "/org/ussur/mazegtk/basic.frag");
     if (!main_shader.is_ok)
         return (MgGlMazeViewResult) ERR(main_shader.error);
 
-    GlProgramResult pp_shader = load_main_shader_program(resource, "/org/ussur/mazegtk/common.vert", "/org/ussur/mazegtk/post_processing.frag");
+    GlProgramResult pp_shader = load_shader_program(resource, "/org/ussur/mazegtk/common.vert", "/org/ussur/mazegtk/post_processing.frag");
     if (!pp_shader.is_ok) {
         gl_program_free(main_shader.ok);
         return (MgGlMazeViewResult) ERR(pp_shader.error);
@@ -34,9 +43,9 @@ MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMa
     assert_alloc(view);
 
     *view = (MgGlMazeView) {
-        .controller = controller,
-
-        .gl_area = GTK_GL_AREA(gtk_builder_get_object(ui, "gl_area")),
+        .mazectl = mazectl,
+        .cameractl = cameractl,
+        .gl_area = gl_area,
 
         .fullscreen_mesh        = create_fullscreen_mesh(), 
         .main_shader            = main_shader.ok,
@@ -48,6 +57,14 @@ MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMa
         .fb_width  = 10,
         .fb_height = 10,
     };
+
+
+    gtk_widget_add_events(
+        GTK_WIDGET(view->gl_area), 
+        gtk_widget_get_events(GTK_WIDGET(view->gl_area)) |
+        GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | 
+        GDK_SCROLL_MASK | GDK_FOCUS_CHANGE_MASK
+    );
 
     return (MgGlMazeViewResult) OK(view);
 }
@@ -68,35 +85,109 @@ void MgGlMazeView_free(MgGlMazeView* view) {
 }
 
 void MgGlMazeView_render(MgGlMazeView* view) {
-    debugln("TODO");
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(view->gl_area));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(view->gl_area));
+
+    // Make sure data is up to date
+    resize_framebuffer(view);
+    if (MgMazeController_was_maze_updated(view->mazectl))
+        upload_maze_to_gpu(view);
+
+    // Render pass 1 : to internal framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, view->render_buffer.framebuffer);
+    glViewport(0, 0, view->fb_width, view->fb_height);
+    render_pass_main(view);
+
+    // Mipmaps (for MSAA effect)
+    generate_fb_mipmaps(view);
+
+    // Render pass 2 : to GtkGLArea
+    gtk_gl_area_attach_buffers(view->gl_area);
+    glViewport(0, 0, width, height);
+    render_pass_post_proc(view);
+
+    // Bugs arise without this line (faulty videodriver? fauly GTK GL?)
+    //      I do not fully understand the logic behind this bug, but it
+    //      requires the program to set glUseProgram for this shader AFTER rendering.
+    glUseProgram(view->main_shader.program);
 }
 
 
+static void resize_framebuffer(MgGlMazeView* self) {
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(self->gl_area));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(self->gl_area));
 
-// void MgGtkViewInner_upload_maze_to_gpu(MgGtkViewInner* view_inner) {
-//     MgMazeController* maze = MgController_get_maze(view_inner->controller);
-//     MazeSsbo_upload(
-//         &view_inner->maze_ssbo, 
-//         MgMazeController_width(maze), 
-//         MgMazeController_height(maze), 
-//         MgMazeController_data_size(maze), 
-//         MgMazeController_data_buffer(maze)
-//     );
+    long double msaa_coef = 4.0; // TODO: make settings
+    size_t fb_width = (size_t)(width * msaa_coef);
+    size_t fb_height = (size_t)(height * msaa_coef);
+
+    if (fb_width != self->fb_width || fb_height != self->fb_height) {
+        framebuffer_resize(&self->render_buffer, fb_width, fb_height);
+        self->fb_width = fb_width;
+        self->fb_height = fb_height;
+    }
+}
+static void generate_fb_mipmaps(MgGlMazeView* self) {
+    glBindTexture(GL_TEXTURE_2D, self->render_buffer.color_texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+static void render_pass_main(MgGlMazeView* self) {
+    // Get values for uniforms
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(self->gl_area));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(self->gl_area));
+
+    MgVector2 cam_pos = MgCameraController_get_pos(self->cameractl);
+    float cell_size = MgCameraController_get_cell_size(self->cameractl);
     
-// }
+    // Set uniform values
+    GLint loc_screen_width = glGetUniformLocation(self->main_shader.program, "u_screen_size");
+    GLint loc_cell_size    = glGetUniformLocation(self->main_shader.program, "u_cell_size_pix");
+    GLint loc_camera_pos   = glGetUniformLocation(self->main_shader.program, "u_camera_pos");
+    glUniform2f(loc_screen_width, (float) width, (float) height);
+    glUniform2f(loc_cell_size, cell_size, cell_size);
+    glUniform2f(loc_camera_pos, cam_pos.x, cam_pos.y);
 
-// void MgGtkViewInner_free(MgGtkViewInner view_inner) {
-//     MazeSsbo_free(view_inner.maze_ssbo);
-//     framebuffer_free(view_inner.render_buffer);
-//     mesh_delete(view_inner.fullscreen_mesh);
-//     gl_program_free(view_inner.post_processing_shader);
-//     gl_program_free(view_inner.main_shader);
-// }
+    // Bind SSBO into shaders (somewhat like uniforms too)
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, self->maze_ssbo.data_buffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, self->maze_ssbo.size_buffer);
+
+    // And call the render finally
+    glUseProgram(self->main_shader.program);
+    mesh_bind(self->fullscreen_mesh);
+    mesh_draw(self->fullscreen_mesh);
+}
+
+static void render_pass_post_proc(MgGlMazeView* self) {
+    // Get values for uniforms
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, self->render_buffer.color_texture);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Bind uniforms
+    glUseProgram(self->post_processing_shader.program);
+    int loc = glGetUniformLocation(self->post_processing_shader.program, "u_read_texture");
+    glUniform1i(loc, 0); // 0 as in GL_TEXTURE0 above
+
+    // Call the render
+    mesh_bind(self->fullscreen_mesh);
+    mesh_draw(self->fullscreen_mesh);
+}
 
 
+static void upload_maze_to_gpu(MgGlMazeView* self) {
+    MazeSsbo_upload(
+        &self->maze_ssbo, 
+        MgMazeController_width(self->mazectl),
+        MgMazeController_height(self->mazectl),
+        MgMazeController_data_size(self->mazectl),
+        MgMazeController_data_buffer(self->mazectl) 
+    );
+}
 
 // Local
-static GlProgramResult load_main_shader_program(GResource* resource, const char* vert_path, const char* frag_path) {
+static GlProgramResult load_shader_program(GResource* resource, const char* vert_path, const char* frag_path) {
     debugln("Loading shader program from '%s' + '%s'...", vert_path, frag_path);
     if (resource == NULL)
         return (GlProgramResult) ERR(GERROR_NEW("No resource loaded to load shader program"));

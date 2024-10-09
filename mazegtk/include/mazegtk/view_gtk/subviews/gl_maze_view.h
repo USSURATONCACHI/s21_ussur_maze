@@ -1,17 +1,20 @@
 #ifndef MAZEGTK_VIEW_GTK_SUBVIEWS_GL_MAZE_VIEW_H_
 #define MAZEGTK_VIEW_GTK_SUBVIEWS_GL_MAZE_VIEW_H_
 
-#include <mazegtk/controller/maze.h>
-#include <better_c_std/result.h>
 #include <gtk/gtk.h>
+#include <better_c_std/result.h>
+
+#include <mazegtk/controller/maze.h>
+#include <mazegtk/controller/camera.h>
+#include <mazegtk/view_gtk/maze_ssbo.h>
 
 #include <opengl_utils/mesh.h>
 #include <opengl_utils/gl_program.h>
 #include <opengl_utils/framebuffer.h>
-#include <mazegtk/view_gtk/maze_ssbo.h>
 
 typedef struct {
-    MgMazeController* controller;
+    MgMazeController* mazectl;
+    MgCameraController* cameractl;
 
     GtkGLArea* gl_area;
 
@@ -26,7 +29,7 @@ typedef struct {
 
 typedef STRUCT_RESULT(MgGlMazeView*, GError*) MgGlMazeViewResult;
 
-MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* controller);
+MgGlMazeViewResult MgGlMazeView_create(GtkBuilder* ui, GResource* resource, MgMazeController* mazectl, MgCameraController* cameractl);
 void MgGlMazeView_free(MgGlMazeView* view);
 
 void MgGlMazeView_render(MgGlMazeView* view);
