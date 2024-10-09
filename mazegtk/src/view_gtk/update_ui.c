@@ -14,24 +14,13 @@ G_MODULE_EXPORT void mg_maze_app_handle_update_ui(GtkGLArea* gl_area, GdkGLConte
 static void update_camera_ui(MgGtkView* view) {
     MgCameraControlsView_update_ui(view->camera_controls);
     MgCameraSettingsView_update_ui(view->camera_settings);
+    MgMazeGenView_update_ui(view->maze_gen);
 }
 
 
-G_MODULE_EXPORT void handle_msaa_coef_value_changed(GtkSpinButton* widget, MgGtkView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->inner.last_shown.msaa_coef)
-        return;
-    view->inner.msaa_coef = val;
-}
-G_MODULE_EXPORT void handle_gen_maze_width_value_changed(GtkSpinButton* widget, MgGtkView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->inner.last_shown.gen_maze_w)
-        return;
-    view->inner.gen_maze_w = val;
-}
-G_MODULE_EXPORT void handle_gen_maze_height_value_changed(GtkSpinButton* widget, MgGtkView* view) {
-    gdouble val = gtk_spin_button_get_value(widget);
-    if (val == view->inner.last_shown.gen_maze_h)
-        return;
-    view->inner.gen_maze_h = val;
-}
+// G_MODULE_EXPORT void handle_msaa_coef_value_changed(GtkSpinButton* widget, MgGtkView* view) {
+//     gdouble val = gtk_spin_button_get_value(widget);
+//     if (val == view->inner.last_shown.msaa_coef)
+//         return;
+//     view->inner.msaa_coef = val;
+// }

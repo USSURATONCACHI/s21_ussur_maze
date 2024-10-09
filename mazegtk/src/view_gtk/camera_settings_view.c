@@ -35,12 +35,14 @@ MgCameraSettingsView* MgCameraSettingsView_create(GtkBuilder* ui, MgCameraContro
 void MgCameraSettingsView_free(MgCameraSettingsView* view) {
     if (view == NULL)
         return;
+    debugln(__PRETTY_FUNCTION__);
 
     if (view->drag_sensitivity_btn) g_signal_handlers_disconnect_by_data(view->drag_sensitivity_btn, view);
     if (view->zoom_speed_btn)       g_signal_handlers_disconnect_by_data(view->zoom_speed_btn,       view);
     if (view->reset_btn)            g_signal_handlers_disconnect_by_data(view->reset_btn,            view);
 
     free(view);
+    debugln("%s done", __PRETTY_FUNCTION__);
 }
 
 void MgCameraSettingsView_update_ui(MgCameraSettingsView* view) {

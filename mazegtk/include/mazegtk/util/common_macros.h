@@ -4,8 +4,6 @@
 #include <gtk/gtk.h>
 #include <better_c_std/prettify/misc.h>
 
-#define DOMAIN g_quark_from_static_string("s21_ussur_mazegtk")
-
 #define GETREF(variable, type, builder, name, out_error)                                 \
     variable = type(gtk_builder_get_object((builder), (name)));                          \
     if (variable == NULL && out_error) {                                                 \

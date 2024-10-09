@@ -50,8 +50,10 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
     if (!result.is_ok)
         MgGtkView_free(view);
 
-    view->camera_controls = MgCameraControlsView_create(view->builder, MgController_get_camera(view->controller));  
-    view->camera_settings = MgCameraSettingsView_create(view->builder, MgController_get_camera(view->controller));  
+    view->camera_controls = MgCameraControlsView_create(view->builder, MgController_get_camera(view->controller));
+    view->camera_settings = MgCameraSettingsView_create(view->builder, MgController_get_camera(view->controller));
+    view->maze_gen        = MgMazeGenView_create(view->builder, MgController_get_maze_gen(view->controller));
+
     MgDropdownViewResult dropdown_res = MgDropdownView_create(view->builder, view->controller);
     if (dropdown_res.is_ok) {
         view->dropdown = dropdown_res.ok;
@@ -106,6 +108,9 @@ static void app_run_function(ThreadArg* arg_heap) {
 }
 
 void MgGtkView_free(MgGtkView* view) {
+    debugln(__PRETTY_FUNCTION__);
+    debug_push();
+
     MgCameraControlsView_free(view->camera_controls);  view->camera_controls    = NULL;
     MgCameraSettingsView_free(view->camera_settings);  view->camera_settings    = NULL;
     MgDropdownView_free(view->dropdown);               view->dropdown           = NULL;
@@ -126,6 +131,9 @@ void MgGtkView_free(MgGtkView* view) {
         g_resources_unregister(view->resource); 
 
     free(view);
+
+    debug_pop();
+    debugln("%s done", __PRETTY_FUNCTION__);
 }
 
 void MgGtkView_fail_with_error(MgGtkView* view, GError* error) {

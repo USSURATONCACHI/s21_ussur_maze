@@ -36,8 +36,10 @@ MgGrabbyCursorView* MgGrabbyCursorView_from_widget(GtkWidget* widget) {
 }
 
 void MgGrabbyCursorView_free(MgGrabbyCursorView* view) {
+    debugln(__PRETTY_FUNCTION__);
     g_signal_handlers_disconnect_by_data(view->widget, view);
     free(view);
+    debugln("%s done", __PRETTY_FUNCTION__);
 }
 
 // ==

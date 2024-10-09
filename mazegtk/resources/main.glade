@@ -27,11 +27,13 @@
     <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment_gen_maze_height">
+    <property name="lower">1</property>
     <property name="upper">1073741824</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment_gen_maze_width">
+    <property name="lower">1</property>
     <property name="upper">1073741824</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
@@ -297,7 +299,6 @@
                                     <property name="climb-rate">10</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_gen_maze_width_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -315,7 +316,6 @@
                                     <property name="climb-rate">10</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_gen_maze_height_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -324,12 +324,11 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="gen_eller">
                                     <property name="label" translatable="yes">Generate (Eller's algorithm)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <signal name="clicked" handler="handle_generate_eller" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -338,12 +337,11 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="gen_empty">
                                     <property name="label" translatable="yes">Generate (Empty)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <signal name="clicked" handler="handle_generate_empty" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -352,12 +350,11 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="gen_crop">
                                     <property name="label" translatable="yes">Crop current maze to size</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <signal name="clicked" handler="handle_generate_cropped" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -424,7 +421,6 @@
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_cam_pos_x_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -445,7 +441,6 @@
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_cam_pos_y_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -478,7 +473,6 @@
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_cam_zoom_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -492,7 +486,6 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <signal name="clicked" handler="handle_reset_camera" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -555,7 +548,6 @@
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_drag_sensitivity_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -585,7 +577,6 @@
                                     <property name="snap-to-ticks">True</property>
                                     <property name="numeric">True</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_zoom_speed_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -599,7 +590,6 @@
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <signal name="clicked" handler="cam_controls_reset_to_default" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -662,7 +652,6 @@
                                     <property name="numeric">True</property>
                                     <property name="value">4</property>
                                     <signal name="scroll-event" handler="dont_scroll_unless_focused" swapped="no"/>
-                                    <signal name="value-changed" handler="handle_msaa_coef_value_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -712,8 +701,6 @@
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_STRUCTURE_MASK | GDK_SCROLL_MASK | GDK_SMOOTH_SCROLL_MASK</property>
                 <signal name="button-press-event" handler="handle_gl_area_button_press" swapped="no"/>
                 <signal name="button-release-event" handler="handle_gl_area_button_release" swapped="no"/>
-                <signal name="enter-notify-event" handler="handle_gl_area_enter" swapped="no"/>
-                <signal name="leave-notify-event" handler="handle_gl_area_leave" swapped="no"/>
                 <signal name="motion-notify-event" handler="handle_gl_area_motion" swapped="no"/>
                 <signal name="realize" handler="mg_maze_app_handle_gl_realize" swapped="no"/>
                 <signal name="render" handler="mg_maze_app_handle_render_gl" swapped="no"/>

@@ -1,7 +1,6 @@
 #ifndef MAZEGTK_VIEW_GTK_CAMERA_SETTINGS_VIEW_H_
 #define MAZEGTK_VIEW_GTK_CAMERA_SETTINGS_VIEW_H_
 
-
 #include <mazegtk/controller/camera.h>
 #include <gtk/gtk.h>
 

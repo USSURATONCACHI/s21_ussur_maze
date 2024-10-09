@@ -13,7 +13,7 @@ MazeSsbo MazeSsbo_create();
 void MazeSsbo_upload(const MazeSsbo* ssbo, size_t width, size_t height, size_t data_size, void* data);
 void MazeSsbo_free(MazeSsbo ssbo);
 
-#define VECTOR_H MazeSsbo
+#define VECTOR_ITEM_TYPE MazeSsbo
 #include <better_c_std/vector.h>
 
 

@@ -4,12 +4,11 @@
 
 #include <libmaze/maze.h>
 
-MgMazeController* MgMazeController_new(void* maze) {
-    MzMaze* cont = (MzMaze*) maze;
-    return (MgMazeController*)cont;
+MgMazeController* MgMazeController_new(MzMaze* maze) {
+    return (MgMazeController*)maze;
 }
 void MgMazeController_free(MgMazeController* controller) {
-    free(controller);
+    unused(controller);
 }
 
 uint8_t* MgMazeController_data_buffer(MgMazeController* self_in) {

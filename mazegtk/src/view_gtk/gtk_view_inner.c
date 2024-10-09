@@ -45,9 +45,6 @@ MgGtkViewInnerResult MgGtkViewInner_new(MgController* controller, GResource* res
         .fb_height     = 1000,
 
         .msaa_coef = 4.0,
-
-        .gen_maze_w = 128,
-        .gen_maze_h = 128,
     };
 
     MgGtkViewInner_upload_maze_to_gpu(&inner);
@@ -78,7 +75,7 @@ void MgGtkViewInner_free(MgGtkViewInner view_inner) {
 
 // Local
 static GlProgramResult load_main_shader_program(GResource* resource, const char* vert_path, const char* frag_path) {
-    debugln("Loading main shader program...");
+    debugln("Loading shader program from '%s' + '%s'...", vert_path, frag_path);
     if (resource == NULL)
         return (GlProgramResult) ERR(GERROR_NEW("No resource loaded to load shader program"));
 

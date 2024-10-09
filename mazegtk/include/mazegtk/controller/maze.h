@@ -3,10 +3,11 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <libmaze/maze_struct.h>
 
 typedef struct MgMazeController MgMazeController;
 
-MgMazeController* MgMazeController_new(void* maze);
+MgMazeController* MgMazeController_new(MzMaze* maze);
 void MgMazeController_free(MgMazeController* controller);
 
 uint8_t* MgMazeController_data_buffer(MgMazeController* self);

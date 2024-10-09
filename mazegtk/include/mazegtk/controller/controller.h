@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <mazegtk/controller/camera.h>
 #include <mazegtk/controller/maze.h>
+#include <mazegtk/controller/maze_gen.h>
 #include <mazegtk/model/model.h>
 
 typedef struct MgController MgController;
@@ -11,8 +12,9 @@ typedef struct MgController MgController;
 MgController* MgController_new(MgModel* model_ref);
 void MgController_free(MgController* controller);
 
-MgMazeController* MgController_get_maze(MgController* self);
-MgCameraController* MgController_get_camera(MgController* self);
+MgMazeController*    MgController_get_maze(MgController* self);
+MgMazeGenController* MgController_get_maze_gen(MgController* self);
+MgCameraController*  MgController_get_camera(MgController* self);
 
 typedef enum {
     MG_SUCCESS,

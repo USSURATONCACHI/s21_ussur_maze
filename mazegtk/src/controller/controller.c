@@ -6,7 +6,10 @@
 
 struct MgController {
     MgModel* model;
-    MgCameraController* camera;
+
+    MgMazeController*    maze_controller;
+    MgCameraController*  camera_controller;
+    MgMazeGenController* maze_gen_controller;
 };
 
 
@@ -14,23 +17,32 @@ MgController* MgController_new(MgModel* model_ref) {
     MgController* cont = (MgController*)malloc(sizeof(MgModel));
     assert_alloc(cont);
 
-    cont->model = model_ref;
-    cont->camera = MgCameraController_new(&model_ref->camera);
+    *cont = (MgController) {
+        .model = model_ref,
+        .camera_controller = MgCameraController_new(&model_ref->camera),
+        .maze_controller = MgMazeController_new(&model_ref->maze),
+        .maze_gen_controller = MgMazeGenController_new(&model_ref->maze),
+    };
 
     return (MgController*) cont;
 }
 void MgController_free(MgController* cont) {
-    MgCameraController_free(cont->camera);
+    MgCameraController_free(cont->camera_controller);
+    MgMazeController_free(cont->maze_controller);
+    MgMazeGenController_free(cont->maze_gen_controller);
     free(cont);
 }
 
 
 MgCameraController* MgController_get_camera(MgController* self) {
-    return self->camera;
+    return self->camera_controller;
+}
+MgMazeGenController* MgController_get_maze_gen(MgController* self) {
+    return self->maze_gen_controller;
 }
 
 MgMazeController* MgController_get_maze(MgController* self) {
-    return MgMazeController_new(&self->model->maze);
+    return self->maze_controller;
 }
 
 

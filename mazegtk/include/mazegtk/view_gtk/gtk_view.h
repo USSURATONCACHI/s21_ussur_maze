@@ -4,10 +4,12 @@
 #include <gtk/gtk.h>
 #include <mazegtk/controller/controller.h>
 #include <mazegtk/view_gtk/gtk_view_inner.h>
+
 #include <mazegtk/view_gtk/camera_controls_view.h>
 #include <mazegtk/view_gtk/camera_settings_view.h>
 #include <mazegtk/view_gtk/dropdown_view.h>
 #include <mazegtk/view_gtk/grabby_cursor_view.h>
+#include <mazegtk/view_gtk/maze_gen_view.h>
 
 
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
@@ -27,6 +29,7 @@ typedef struct {
     MgCameraSettingsView* camera_settings;
     MgDropdownView*       dropdown;
     MgGrabbyCursorView*   grabby_cursor_view;
+    MgMazeGenView*        maze_gen;
 
     MgController* controller;
     MgGtkViewInner inner;

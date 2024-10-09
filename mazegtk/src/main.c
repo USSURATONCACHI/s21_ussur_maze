@@ -5,8 +5,8 @@
 
 
 int main(int argc, char** argv) {    
-    // MODEL & CONTROLLEr
-    // MgModel model = MgModel_new(64000, 64000);
+    // MODEL & CONTROLLER
+    // MgModel model = MgModel_new(20000, 20000) // Eller's algorithm is not very parallelizable, so this will take some time
     MgModel model = MgModel_new(10, 10);
     MgController* controller = MgController_new(&model);
 

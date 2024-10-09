@@ -37,6 +37,7 @@ MgCameraControlsView* MgCameraControlsView_create(GtkBuilder* ui, MgCameraContro
 void MgCameraControlsView_free(MgCameraControlsView* view) {
     if (view == NULL)
         return;
+    debugln(__PRETTY_FUNCTION__);
 
     if (view->x_btn)     g_signal_handlers_disconnect_by_data(view->x_btn,     view);
     if (view->y_btn)     g_signal_handlers_disconnect_by_data(view->y_btn,     view);
@@ -44,6 +45,7 @@ void MgCameraControlsView_free(MgCameraControlsView* view) {
     if (view->reset_btn) g_signal_handlers_disconnect_by_data(view->reset_btn, view);
 
     free(view);
+    debugln("%s done", __PRETTY_FUNCTION__);
 }
 
 void MgCameraControlsView_update_ui(MgCameraControlsView* view) {

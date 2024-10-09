@@ -27,29 +27,6 @@ typedef struct {
     // For camera & camera controls
     bool is_dragging;
     int prev_x, prev_y; // can be uninitialized
-
-    // For maze generation
-    size_t gen_maze_w, gen_maze_h;
-
-    // For camera UI (can be uninit)
-    struct {
-        gdouble cam_x, cam_y;
-        gdouble zoom;
-        gdouble zoom_speed;
-        gdouble drag_sensitivity;
-
-        gdouble msaa_coef;
-
-        size_t gen_maze_w, gen_maze_h;
-    } last_shown;
-
-    // For off-thread maze generation
-    struct {
-        size_t threads_count;
-        pthread_t* threads;
-        bool should_cancel;
-
-    } thread_gen;
 } MgGtkViewInner;
 
 typedef STRUCT_RESULT(MgGtkViewInner, GError*) MgGtkViewInnerResult;
