@@ -5,6 +5,9 @@
 #include <better_c_std/camera/camera.h>
 #include <mazegtk/util/vector2.h>
 
+// Opaque pointers are used instead of full defined structs to
+// not encourage coders (me) to use parts of inner implementation in view layer.
+// This way, internals are simply inaccessible.
 typedef struct MgCameraController MgCameraController;
 
 MgCameraController* MgCameraController_new(BcstdCamera* model_ref);

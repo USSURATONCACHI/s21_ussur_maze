@@ -6,6 +6,9 @@
 #include <libmaze/maze_struct.h>
 #include <mazegtk/controller/maze.h>
 
+// Opaque pointers are used instead of full defined structs to
+// not encourage coders (me) to use parts of inner implementation in view layer.
+// This way, internals are simply inaccessible.
 typedef struct MgMazeGenController MgMazeGenController;
 
 MgMazeGenController* MgMazeGenController_new(MgMazeController* maze_controller); // depends on another controller

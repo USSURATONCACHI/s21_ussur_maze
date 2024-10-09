@@ -16,14 +16,21 @@
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
 
+// This main `MgGtkView` just aggregates all the small subviews, and does nothing on its own.
+
 typedef struct {
     // Resources to manage Gtk GL app
     GtkApplication* app;
     GtkBuilder* builder;
     GResource* resource;
-    GError* failed_error;
-    pthread_t thread;
-    bool is_thread_running;
+
+    GError* failed_error;   // We run gtk in separate thread, because glib only provides quite inflexible async callback
+    pthread_t thread;       // interfaces. This really breaks the line of execution and decimate readability.
+    bool is_thread_running; // This struct/class provides synchronous interface to this whole process.
+
+                            // GTK callbacks approach would maybe work nice, if I turned my entire program into a state-machine.
+                            // However, i don't think just creating a window and rendering to it would be worth
+                            // covering all parts of my code with unions, state checks, and ownership managing.
 
     // Application-specific resources
     MgCameraControlsView* camera_controls;
