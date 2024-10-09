@@ -22,6 +22,10 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_realize(GtkGLArea* widget, MgGtkView*
 G_MODULE_EXPORT void mg_maze_app_handle_gl_render(GtkGLArea* gl_area, GdkGLContext* context, MgGtkView* view) {
     unused(gl_area);
     unused(context);
+    MgCameraControlsView_update_ui(view->view_camera_controls);
+    MgCameraSettingsView_update_ui(view->view_camera_settings);
+    MgMazeGenView_update_ui(view->view_maze_gen);
+    
     MgGlMazeView_render(view->view_gl_maze);
 }
 
