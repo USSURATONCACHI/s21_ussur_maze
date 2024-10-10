@@ -63,6 +63,12 @@ void MgMazeGenView_update_ui(MgMazeGenView* view) {
 
     UPDATE_SPINBTN_GDOUBLE(view->gen_w_btn, view->last_shown.gen_w, w);
     UPDATE_SPINBTN_GDOUBLE(view->gen_h_btn, view->last_shown.gen_h, h);
+
+    bool is_loading = MgMazeGenController_is_loading(view->controller);
+    gtk_widget_set_sensitive(GTK_WIDGET(view->gen_eller_btn),  !is_loading);
+    gtk_widget_set_sensitive(GTK_WIDGET(view->gen_crop_btn),   !is_loading);
+    gtk_widget_set_sensitive(GTK_WIDGET(view->gen_empty_btn),  !is_loading);
+    gtk_widget_set_sensitive(GTK_WIDGET(view->gen_random_btn), !is_loading);
 }
 
 // ==

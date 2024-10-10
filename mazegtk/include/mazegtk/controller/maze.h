@@ -15,11 +15,15 @@ void MgMazeController_free(MgMazeController* controller);
 
 bool MgMazeController_was_maze_updated(const MgMazeController* self);  // check if updated since last call to `MgMazeController_maze_was_updated`
 void MgMazeController_maze_was_updated(MgMazeController* self);
+void MgMazeController_increment_update_id(MgMazeController* self);
 
 uint8_t* MgMazeController_data_buffer(MgMazeController* self);
 size_t   MgMazeController_data_size  (MgMazeController* self);
 size_t   MgMazeController_width      (MgMazeController* self);
 size_t   MgMazeController_height     (MgMazeController* self);
+
+bool MgMazeController_is_loading(const MgMazeController* self);
+void MgMazeController_set_loading(MgMazeController* self, bool value);
 
 // For inter-controller use
 void MgMazeController_set_maze(MgMazeController* self, MzMaze new_maze);

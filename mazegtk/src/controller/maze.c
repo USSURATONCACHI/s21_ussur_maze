@@ -8,6 +8,7 @@ struct MgMazeController {
     MzMaze* maze;
     size_t maze_update_id;
     size_t last_maze_check_id;
+    bool is_loading;
 };
 
 MgMazeController* MgMazeController_new(MzMaze* maze) {
@@ -40,6 +41,9 @@ bool MgMazeController_was_maze_updated(const MgMazeController* self) {
 void MgMazeController_maze_was_updated(MgMazeController* self) {
     self->last_maze_check_id = self->maze_update_id;
 }
+void MgMazeController_increment_update_id(MgMazeController* self) {
+    self->maze_update_id++;
+}
 
 uint8_t* MgMazeController_data_buffer(MgMazeController* self) {
     return self->maze->raw_data;
@@ -52,4 +56,12 @@ size_t MgMazeController_width(MgMazeController* self) {
 }
 size_t MgMazeController_height(MgMazeController* self) {
     return self->maze->height;
+}
+
+
+bool MgMazeController_is_loading(const MgMazeController* self) {
+    return self->is_loading;
+}
+void MgMazeController_set_loading(MgMazeController* self, bool value) {
+    self->is_loading = value;
 }

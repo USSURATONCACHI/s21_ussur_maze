@@ -48,7 +48,6 @@ MgMazeController* MgController_get_maze(MgController* self) {
     return self->maze_controller;
 }
 
-
 // static MgCreateError MzError_to_MgCreateError(MzError err) {
 //     switch (err) {
 //         case NOT_ENOUGH_MEMORY:
