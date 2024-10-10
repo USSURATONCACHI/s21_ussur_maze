@@ -9,25 +9,25 @@ extern "C" {
 }
 
 TEST(MzMaze, Create) {
-    MzMazeResult res = mz_maze_create(150, 151);
+    MzMazeResult res = MzMaze_create(150, 151);
     ASSERT_TRUE(res.is_ok);
     MzMaze maze = res.ok;
 
     EXPECT_EQ(maze.width, 150);
     EXPECT_EQ(maze.height, 151);
 
-    mz_maze_free(maze);
+    MzMaze_free(maze);
 }
 
 
 TEST(MzMaze, WritePersists) {
-    MzMazeResult res = mz_maze_create(2, 2);
+    MzMazeResult res = MzMaze_create(2, 2);
     ASSERT_TRUE(res.is_ok);
     MzMaze maze = res.ok;
 
     for (size_t x = 0; x < maze.width; x++) {
         for (size_t y = 0; y < maze.height; y++) {
-            mz_maze_set_at(&maze, x, y, (MzCell) {
+            MzMaze_set_at(&maze, x, y, (MzCell) {
                 .top_wall = (x & 1) ? true : false,
                 .left_wall = (x & 6) ? true : false
             });
@@ -36,69 +36,69 @@ TEST(MzMaze, WritePersists) {
 
     for (size_t x = 0; x < maze.width; x++) {
         for (size_t y = 0; y < maze.height; y++) {
-            MzCell cell = mz_maze_at(&maze, x, y);
+            MzCell cell = MzMaze_at(&maze, x, y);
             EXPECT_EQ(cell.top_wall, (x & 1) ? true : false);
             EXPECT_EQ(cell.left_wall, (x & 6) ? true : false);
         }
     }
-    mz_maze_free(maze);
+    MzMaze_free(maze);
 }
 
 TEST(MzMaze, Print) {
-    MzMazeResult res = mz_maze_create(9, 4);
+    MzMazeResult res = MzMaze_create(9, 4);
     ASSERT_TRUE(res.is_ok);
     MzMaze maze = res.ok;
 
-    mz_maze_set_at(&maze, 1, 1, (MzCell) {
+    MzMaze_set_at(&maze, 1, 1, (MzCell) {
         .top_wall = true,
         .left_wall = true,
     });
-    mz_maze_set_at(&maze, 2, 1, (MzCell) {
+    MzMaze_set_at(&maze, 2, 1, (MzCell) {
         .top_wall = true,
         .left_wall = false,
     });
-    mz_maze_set_at(&maze, 1, 2, (MzCell) {
+    MzMaze_set_at(&maze, 1, 2, (MzCell) {
         .top_wall = true,
         .left_wall = false,
     });
-    mz_maze_print(&maze);
-    mz_maze_free(maze);
+    MzMaze_print(&maze);
+    MzMaze_free(maze);
 }
 
 TEST(MzMaze, Directions) {
-    MzMazeResult res = mz_maze_create(9, 4);
+    MzMazeResult res = MzMaze_create(9, 4);
     ASSERT_TRUE(res.is_ok);
     MzMaze maze = res.ok;
 
-    mz_maze_set_at(&maze, 1, 1, (MzCell) {
+    MzMaze_set_at(&maze, 1, 1, (MzCell) {
         .top_wall = true,
         .left_wall = true,
     });
-    mz_maze_set_at(&maze, 2, 1, (MzCell) {
+    MzMaze_set_at(&maze, 2, 1, (MzCell) {
         .top_wall = true,
         .left_wall = false,
     });
-    mz_maze_set_at(&maze, 1, 2, (MzCell) {
+    MzMaze_set_at(&maze, 1, 2, (MzCell) {
         .top_wall = true,
         .left_wall = false,
     });
 
-    MzDirections dir = mz_maze_where_can_go(&maze, 1, 1);
+    MzDirections dir = MzMaze_where_can_go(&maze, 1, 1);
     EXPECT_FALSE(dir.up);
     EXPECT_FALSE(dir.down);
     EXPECT_FALSE(dir.left);
     EXPECT_TRUE(dir.right);
 
-    mz_maze_free(maze);
+    MzMaze_free(maze);
 }
 
 TEST(MzMaze, Random) {
-    MzMazeResult res = mz_maze_create(9, 6);
+    MzMazeResult res = MzMaze_create(9, 6);
     ASSERT_TRUE(res.is_ok);
     MzMaze maze = res.ok;
 
     srand(time(NULL));
-    mz_maze_fill_random(&maze);
-    mz_maze_print(&maze);
-    mz_maze_free(maze);
+    MzMaze_fill_random(&maze);
+    MzMaze_print(&maze);
+    MzMaze_free(maze);
 }
