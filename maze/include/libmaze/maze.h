@@ -7,25 +7,30 @@
 #include <libmaze/maze_struct.h>
 #include <libmaze/cell_struct.h>
 #include <libmaze/directions_struct.h>
+#include <libmaze/ellers_resources.h>
 
-MzMazeResult mz_maze_create(size_t width, size_t height);
-MzMazeResult mz_maze_generate_perfect_eller(size_t width, size_t height);
-MzMazeResult mz_maze_crop_to_size(const MzMaze* old_one, size_t width, size_t height);
-MzMazeResult mz_maze_get_mipmap_halved(const MzMaze* maze);
+// Ctor & destructor
+MzMazeResult MzMaze_create(size_t width, size_t height);
+void MzMaze_free(MzMaze maze);
 
-MzVoidResult mz_maze_fill_perfect_eller(MzMaze* maze);
+// General methods
+void MzMaze_set_at(MzMaze* maze, size_t x, size_t y, MzCell value);
+MzCell MzMaze_at(const MzMaze* maze, size_t x, size_t y);
 
+void MzMaze_print(const MzMaze* maze);
+MzDirections MzMaze_where_can_go(const MzMaze* maze, size_t at_x, size_t at_y);
+size_t MzMaze_get_buffer_size(const MzMaze* maze);
 
-void   mz_maze_free(MzMaze maze);
-void   mz_maze_fill_random(MzMaze* maze);
+// -- Random fill
+void MzMaze_fill_random(MzMaze* maze);
 
-size_t mz_maze_get_buffer_size(const MzMaze* maze);
+// -- Eller's algorithm
+MzMazeResult MzMaze_create_perfect_eller(size_t width, size_t height);
+MzVoidResult MzMaze_fill_perfect_eller(MzMaze* maze);
+void MzMaze_fill_perfect_eller_preallocated(MzMaze* maze, MzEllersResources* res, size_t* current_row_report);
 
-MzCell mz_maze_at(const MzMaze* maze, size_t x, size_t y);
-void   mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell value);
-void   mz_maze_print(const MzMaze* maze);
-
-MzDirections mz_maze_where_can_go(const MzMaze* maze, size_t x, size_t y);
+// -- Misc
+MzMazeResult MzMaze_crop_to_size(const MzMaze* old_one, size_t new_width, size_t new_height);
 
 
 

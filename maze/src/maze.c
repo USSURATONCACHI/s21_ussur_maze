@@ -12,7 +12,7 @@ static size_t get_buffer_size(size_t w, size_t h) {
     return size_bytes;
 }
 
-MzMazeResult mz_maze_create(size_t width, size_t height) {
+MzMazeResult MzMaze_create(size_t width, size_t height) {
     size_t size_bytes = get_buffer_size(width, height);
     
     uint8_t* data = size_bytes > 0 ? ((uint8_t*) calloc(size_bytes, 1)) : NULL;
@@ -24,33 +24,33 @@ MzMazeResult mz_maze_create(size_t width, size_t height) {
         };
         return (MzMazeResult) OK(maze);
     } else {
-        return (MzMazeResult) ERR(NOT_ENOUGH_MEMORY);
+        return (MzMazeResult) ERR(MZ_ERROR_NOT_ENOUGH_MEMORY);
     }
 }
 
 
-MzMazeResult mz_maze_crop_to_size(const MzMaze* old_one, size_t width, size_t height) {
-    MzMazeResult res = mz_maze_create(width, height);
+MzMazeResult MzMaze_crop_to_size(const MzMaze* old_one, size_t width, size_t height) {
+    MzMazeResult res = MzMaze_create(width, height);
 
     if (res.is_ok) {
         for (size_t y = 0; y < res.ok.height && y < old_one->height; y++)
             for (size_t x = 0; x < res.ok.width && x < old_one->width; x++)
-                mz_maze_set_at(&res.ok, x, y, mz_maze_at(old_one, x, y));
+                MzMaze_set_at(&res.ok, x, y, MzMaze_at(old_one, x, y));
     }
 
     return res;
 }
 
 
-size_t mz_maze_get_buffer_size(const MzMaze* maze) {
+size_t MzMaze_get_buffer_size(const MzMaze* maze) {
     return get_buffer_size(maze->width, maze->height);
 }
 
-void mz_maze_free(MzMaze maze) {
+void MzMaze_free(MzMaze maze) {
     free(maze.raw_data);
 }
 
-MzCell mz_maze_at(const MzMaze* maze, size_t x, size_t y) {
+MzCell MzMaze_at(const MzMaze* maze, size_t x, size_t y) {
     size_t pos_bits = (y * maze->width + x) * MZ_CELL_SIZE_BITS;
     size_t pos_bytes = pos_bits / 8;
     size_t rem_bits = pos_bits % 8;
@@ -61,7 +61,7 @@ MzCell mz_maze_at(const MzMaze* maze, size_t x, size_t y) {
     MzCell cell = *((MzCell*)&data);
     return cell;
 }
-void mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell cell) {
+void MzMaze_set_at(MzMaze* maze, size_t x, size_t y, MzCell cell) {
     if (x == 0)
         cell.left_wall = true;
     if (y == 0)
@@ -78,7 +78,7 @@ void mz_maze_set_at(MzMaze* maze, size_t x, size_t y, MzCell cell) {
     maze->raw_data[pos_bytes] |= data_byte;    
 }
 
-void mz_maze_fill_random(MzMaze* maze) {
+void MzMaze_fill_random(MzMaze* maze) {
     debugln("Maze size: %zu %zu", maze->width, maze->height);
     for (size_t y = 0; y < maze->height; y++) {
         for (size_t x = 0; x < maze->width; x++) {
@@ -88,14 +88,14 @@ void mz_maze_fill_random(MzMaze* maze) {
                 .left_wall = r & 2 ? true : false,  
             };
 
-            mz_maze_set_at(maze, x, y, cell);
+            MzMaze_set_at(maze, x, y, cell);
         }
     }
 }
 
 
-MzDirections mz_maze_where_can_go(const MzMaze* maze, size_t x, size_t y) {
-    MzCell cell = mz_maze_at(maze, x, y);
+MzDirections MzMaze_where_can_go(const MzMaze* maze, size_t x, size_t y) {
+    MzCell cell = MzMaze_at(maze, x, y);
 
     if (x == 0) cell.left_wall = true;
     if (y == 0) cell.top_wall = true;
@@ -108,15 +108,15 @@ MzDirections mz_maze_where_can_go(const MzMaze* maze, size_t x, size_t y) {
     };
 
     if (x + 1 < maze->width)
-        result.right = !mz_maze_at(maze, x + 1, y).left_wall;
+        result.right = !MzMaze_at(maze, x + 1, y).left_wall;
 
     if (y + 1 < maze->height)
-        result.down = !mz_maze_at(maze, x + 1, y).top_wall;
+        result.down = !MzMaze_at(maze, x + 1, y).top_wall;
     
     return result;
 }
 
-void mz_maze_print(const MzMaze* maze) {
+void MzMaze_print(const MzMaze* maze) {
     const char* cells[4][2] = {
         {"+ ", "  "}, // left_wall: false, top_wall: false,
         {"+ ", "| "}, // left_wall: true, top_wall: false,
@@ -127,7 +127,7 @@ void mz_maze_print(const MzMaze* maze) {
     for (size_t y = 0; y < maze->height; y++) {
         for (size_t row = 0; row < 2; row++) {
             for (size_t x = 0; x < maze->width; x++) {
-                MzCell cell = mz_maze_at(maze, x, y);
+                MzCell cell = MzMaze_at(maze, x, y);
 
                 if (x == 0) cell.left_wall = true;
                 if (y == 0) cell.top_wall = true;
@@ -178,11 +178,11 @@ static bool can_go_left(MzCell tl, MzCell tr, MzCell bl, MzCell br) {
     return true;
 }
 
-MzMazeResult mz_maze_get_mipmap_halved(const MzMaze* maze) {
+MzMazeResult MzMaze_get_mipmap_halved(const MzMaze* maze) {
     size_t halved_width = maze->width / 2;
     size_t halved_height = maze->height / 2;
 
-    MzMazeResult halved_res = mz_maze_create(halved_width, halved_height);
+    MzMazeResult halved_res = MzMaze_create(halved_width, halved_height);
     if (!halved_res.is_ok) {
         return (MzMazeResult) ERR(halved_res.error);
     }
@@ -190,14 +190,14 @@ MzMazeResult mz_maze_get_mipmap_halved(const MzMaze* maze) {
 
     for (size_t y = 0; y < halved_height; y++) {
         for (size_t x = 0; x < halved_width; x++) {
-            MzCell tl_cell = mz_maze_at(maze, x * 2 + 0, y * 2 + 0);
-            MzCell tr_cell = mz_maze_at(maze, x * 2 + 1, y * 2 + 0);
-            MzCell bl_cell = mz_maze_at(maze, x * 2 + 0, y * 2 + 1);
-            MzCell br_cell = mz_maze_at(maze, x * 2 + 1, y * 2 + 1); // dont need this cell?
+            MzCell tl_cell = MzMaze_at(maze, x * 2 + 0, y * 2 + 0);
+            MzCell tr_cell = MzMaze_at(maze, x * 2 + 1, y * 2 + 0);
+            MzCell bl_cell = MzMaze_at(maze, x * 2 + 0, y * 2 + 1);
+            MzCell br_cell = MzMaze_at(maze, x * 2 + 1, y * 2 + 1); // dont need this cell?
 
             bool top_wall = !can_go_up(tl_cell, tr_cell, bl_cell, br_cell);
             bool left_wall = !can_go_left(tl_cell, tr_cell, bl_cell, br_cell);
-            mz_maze_set_at(&halved, x, y, (MzCell) { 
+            MzMaze_set_at(&halved, x, y, (MzCell) { 
                 .top_wall = top_wall, 
                 .left_wall = left_wall
             });

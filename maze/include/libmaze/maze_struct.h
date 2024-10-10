@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <better_c_std/result.h>
+#include <libmaze/error.h>
 
 typedef struct {
     uint8_t* raw_data;
@@ -10,15 +12,7 @@ typedef struct {
     size_t height;
 } MzMaze;
 
-#include <better_c_std/result.h>
-
-typedef enum {
-    NOT_ENOUGH_MEMORY,
-} MzError;
-
 typedef STRUCT_RESULT(MzMaze, MzError) MzMazeResult;
 
-typedef struct {} MzVoid;
-typedef STRUCT_RESULT(MzVoid, MzError) MzVoidResult;
 
 #endif // LIBMAZE_MAZE_STRUCT_H_

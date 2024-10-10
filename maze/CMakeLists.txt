@@ -1,6 +1,9 @@
 add_library(s21_ussur_maze SHARED
     src/maze.c
-    src/eller.c
+    src/vec_size_t.c
+    src/ellers_algorithm.c
+    src/ellers_offthread_generator.c
+    src/ellers_resources.c
 )
 target_include_directories(s21_ussur_maze PUBLIC include)
 
