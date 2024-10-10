@@ -2,10 +2,11 @@
 #include <time.h>
 #include <stdlib.h>
 #include <better_c_std/prettify.h>
+#include <libmaze/maze.h>
 
 MgModel MgModel_new(size_t maze_width, size_t maze_height) {
     srand(time(NULL));
-    MzMazeResult res = mz_maze_generate_perfect_eller(maze_width, maze_height);
+    MzMazeResult res = MzMaze_create_perfect_eller(maze_width, maze_height);
     assert_m(res.is_ok);
 
     MgModel model = {
@@ -17,7 +18,7 @@ MgModel MgModel_new(size_t maze_width, size_t maze_height) {
     return model;
 }
 void MgModel_free(MgModel model) {
-    mz_maze_free(model.maze);
+    MzMaze_free(model.maze);
 }
 
 void MgModel_reset_camera(MgModel* self) {

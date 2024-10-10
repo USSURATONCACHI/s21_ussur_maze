@@ -28,7 +28,7 @@ void MgMazeController_free(MgMazeController* controller) {
 }
 
 void MgMazeController_set_maze(MgMazeController* self, MzMaze new_maze) {
-    mz_maze_free(*self->maze);
+    MzMaze_free(*self->maze);
     *self->maze = new_maze;
     self->maze_update_id++;
 }
@@ -49,7 +49,7 @@ uint8_t* MgMazeController_data_buffer(MgMazeController* self) {
     return self->maze->raw_data;
 }
 size_t MgMazeController_data_size(MgMazeController* self) {
-    return mz_maze_get_buffer_size(self->maze);
+    return MzMaze_get_buffer_size(self->maze);
 }
 size_t MgMazeController_width(MgMazeController* self) {
     return self->maze->width;

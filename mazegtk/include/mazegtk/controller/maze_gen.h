@@ -26,6 +26,6 @@ void   MgMazeGenController_set_gen_width (MgMazeGenController* self, size_t new_
 void   MgMazeGenController_set_gen_height(MgMazeGenController* self, size_t new_height);
 
 bool MgMazeGenController_is_loading(MgMazeGenController* self);
-bool MgMazeGenController_join_generation_threads(MgMazeGenController* self);
+void MgMazeGenController_join_generation_threads(MgMazeGenController* self);
 
 #endif  // MAZEGTK_CONTROLLER_MAZE_GEN_H_

@@ -44,7 +44,7 @@ static void thread_fn_gen_eller(MgMazeGenController* self) {
         size_t h = self->gen_height;
         MzMaze* maze = MgMazeController_get_maze(self->maze_ctl);
         if (maze->width != w || maze->height != h) {
-            MzMazeResult resized = mz_maze_create(w, h);
+            MzMazeResult resized = MzMaze_create(w, h);
             if (!resized.is_ok) {
                 debugln("TODO: Error: %d", resized.error);
             } else {
@@ -54,8 +54,8 @@ static void thread_fn_gen_eller(MgMazeGenController* self) {
     }
 
     MzMaze* maze = MgMazeController_get_maze(self->maze_ctl);
-    memset(maze->raw_data, 0, mz_maze_get_buffer_size(maze)); // zero out the maze
-    MzVoidResult res = mz_maze_fill_perfect_eller(maze);
+    memset(maze->raw_data, 0, MzMaze_get_buffer_size(maze)); // zero out the maze
+    MzVoidResult res = MzMaze_fill_perfect_eller(maze);
     
     if (res.is_ok) {
         // nothing to do?
@@ -80,9 +80,9 @@ void MgMazeGenController_gen_random(MgMazeGenController* self) {
     if (self->is_thread_running)
         return;
 
-    MzMazeResult res = mz_maze_create(self->gen_width, self->gen_height);
+    MzMazeResult res = MzMaze_create(self->gen_width, self->gen_height);
     if (res.is_ok) {
-        mz_maze_fill_random(&res.ok);
+        MzMaze_fill_random(&res.ok);
         MgMazeController_set_maze(self->maze_ctl, res.ok);
     } else {
         debugln("TODO: err %d", res.error);
@@ -94,7 +94,7 @@ void MgMazeGenController_gen_empty(MgMazeGenController* self) {
     if (self->is_thread_running)
         return;
 
-    MzMazeResult res = mz_maze_create(self->gen_width, self->gen_height);
+    MzMazeResult res = MzMaze_create(self->gen_width, self->gen_height);
 
     if (res.is_ok) {
         MgMazeController_set_maze(self->maze_ctl, res.ok);
@@ -108,7 +108,7 @@ void MgMazeGenController_gen_crop(MgMazeGenController* self) {
         return;
 
     MzMaze* maze = MgMazeController_get_maze(self->maze_ctl);
-    MzMazeResult res = mz_maze_crop_to_size(maze, self->gen_width, self->gen_height);
+    MzMazeResult res = MzMaze_crop_to_size(maze, self->gen_width, self->gen_height);
 
     if (res.is_ok) {
         MgMazeController_set_maze(self->maze_ctl, res.ok);
@@ -134,7 +134,7 @@ bool MgMazeGenController_is_loading(MgMazeGenController* self) {
     return MgMazeController_is_loading(self->maze_ctl);
 }
 
-bool MgMazeGenController_join_generation_threads(MgMazeGenController* self) {
+void MgMazeGenController_join_generation_threads(MgMazeGenController* self) {
     if (self->is_thread_running) {
         pthread_join(self->generation_thread, NULL);
     }
