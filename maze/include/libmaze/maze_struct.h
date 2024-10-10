@@ -18,4 +18,7 @@ typedef enum {
 
 typedef STRUCT_RESULT(MzMaze, MzError) MzMazeResult;
 
+typedef struct {} MzVoid;
+typedef STRUCT_RESULT(MzVoid, MzError) MzVoidResult;
+
 #endif // LIBMAZE_MAZE_STRUCT_H_

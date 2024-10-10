@@ -13,6 +13,8 @@ MzMazeResult mz_maze_generate_perfect_eller(size_t width, size_t height);
 MzMazeResult mz_maze_crop_to_size(const MzMaze* old_one, size_t width, size_t height);
 MzMazeResult mz_maze_get_mipmap_halved(const MzMaze* maze);
 
+MzVoidResult mz_maze_fill_perfect_eller(MzMaze* maze);
+
 
 void   mz_maze_free(MzMaze maze);
 void   mz_maze_fill_random(MzMaze* maze);
