@@ -18,10 +18,10 @@ typedef struct {
     size_t rows_done;
 } MzEllersOffthreadGenerator;
 
-MzEllersOffthreadGenerator* MzEllersOffthreadGenerator_create(MzMaze* maze);
+MzEllersOffthreadGenerator* MzEllersOffthreadGenerator_create();
 void MzEllersOffthreadGenerator_free(MzEllersOffthreadGenerator* gen);
 
 bool MzEllersOffthreadGenerator_is_finished(MzEllersOffthreadGenerator* gen);
-void MzEllersOffthreadGenerator_start(MzEllersOffthreadGenerator* gen);
+void MzEllersOffthreadGenerator_start(MzEllersOffthreadGenerator* gen, MzMaze* maze_to_fill);
 void MzEllersOffthreadGenerator_terminate(MzEllersOffthreadGenerator* gen);
 MzVoidResult MzEllersOffthreadGenerator_await(MzEllersOffthreadGenerator* gen);

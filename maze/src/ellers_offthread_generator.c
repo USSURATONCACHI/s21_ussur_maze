@@ -5,7 +5,7 @@
 
 static MzVoidResult* thread_fn(MzEllersOffthreadGenerator* self);
 
-MzEllersOffthreadGenerator* MzEllersOffthreadGenerator_create(MzMaze* maze) {
+MzEllersOffthreadGenerator* MzEllersOffthreadGenerator_create() {
     MzEllersResourcesResult res = MzEllersResources_allocate(0); // thread will later reinit that
     if (!res.is_ok)
         return NULL;
@@ -13,7 +13,7 @@ MzEllersOffthreadGenerator* MzEllersOffthreadGenerator_create(MzMaze* maze) {
     MzEllersOffthreadGenerator* gen = (void*) malloc(sizeof(MzEllersOffthreadGenerator));
     assert_alloc(gen);
     *gen = (MzEllersOffthreadGenerator) {
-        .maze = maze,
+        .maze = NULL,
         .res = res.ok,
         // thread - uninit
         // mutex - init later
@@ -40,9 +40,10 @@ bool MzEllersOffthreadGenerator_is_finished(MzEllersOffthreadGenerator* gen) {
     return result;
 }
 
-void MzEllersOffthreadGenerator_start(MzEllersOffthreadGenerator* gen) {
+void MzEllersOffthreadGenerator_start(MzEllersOffthreadGenerator* gen, MzMaze* maze_to_fill) {
     mtx_lock(&gen->mutex);
     if (!gen->is_thread_running) {
+        gen->maze = maze_to_fill;
         gen->is_allocated = false;
         gen->rows_done = 0;
 
@@ -55,7 +56,7 @@ void MzEllersOffthreadGenerator_start(MzEllersOffthreadGenerator* gen) {
 void MzEllersOffthreadGenerator_terminate(MzEllersOffthreadGenerator* gen) {
     mtx_lock(&gen->mutex);
     if (gen->is_thread_running) {
-        pthread_kill(gen->thread, SIGKILL);
+        pthread_cancel(gen->thread);
         gen->is_thread_running = false;
     }
     mtx_unlock(&gen->mutex);
@@ -84,7 +85,10 @@ MzVoidResult MzEllersOffthreadGenerator_await(MzEllersOffthreadGenerator* gen) {
     //;
 
 static MzVoidResult* thread_fn(MzEllersOffthreadGenerator* self) {
-    // Allocate resources with correct width
+    // Allocate resources with cor
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+
     mtx_lock(&self->mutex);
     MzEllersResourcesResult new_res = MzEllersResources_allocate(self->maze->width);
     if (!new_res.is_ok) {
@@ -96,6 +100,7 @@ static MzVoidResult* thread_fn(MzEllersOffthreadGenerator* self) {
         self->is_allocated = true;
         mtx_unlock(&self->mutex);
     }
+    pthread_testcancel();
 
     // Start the algorithm
     MzMaze_fill_perfect_eller_preallocated(self->maze, &self->res, &self->rows_done);

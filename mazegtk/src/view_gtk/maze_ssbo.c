@@ -1,5 +1,6 @@
 #include <epoxy/gl.h>
 #include <mazegtk/view_gtk/maze_ssbo.h>
+#include <better_c_std/prettify.h>
 
 MazeSsbo MazeSsbo_create() {
     GLuint buffers[2];
@@ -17,6 +18,8 @@ void MazeSsbo_upload(const MazeSsbo* ssbo, size_t width, size_t height, size_t d
     GLuint maze_size[2] = { width, height };
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo->size_buffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(maze_size), maze_size, GL_STATIC_DRAW);
+    if (glGetError() == GL_OUT_OF_MEMORY)
+        debugln("GL_OUT_OF_MEMORY");
  
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }

@@ -14,6 +14,7 @@ typedef struct {
     GtkButton* gen_eller_btn;
     GtkButton* gen_empty_btn;
     GtkButton* gen_crop_btn;
+    GtkButton* gen_cancel_btn;
 
     // GTK does not differ user input and programmatic `_set_value`. 
     // So, we compare input to last set value to check if it is set by the program or by the user.

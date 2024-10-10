@@ -1,6 +1,7 @@
 #include <libmaze/maze.h>
 #include <libmaze/vec_size_t.h>
 #include <better_c_std/prettify.h>
+#include <pthread.h>
 
 
 static void add_vertical_walls      (MzEllersResources* res, MzMaze* maze, size_t y);
@@ -42,6 +43,7 @@ void MzMaze_fill_perfect_eller_preallocated(MzMaze* maze, MzEllersResources* res
         if (current_row_report)
             (*current_row_report)++;
 
+        pthread_testcancel();
         if (y == 0) break; // `(size_t)x >= 0` is always true
     }
 }

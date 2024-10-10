@@ -9,6 +9,7 @@ static void h_gen_random(GtkButton* widget, MgMazeGenView* view);
 static void h_gen_eller(GtkButton* widget, MgMazeGenView* view);
 static void h_gen_empty(GtkButton* widget, MgMazeGenView* view);
 static void h_gen_crop(GtkButton* widget, MgMazeGenView* view);
+static void h_gen_cancel(GtkButton* widget, MgMazeGenView* view);
 
 MgMazeGenView* MgMazeGenView_create(GtkBuilder* ui, MgMazeGenController* controller) {
     if (ui == NULL || controller == NULL)
@@ -27,6 +28,7 @@ MgMazeGenView* MgMazeGenView_create(GtkBuilder* ui, MgMazeGenController* control
         .gen_eller_btn  = GTK_BUTTON(gtk_builder_get_object(ui, "gen_eller")),
         .gen_empty_btn  = GTK_BUTTON(gtk_builder_get_object(ui, "gen_empty")),
         .gen_crop_btn   = GTK_BUTTON(gtk_builder_get_object(ui, "gen_crop")),
+        .gen_cancel_btn = GTK_BUTTON(gtk_builder_get_object(ui, "gen_cancel")),
 
         .last_shown = {}, // can be uninitialized, does not matter 
     };
@@ -38,19 +40,21 @@ MgMazeGenView* MgMazeGenView_create(GtkBuilder* ui, MgMazeGenController* control
     if (view->gen_eller_btn)  g_signal_connect(view->gen_eller_btn, "clicked", G_CALLBACK(h_gen_eller), view);
     if (view->gen_empty_btn)  g_signal_connect(view->gen_empty_btn, "clicked", G_CALLBACK(h_gen_empty), view);
     if (view->gen_crop_btn)   g_signal_connect(view->gen_crop_btn, "clicked", G_CALLBACK(h_gen_crop), view);
+    if (view->gen_cancel_btn) g_signal_connect(view->gen_cancel_btn, "clicked", G_CALLBACK(h_gen_cancel), view);
 
     return view;
 }
 
 void MgMazeGenView_free(MgMazeGenView* view) {
     debugln(__PRETTY_FUNCTION__);
-
-    if (view->gen_w_btn)     g_signal_handlers_disconnect_by_data(view->gen_w_btn,     view);
-    if (view->gen_h_btn)     g_signal_handlers_disconnect_by_data(view->gen_h_btn,     view);
+ 
+    if (view->gen_w_btn)      g_signal_handlers_disconnect_by_data(view->gen_w_btn,     view);
+    if (view->gen_h_btn)      g_signal_handlers_disconnect_by_data(view->gen_h_btn,     view);
     if (view->gen_random_btn) g_signal_handlers_disconnect_by_data(view->gen_eller_btn, view);
-    if (view->gen_eller_btn) g_signal_handlers_disconnect_by_data(view->gen_eller_btn, view);
-    if (view->gen_empty_btn) g_signal_handlers_disconnect_by_data(view->gen_empty_btn, view);
-    if (view->gen_crop_btn)  g_signal_handlers_disconnect_by_data(view->gen_crop_btn,  view);
+    if (view->gen_eller_btn)  g_signal_handlers_disconnect_by_data(view->gen_eller_btn, view);
+    if (view->gen_empty_btn)  g_signal_handlers_disconnect_by_data(view->gen_empty_btn, view);
+    if (view->gen_crop_btn)   g_signal_handlers_disconnect_by_data(view->gen_crop_btn,  view);
+    if (view->gen_cancel_btn) g_signal_handlers_disconnect_by_data(view->gen_cancel_btn,  view);
 
     free(view);
     
@@ -69,6 +73,8 @@ void MgMazeGenView_update_ui(MgMazeGenView* view) {
     gtk_widget_set_sensitive(GTK_WIDGET(view->gen_crop_btn),   !is_loading);
     gtk_widget_set_sensitive(GTK_WIDGET(view->gen_empty_btn),  !is_loading);
     gtk_widget_set_sensitive(GTK_WIDGET(view->gen_random_btn), !is_loading);
+
+    gtk_widget_set_sensitive(GTK_WIDGET(view->gen_cancel_btn), is_loading);
 }
 
 // ==
@@ -177,4 +183,10 @@ static void h_gen_crop(GtkButton* widget, MgMazeGenView* view) {
         show_confirmation_dialog(view, MgMazeGenController_gen_crop);
     else
         MgMazeGenController_gen_crop(view->controller);
+}
+
+// Cancel generation
+static void h_gen_cancel(GtkButton* widget, MgMazeGenView* view) {
+    unused(widget);
+    MgMazeGenController_cancel(view->controller);
 }

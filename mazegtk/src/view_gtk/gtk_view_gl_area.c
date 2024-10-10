@@ -28,6 +28,8 @@ G_MODULE_EXPORT void mg_maze_app_handle_gl_render(GtkGLArea* gl_area, GdkGLConte
     MgMazeInfoView_update_ui(view->view_maze_info);
     
     MgGlMazeView_render(view->view_gl_maze);
+
+    MgMazeGenController_update(MgController_get_maze_gen(view->controller));
 }
 
 G_MODULE_EXPORT void mg_maze_app_handle_gl_unrealize(GtkGLArea* widget, MgGtkView* view) {
