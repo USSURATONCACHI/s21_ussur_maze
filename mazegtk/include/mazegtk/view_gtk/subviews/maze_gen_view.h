@@ -10,6 +10,7 @@ typedef struct {
     GtkSpinButton* gen_w_btn;
     GtkSpinButton* gen_h_btn;
 
+    GtkButton* gen_random_btn;
     GtkButton* gen_eller_btn;
     GtkButton* gen_empty_btn;
     GtkButton* gen_crop_btn;

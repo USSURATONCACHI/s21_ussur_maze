@@ -125,7 +125,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="width_label">
                                         <property name="width-request">50</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -137,7 +137,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="height_label">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="label" translatable="yes">?</property>
@@ -148,7 +148,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="defects_label">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="label" translatable="yes">?</property>
@@ -205,7 +205,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="open_from_file_btn">
                                     <property name="label" translatable="yes">Open maze from file...</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -218,7 +218,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="save_btn">
                                     <property name="label" translatable="yes">Save</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -231,7 +231,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="save_as_btn">
                                     <property name="label" translatable="yes">Save As...</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -324,6 +324,19 @@
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkButton" id="gen_random">
+                                    <property name="label" translatable="yes">Generate (Random)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkButton" id="gen_eller">
                                     <property name="label" translatable="yes">Generate (Eller's algorithm)</property>
                                     <property name="visible">True</property>
@@ -333,7 +346,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">3</property>
+                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -346,7 +359,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">4</property>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -359,7 +372,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">5</property>
+                                    <property name="position">6</property>
                                   </packing>
                                 </child>
                                 <child>

@@ -12,10 +12,6 @@ typedef struct {
 MgModel MgModel_new(size_t maze_width, size_t maze_height);
 void MgModel_free(MgModel model);
 
-void MgModel_generate_eller(MgModel* self, size_t width, size_t height);
-void MgModel_generate_empty(MgModel* self, size_t width, size_t height);
-void MgModel_crop_to_size  (MgModel* self, size_t width, size_t height);
-
 void MgModel_reset_camera(MgModel* self);
 void MgModel_reset_camera_settings(MgModel* self);
 

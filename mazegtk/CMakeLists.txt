@@ -22,6 +22,7 @@ add_executable(s21_ussur_mazegtk
     src/view_gtk/subviews/gl_maze_view.c
     src/view_gtk/subviews/camera_mouse_view.c
     src/view_gtk/subviews/render_settings_view.c
+    src/view_gtk/subviews/maze_info_view.c
 
     src/view_gtk/gtk_view_create.c
     src/view_gtk/gtk_view_gl_area.c

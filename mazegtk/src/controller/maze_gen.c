@@ -28,6 +28,9 @@ void MgMazeGenController_free(MgMazeGenController* controller) {
 }
 
 // Methods
+size_t MgMazeGenController_how_much_ram_needed_mb(MgMazeGenController* self) {
+    return self->gen_width * self->gen_height * 2 / 8 / 1024 / 1024; // 2 bits per cell
+}
 
 void MgMazeGenController_gen_eller(MgMazeGenController* self) {
     MzMazeResult res = mz_maze_generate_perfect_eller(self->gen_width, self->gen_height);
@@ -37,6 +40,18 @@ void MgMazeGenController_gen_eller(MgMazeGenController* self) {
         debugln("TODO: err %d", res.error);
     }
 }
+
+void MgMazeGenController_gen_random(MgMazeGenController* self) {
+    MzMazeResult res = mz_maze_create(self->gen_width, self->gen_height);
+    if (res.is_ok) {
+        mz_maze_fill_random(&res.ok);
+        MgMazeController_set_maze(self->maze_ctl, res.ok);
+    } else {
+        debugln("TODO: err %d", res.error);
+    }
+
+}
+
 void MgMazeGenController_gen_empty(MgMazeGenController* self) {
     MzMazeResult res = mz_maze_create(self->gen_width, self->gen_height);
 
