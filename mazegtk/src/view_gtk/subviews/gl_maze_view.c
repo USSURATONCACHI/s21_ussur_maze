@@ -97,8 +97,10 @@ void MgGlMazeView_render(MgGlMazeView* view) {
 
     // Make sure data is up to date
     resize_framebuffer(view);
-    if (MgMazeController_was_maze_updated(view->mazectl))
+    if (MgMazeController_was_maze_updated(view->mazectl) || MgMazeController_is_loading(view->mazectl)) {
         upload_maze_to_gpu(view);
+        MgMazeController_maze_was_updated(view->mazectl);
+    }
 
     // Render pass 1 : to internal framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, view->render_buffer.framebuffer);
