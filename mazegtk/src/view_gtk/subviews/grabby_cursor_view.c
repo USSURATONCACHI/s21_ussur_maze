@@ -14,9 +14,10 @@ MgGrabbyCursorViewResult MgGrabbyCursorView_create(GtkBuilder* ui, const char* w
     if (widget_name == NULL)
         return (MgGrabbyCursorViewResult) ERR(GERROR_NEW("No widget name provided"));
 
-    // Get required UI elements
+    // Get required UI element
     GtkWidget* widget = GTK_WIDGET(gtk_builder_get_object(ui, widget_name));
-    if (widget == NULL) return (MgGrabbyCursorViewResult) ERR(GERROR_NEW("No `%s` widget provided", widget_name));
+    if (widget == NULL) 
+        return (MgGrabbyCursorViewResult) ERR(GERROR_NEW("No `%s` widget provided", widget_name));
 
     gtk_widget_add_events(widget, gtk_widget_get_events(widget) | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 
@@ -41,10 +42,8 @@ MgGrabbyCursorView* MgGrabbyCursorView_from_widget(GtkWidget* widget) {
 }
 
 void MgGrabbyCursorView_free(MgGrabbyCursorView* view) {
-    debugln(__PRETTY_FUNCTION__);
     g_signal_handlers_disconnect_by_data(view->widget, view);
     free(view);
-    debugln("%s done", __PRETTY_FUNCTION__);
 }
 
 // ==

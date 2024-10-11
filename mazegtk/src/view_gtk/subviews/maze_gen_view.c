@@ -30,6 +30,8 @@ MgMazeGenView* MgMazeGenView_create(GtkBuilder* ui, MgMazeGenController* control
         .gen_crop_btn   = GTK_BUTTON(gtk_builder_get_object(ui, "gen_crop")),
         .gen_cancel_btn = GTK_BUTTON(gtk_builder_get_object(ui, "gen_cancel")),
 
+        .main_window = GTK_WINDOW(gtk_builder_get_object(ui, "main_window")),
+
         .last_shown = {}, // can be uninitialized, does not matter 
     };
 
@@ -116,11 +118,12 @@ static void show_confirmation_dialog(MgMazeGenView* view, GenerationFunction fn)
     size_t ram_mb = MgMazeGenController_how_much_ram_needed_mb(view->controller);
 
     GtkWidget* dialog = gtk_message_dialog_new(
-            NULL,
+            view->main_window,
             GTK_DIALOG_MODAL,
             GTK_MESSAGE_QUESTION,
             GTK_BUTTONS_NONE,
-            "This will require %zu MB RAM + %zu MB VRAM. Also may take significant time to allocate/generate. Are you sure?",
+            "This will require %zu MB RAM + %zu MB VRAM. Also may take significant time to allocate/generate. "
+            "If your GPU does not have enough VRAM, the program might halt. Are you sure?",
             ram_mb, ram_mb
         );
     
