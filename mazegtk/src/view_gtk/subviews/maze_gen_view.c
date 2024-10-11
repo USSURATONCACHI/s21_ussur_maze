@@ -122,7 +122,7 @@ static void show_confirmation_dialog(MgMazeGenView* view, GenerationFunction fn)
             GTK_DIALOG_MODAL,
             GTK_MESSAGE_QUESTION,
             GTK_BUTTONS_NONE,
-            "This will require %zu MB RAM + %zu MB VRAM. Also may take significant time to allocate/generate. "
+            "This will require at least %zu MB RAM + %zu MB VRAM. Also may take significant time to allocate/generate. "
             "If your GPU does not have enough VRAM, the program might halt. Are you sure?",
             ram_mb, ram_mb
         );

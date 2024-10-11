@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include <better_c_std/io/out_stream.h>
+
 #include <libmaze/maze_struct.h>
 #include <libmaze/cell_struct.h>
 #include <libmaze/directions_struct.h>
@@ -20,6 +22,8 @@ MzCell MzMaze_at(const MzMaze* maze, size_t x, size_t y);
 void MzMaze_print(const MzMaze* maze);
 MzDirections MzMaze_where_can_go(const MzMaze* maze, size_t at_x, size_t at_y);
 size_t MzMaze_get_buffer_size(const MzMaze* maze);
+
+void MzMaze_serialize_binary(const MzMaze* maze, OutStream stream);
 
 // -- Random fill
 void MzMaze_fill_random(MzMaze* maze);

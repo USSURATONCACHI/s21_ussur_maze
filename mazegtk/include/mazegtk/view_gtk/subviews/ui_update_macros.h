@@ -15,9 +15,9 @@
 
 #define UPDATE_LABEL_SIZE_T(updating_lbl, new_value)                  \
         if (updating_lbl) {                                           \
-            str_t text = str_owned("%zu", new_value);                 \
+            BcstdStr text = BcstdStr_owned("%zu", new_value);                 \
             gtk_label_set_text(GTK_LABEL(updating_lbl), text.string); \
-            str_free(text);                                           \
+            BcstdStr_free(text);                                           \
         }                                                             \
     //;
 

@@ -21,24 +21,26 @@ TEST(MzMaze, Create) {
 
 
 TEST(MzMaze, WritePersists) {
-    MzMazeResult res = MzMaze_create(2, 2);
+    MzMazeResult res = MzMaze_create(4, 4);
     ASSERT_TRUE(res.is_ok);
     MzMaze maze = res.ok;
 
-    for (size_t x = 0; x < maze.width; x++) {
-        for (size_t y = 0; y < maze.height; y++) {
+    for (size_t x = 1; x < maze.width - 1; x++) {
+        for (size_t y = 1; y < maze.height - 1; y++) {
             MzMaze_set_at(&maze, x, y, (MzCell) {
                 .top_wall = (x & 1) ? true : false,
-                .left_wall = (x & 6) ? true : false
+                .left_wall = (y & 1) ? true : false
             });
         }
     }
 
-    for (size_t x = 0; x < maze.width; x++) {
-        for (size_t y = 0; y < maze.height; y++) {
+    MzMaze_print(&maze);
+
+    for (size_t x = 1; x < maze.width - 1; x++) {
+        for (size_t y = 1; y < maze.height - 1; y++) {
             MzCell cell = MzMaze_at(&maze, x, y);
             EXPECT_EQ(cell.top_wall, (x & 1) ? true : false);
-            EXPECT_EQ(cell.left_wall, (x & 6) ? true : false);
+            EXPECT_EQ(cell.left_wall, (y & 1) ? true : false);
         }
     }
     MzMaze_free(maze);

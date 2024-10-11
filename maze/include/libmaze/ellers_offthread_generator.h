@@ -4,8 +4,7 @@
 #include <pthread.h>
 #include <threads.h>
 
-// Blocking generation gunction
-
+// Provides non-blocking synchronous API of a thread that runs Eller's algorithm in parallel
 typedef struct {
     MzMaze* maze;
     MzEllersResources res;

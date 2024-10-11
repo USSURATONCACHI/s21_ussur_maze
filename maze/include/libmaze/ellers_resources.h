@@ -7,14 +7,14 @@
 #include <libmaze/error.h>
 #include <better_c_std/result.h>
 
-// Resources, needed for running Eller's algorithm row by row.
+// Resources needed for running Eller's algorithm row by row.
 typedef struct {
     size_t* row;      // Sets IDs for each cell in a row
     size_t* next_row; // Temporary write swapbuffer
 
     // Sets data is not aggregated into a single struct for perfomance.
     // These vectors are cleaned up and refilled at different times.
-    // When these are split, you can just memset their buffers and reset lengths to 0. It would not be possible, if these were a single struct
+    // When these are split, you can just memset their buffers or reset lengths to 0. It would not be possible, if these were a single struct
 
     vec_size_t sets_sizes;          // Amount of cells in sets 
     vec_size_t sets_chosen_cells;   // Ids of cells in the set, that are forbidden from having a horizontal wall
