@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include <better_c_std/io/out_stream.h>
+#include <better_c_std/pipe.h>
 
 #include <libmaze/maze_struct.h>
 #include <libmaze/cell_struct.h>
@@ -19,13 +20,20 @@ void MzMaze_free(MzMaze maze);
 // General methods
 void MzMaze_set_at(MzMaze* maze, size_t x, size_t y, MzCell value);
 MzCell MzMaze_at(const MzMaze* maze, size_t x, size_t y);
-
-void MzMaze_print(const MzMaze* maze);
-void MzMaze_print_with_path(const MzMaze* maze, const vec_MzCellPos* path);
 MzDirections MzMaze_where_can_go(const MzMaze* maze, size_t at_x, size_t at_y);
 size_t MzMaze_get_buffer_size(const MzMaze* maze);
 
+// -- Printing
+void MzMaze_print(const MzMaze* maze);
+void MzMaze_print_with_path(const MzMaze* maze, const vec_MzCellPos* path);
+
+// -- Serialization
 void MzMaze_serialize_binary(const MzMaze* maze, OutStream stream);
+void MzMaze_serialize_text(const MzMaze* maze, OutStream stream);
+
+typedef STRUCT_RESULT(MzMaze, BcstdStr) MzMazeReadResult;
+MzMazeReadResult MzMaze_read_binary(BcstdPipeHandle* in_stream);
+MzMazeReadResult MzMaze_read_text(BcstdPipeHandle* in_stream);
 
 // -- Random fill
 void MzMaze_fill_random(MzMaze* maze);
