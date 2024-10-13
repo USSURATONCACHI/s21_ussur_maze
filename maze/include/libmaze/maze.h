@@ -10,6 +10,7 @@
 #include <libmaze/cell_struct.h>
 #include <libmaze/directions_struct.h>
 #include <libmaze/ellers_resources.h>
+#include <libmaze/cell_pos.h>
 
 // Ctor & destructor
 MzMazeResult MzMaze_create(size_t width, size_t height);
@@ -20,6 +21,7 @@ void MzMaze_set_at(MzMaze* maze, size_t x, size_t y, MzCell value);
 MzCell MzMaze_at(const MzMaze* maze, size_t x, size_t y);
 
 void MzMaze_print(const MzMaze* maze);
+void MzMaze_print_with_path(const MzMaze* maze, const vec_MzCellPos* path);
 MzDirections MzMaze_where_can_go(const MzMaze* maze, size_t at_x, size_t at_y);
 size_t MzMaze_get_buffer_size(const MzMaze* maze);
 

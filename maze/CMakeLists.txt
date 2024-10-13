@@ -1,5 +1,6 @@
 add_library(s21_ussur_maze SHARED
     src/maze.c
+    src/cell_pos.c
     src/a_star.c
     src/vec_size_t.c
     src/ellers_algorithm.c
