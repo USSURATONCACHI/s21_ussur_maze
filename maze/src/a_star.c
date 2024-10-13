@@ -79,7 +79,16 @@ MzAStarChunk MzAStarChunk_merge(MzAStarChunk a, MzAStarChunk b) {
 }
 
 
-MzAStarPathfinder MzAStarPathfinder_create(size_t start_x, size_t start_y, size_t end_x, size_t end_y);
+MzAStarPathfinder MzAStarPathfinder_create(size_t start_x, size_t start_y, size_t end_x, size_t end_y) {
+    return (MzAStarPathfinder) {
+        .cells_to_check = vec_MzCellPos_create(),
+        .checked_cells = vec_MzAStarChunk_create(),
+        .start_x = start_x,
+        .start_y = start_y,
+        .end_x = end_x,
+        .end_y = end_y,
+    };
+}
 
 void MzAStarPathfinder_free(MzAStarPathfinder self) {
     vec_MzAStarChunk_free(self.checked_cells);
@@ -132,12 +141,12 @@ void MzAStarPathfinder_set_cell_at(MzAStarPathfinder* self, size_t x, size_t y, 
     vec_MzAStarChunk_push(&self->checked_cells, new_chunk);
 }
 
-void MzAStarCellData_update_chunks(MzAStarCellData* self) {
+void MzAStarPathfinder_update_chunks(MzAStarPathfinder* self) {
     // nothing, currently
     unused(self);
 }
 
-void MzAStarPathfinder_pathfind(MzAStarCellData* self, const MzMaze* maze) {
+void MzAStarPathfinder_pathfind(MzAStarPathfinder* self, const MzMaze* maze) {
     unused(self);
     unused(maze);
     debugln("TODO!");

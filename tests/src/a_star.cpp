@@ -15,5 +15,10 @@ TEST(MzAStar, Test1) {
 
     MzMaze_print(&maze);
 
+    MzAStarPathfinder pathfinder = MzAStarPathfinder_create(0, 0, 4, 4);
+
+    MzAStarPathfinder_pathfind(&pathfinder, &maze);
+
+    MzAStarPathfinder_free(pathfinder);
     MzMaze_free(maze);
 }

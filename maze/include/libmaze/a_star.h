@@ -56,8 +56,8 @@ void MzAStarPathfinder_free(MzAStarPathfinder self);
 
 MzAStarCellData MzAStarPathfinder_get_cell_at(MzAStarPathfinder* self, size_t x, size_t y);
 void MzAStarPathfinder_set_cell_at(MzAStarPathfinder* self, size_t x, size_t y, MzAStarCellData cell);
-void MzAStarCellData_update_chunks(MzAStarCellData* self);
+void MzAStarPathfinder_update_chunks(MzAStarPathfinder* self);
 
-void MzAStarPathfinder_pathfind(MzAStarCellData* self, const MzMaze* maze);
+void MzAStarPathfinder_pathfind(MzAStarPathfinder* self, const MzMaze* maze);
 
 #endif // LIBMAZE_A_STAR_H_
