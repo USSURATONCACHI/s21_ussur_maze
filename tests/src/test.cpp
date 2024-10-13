@@ -1,4 +1,3 @@
-#include "libmaze/directions_struct.h"
 #include <gtest/gtest.h>
 
 extern "C" {

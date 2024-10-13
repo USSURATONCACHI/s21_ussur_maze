@@ -29,6 +29,12 @@ MgCameraMouseView* MgCameraMouseView_create(GtkBuilder* ui, MgCameraController* 
         g_signal_connect(view->gl_area, "motion-notify-event",  G_CALLBACK(h_motion),         view);
         g_signal_connect(view->gl_area, "scroll-event",         G_CALLBACK(h_scroll),         view);
     }
+        gtk_widget_add_events(GTK_WIDGET(view->gl_area), 
+            gtk_widget_get_events(GTK_WIDGET(view->gl_area)) | 
+            GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | 
+            GDK_SCROLL_MASK | GDK_FOCUS_CHANGE_MASK
+            
+        );
 
     return view;
 }
@@ -74,6 +80,7 @@ static gboolean h_button_release(GtkGLArea* widget, GdkEventButton* event, MgCam
 static gboolean h_scroll(GtkGLArea* widget, GdkEventScroll* event, MgCameraMouseView* view) {
     unused(widget);
 
+    debugln("h_scroll: %d", event->direction);
     // MgCameraController_update_anim(view->controller);
     float zoom_delta = 0.0;
     switch (event->direction) {
