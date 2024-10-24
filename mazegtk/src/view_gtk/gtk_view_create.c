@@ -42,7 +42,7 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
 
     // Base parts of GTK + Glade app
     GResource* resource = OK_OR_NULL_WITH_GERR_REPORT(register_resource(), &errors);
-    GtkApplication* app = gtk_application_new("org.ussur.mazegtk", G_APPLICATION_DEFAULT_FLAGS);
+    GtkApplication* app = gtk_application_new("org.ussur.mazegtk", 0);
     GtkBuilder* builder = gtk_builder_new_from_resource("/org/ussur/mazegtk/main.glade");
 
     // These subviews can fail on create
