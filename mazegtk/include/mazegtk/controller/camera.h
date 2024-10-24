@@ -25,6 +25,7 @@ long double MgCameraController_get_zoom_sens(const MgCameraController* self);
 
 // Setters
 void MgCameraController_set_pos      (MgCameraController* self, MgVector2 pos);
+void MgCameraController_set_vel      (MgCameraController* self, MgVector2 vel);
 void MgCameraController_set_zoom     (MgCameraController* self, long double zoom);
 void MgCameraController_stop_movement(MgCameraController* self);
 

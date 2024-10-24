@@ -1,3 +1,12 @@
 .h2 {
     font-size: 16px;
 }
+
+.expander {
+    margin-top: 15px;
+}
+
+.overlay_label {
+    margin: 5px;
+    color: #eee;
+}

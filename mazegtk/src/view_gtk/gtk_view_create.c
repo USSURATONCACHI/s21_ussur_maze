@@ -70,10 +70,11 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
 
         .view_camera_controls = MgCameraControlsView_create(builder, MgController_get_camera(controller)),
         .view_camera_settings = MgCameraSettingsView_create(builder, MgController_get_camera(controller)),
-        .view_maze_gen        = MgMazeGenView_create(builder, MgController_get_maze_gen(controller)),
-        .view_camera_mouse    = MgCameraMouseView_create(builder, MgController_get_camera(controller)),
+        .view_maze_gen        = MgMazeGenView_create       (builder, MgController_get_maze_gen(controller)),
+        .view_camera_mouse    = MgCameraMouseView_create   (builder, MgController_get_camera(controller)),
         .view_render_settings = MgRenderSettingsView_create(builder, store_render_settings),
-        .view_maze_info       = MgMazeInfoView_create(builder, MgController_get_maze(controller)),
+        .view_maze_info       = MgMazeInfoView_create      (builder, MgController_get_maze(controller)),
+        .view_camera_keyboard = MgCameraKeyboardView_create(builder, MgController_get_camera(controller)),
 
         // other fields are zeroed out by `calloc`
     };
@@ -143,11 +144,13 @@ void MgGtkView_free(MgGtkView* view) {
 
     MgCameraControlsView_free(view->view_camera_controls);
     MgCameraSettingsView_free(view->view_camera_settings);
-    MgDropdownView_free(view->view_dropdown);
-    MgGrabbyCursorView_free(view->view_grabby_cursor);
-    MgMazeGenView_free(view->view_maze_gen);
-    MgCameraMouseView_free(view->view_camera_mouse);
-    MgMazeInfoView_free(view->view_maze_info);
+    MgDropdownView_free      (view->view_dropdown       );
+    MgGrabbyCursorView_free  (view->view_grabby_cursor  );
+    MgMazeGenView_free       (view->view_maze_gen       );
+    MgCameraMouseView_free   (view->view_camera_mouse   );
+    MgMazeInfoView_free      (view->view_maze_info      );
+    MgRenderSettingsView_free(view->view_render_settings);
+    MgCameraKeyboardView_free(view->view_camera_keyboard);
     // MgGlMazeView can only be freed before signal "GtkGLArea::unrealize"
 
     MgRenderSettingsStore_free(view->store_render_settings);
@@ -225,5 +228,5 @@ static void handle_activate(void* couldnt_care_less, MgGtkView* view) {
     gtk_widget_show_all(GTK_WIDGET(window));
 
     // After this, GTK execution eventually jumps to 
-    // function `mg_maze_app_handle_gl_realize` in file `gtk_view_gl_area.c`
+    // function `mg_maze_app_handle_gl_realize` in file `./gtk_view_gl_area.c`
 }

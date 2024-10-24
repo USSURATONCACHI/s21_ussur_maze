@@ -53,6 +53,13 @@ void MgCameraController_set_pos(MgCameraController* self, MgVector2 pos) {
         .y = pos.y,
     });
 }
+void MgCameraController_set_vel(MgCameraController* self, MgVector2 vel) {
+    BcstdCamera_set_vel(self->camera, (BcstdVec2) {
+        .x = vel.x,
+        .y = vel.y,
+    });
+}
+
 void MgCameraController_set_zoom(MgCameraController* self, long double zoom) {
     BcstdCamera_set_zoom(self->camera, zoom);
 }

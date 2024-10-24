@@ -36,50 +36,6 @@ G_MODULE_EXPORT void handle_error_continue(GtkWidget* widget, MgGtkView* view) {
     gtk_stack_set_visible_child(main_stack, show_maze_ui);
 }
 
-
-// static void view_set_to_loading_ui(MgGtkView* view) {
-//     GtkStack* main_stack = GTK_STACK(gtk_builder_get_object(view->builder, "main_stack"));
-//     if (main_stack == NULL)
-//         MgGtkView_fail_with_error(view, GERROR_NEW("No `main_stack` widget :("));
-
-//     GtkWidget* loading_ui = GTK_WIDGET(gtk_builder_get_object(view->builder, "loading_ui"));
-//     if (loading_ui == NULL)
-//         MgGtkView_fail_with_error(view, GERROR_NEW("No `loading_ui` widget :("));
-
-//     GtkWidget* show_maze_ui = GTK_WIDGET(gtk_builder_get_object(view->builder, "show_maze_ui"));
-//     assert_m(show_maze_ui != NULL); // This would be absurd if at this point app hasnt crashed cuz of this
-
-//     gtk_stack_set_visible_child(main_stack, loading_ui);
-// }
-
-// static void view_react_to_create_result(MgGtkView* view, MgCreateError err) {
-//     GtkStack* main_stack = GTK_STACK(gtk_builder_get_object(view->builder, "main_stack"));
-//     if (main_stack == NULL)
-//         MgGtkView_fail_with_error(view, GERROR_NEW("No `main_stack` widget :("));
-
-//     GtkWidget* loading_ui = GTK_WIDGET(gtk_builder_get_object(view->builder, "loading_ui"));
-//     if (loading_ui == NULL)
-//         MgGtkView_fail_with_error(view, GERROR_NEW("No `loading_ui` widget :("));
-
-//     GtkWidget* show_maze_ui = GTK_WIDGET(gtk_builder_get_object(view->builder, "show_maze_ui"));
-//     assert_m(show_maze_ui != NULL); // This would be absurd if at this point app hasnt crashed cuz of this
-
-//     switch (err) {
-//         case MG_SUCCESS:
-//             MgGtkViewInner_upload_maze_to_gpu(&view->inner);
-//             gtk_stack_set_visible_child(main_stack, show_maze_ui);
-//             break;
-
-//         case MG_NOT_ENOUGH_MEMORY:
-//             MgGtkView_show_error_screen(view, GERROR_NEW("Not enough RAM :/"));
-//             break;
-        
-//         default:
-//             MgGtkView_show_error_screen(view, GERROR_NEW("Something went horribly wrong,\nbut we do not know what"));
-//             break;
-//     }
-// }
-
 G_MODULE_EXPORT gboolean dont_scroll_unless_focused(GtkWidget *widget) {
     if (gtk_widget_is_focus(widget)) {
         return FALSE;

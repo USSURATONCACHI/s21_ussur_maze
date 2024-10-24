@@ -14,6 +14,7 @@
 #include <mazegtk/view_gtk/subviews/camera_mouse_view.h>
 #include <mazegtk/view_gtk/subviews/render_settings_view.h>
 #include <mazegtk/view_gtk/subviews/maze_info_view.h>
+#include <mazegtk/view_gtk/subviews/camera_keyboard_view.h>
 
 #include <mazegtk/view_gtk/render_settings_store.h>
 
@@ -48,6 +49,7 @@ typedef struct {
     MgCameraMouseView*    view_camera_mouse;
     MgRenderSettingsView* view_render_settings;
     MgMazeInfoView*       view_maze_info;
+    MgCameraKeyboardView* view_camera_keyboard;
 
     MgController* controller;
 } MgGtkView;
