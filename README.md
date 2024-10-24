@@ -1,4 +1,4 @@
-# WORK IN PROGRESS, not all features are implemented yet
+# WORK IN PROGRESS, not all base features are implemented yet
 # maze
 
 Program for viewing, generating, and solving 2D rectangular mazes of different sizes.
