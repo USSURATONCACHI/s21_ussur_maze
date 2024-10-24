@@ -47,7 +47,7 @@ target_include_directories(s21_ussur_mazegtk PRIVATE ${Epoxy_INCLUDE_DIRS})
 target_link_directories   (s21_ussur_mazegtk PRIVATE ${Epoxy_LIBRARY_DIRS})
 target_link_libraries     (s21_ussur_mazegtk PUBLIC  ${Epoxy_LIBRARIES})
 
-target_link_libraries     (s21_ussur_mazegtk PUBLIC s21_ussur_maze s21_ussur_opengl_utils m)
+target_link_libraries     (s21_ussur_mazegtk PUBLIC s21_ussur_maze s21_ussur_opengl_utils m pthread)
 
 target_include_directories(s21_ussur_mazegtk PRIVATE include)
 target_link_options(s21_ussur_mazegtk PRIVATE "-rdynamic")
