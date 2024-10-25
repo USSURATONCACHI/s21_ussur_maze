@@ -15,7 +15,7 @@ Program for viewing, generating, and solving 2D rectangular mazes of different s
 
 ### "Eller's" Maze 30k x 30k
 
-![30k by 30k maze](./images/30k.gif)
+Video demo: [https://youtu.be/3iz2aonj-l0](https://youtu.be/3iz2aonj-l0)
 
 ## Building (CMake)
 
