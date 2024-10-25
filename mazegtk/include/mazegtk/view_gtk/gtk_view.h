@@ -21,6 +21,8 @@
 #define RESOURCES_ENV_VAR "S21_USSUR_MAZEGTK_RESOURCES_FILE"
 #define RESOURCES_DEFAULT_FILE "/usr/share/s21_ussur_mazegtk.gresource"
 
+#define RESOURCES_FILENAME "s21_ussur_mazegtk.gresource"
+
 // This main `MgGtkView` just aggregates all the small subviews, and does nothing on its own.
 // To add new functionality - just add more subviews in here (and call `_ui_update`s or `_renders` in render handle, if needed)
 typedef struct {

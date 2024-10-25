@@ -1,8 +1,11 @@
 #include <mazegtk/view_gtk/gtk_view.h>
-#include <better_c_std/result.h>
 #include <mazegtk/util/common_macros.h>
+#include <better_c_std/result.h>
 #include <better_c_std/prettify.h>
+#include <better_c_std/get_executable_dir.h>
+
 #include <pthread.h>
+#include <libgen.h>
 
 typedef GError* GError_ptr;
 #define VECTOR_ITEM_TYPE GError_ptr
@@ -111,24 +114,64 @@ MgGtkViewResult MgGtkView_create(MgController* controller, MgDataForGtkLib gdata
     return (MgGtkViewResult) OK(view);
 }
 
-static ResourceResult register_resource() {
-    debugln("Loading and registering resource...");
+static BcstdStr get_resource_filepath() {
+    debugln("Cheking where resource file is...");
 
     const char* res_file = getenv(RESOURCES_ENV_VAR);
     debugln("Env variable '%s' is: '%s'", RESOURCES_ENV_VAR, res_file);
 
-    if (res_file == NULL)
-        res_file = RESOURCES_DEFAULT_FILE;
+    // Env variable of resource file
+    if (res_file)
+        return BcstdStr_literal(res_file);
+
+    // Check executable dir
+    BcstdStr exe_dir = Bcstd_get_executable_dir();
+    if (!exe_dir.string)
+        debugln("Could not determine the executable directory.");
+    
+    char path_buffer[PATH_MAX];
+    if (exe_dir.string) {
+        // If resouce lies right next to the executable
+        debugln("Checking right next to executable...");
+        snprintf(path_buffer, sizeof(path_buffer), "%s/%s", exe_dir.string, RESOURCES_FILENAME);
+        if (g_file_test(path_buffer, G_FILE_TEST_EXISTS)) {
+            BcstdStr_free(exe_dir);
+            return BcstdStr_owned("%s", path_buffer);
+        }
+
+        // If resource lies in ../share
+        debugln("Checking ../share");
+        snprintf(path_buffer, sizeof(path_buffer), "%s/../share/%s", exe_dir.string, RESOURCES_FILENAME);
+        if (g_file_test(path_buffer, G_FILE_TEST_EXISTS)) {
+            BcstdStr_free(exe_dir);
+            return BcstdStr_owned("%s", path_buffer);
+        }
+    }
+
+    // Default location then
+    BcstdStr_free(exe_dir);
+    return BcstdStr_literal(RESOURCES_DEFAULT_FILE);
+
+}
+
+static ResourceResult register_resource() {
+    debugln("Loading and registering resource...");
+
+    BcstdStr res_path = get_resource_filepath();
+    debugln("Trying to load resource from: %s", res_path.string);
 
     GError* error = NULL;
-    GResource* resource = g_resource_load(res_file, &error);
+    GResource* resource = g_resource_load(res_path.string, &error);
+    BcstdStr_free(res_path);
 
-    if (error)
+    if (error) {
         return (ResourceResult) ERR(error);
+    }
 
     g_resources_register(resource);
     return (ResourceResult) OK(resource);
 }
+
 
 
 static void app_run_function(ThreadArg* arg_heap) {
